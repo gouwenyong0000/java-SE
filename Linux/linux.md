@@ -356,7 +356,7 @@ reboot        		#现在重新启动计算机
 2)	在提示符下输入**logout 即可注销用户**
 
 ```shell
-[root@hadoop1 linux-share]# logout
+[root@hadoop1 linux-share]$ logout
 ```
 
 > 注意：
@@ -2437,6 +2437,8 @@ tree
 
 ##  Linux 网络配置原理图(含虚拟机)
 
+![image-20210512012033426](linux.assets/image-20210512012033426.png)
+
 ![image-20210509191151854](linux.assets/image-20210509191151854.png)
 
 ## 查看ip和网关
@@ -2453,7 +2455,7 @@ tree
 
 ![image-20210509191816123](linux.assets/image-20210509191816123.png)
 
-### 查看windows环境的中VMnet8网络配置(ipconfig指令)
+### 查看windows环境的中VMnet8网络配置(`ipconfig`指令)
 
 界面查看
 
@@ -2462,6 +2464,12 @@ tree
 命令查看
 
 ![image-20210510223305586](linux.assets/image-20210510223305586.png)
+
+
+
+### linux 中ip查看`ifconfig`
+
+![image-20210512012438566](linux.assets/image-20210512012438566.png)
 
 ## ping 测试主机之间网络连通性
 
@@ -2484,13 +2492,26 @@ tree
 
 
 
+![image-20210512012623349](linux.assets/image-20210512012623349.png)
+
 缺点: linux 启动后会自动获取 IP,缺点是每次自动获取的 ip 地址可能不一样。这个不适用于做服务器，因为我们的服务器的 ip 需要时固定的。
 
 ### 第二种方法(指定固定的ip)
 
 说明
-直接修改配置文件来指定IP,并可以连接到外网(程序员推荐)，编辑 `vi /etc/sysconfig/network-scripts/ifcfg-eth0`
-要求：将ip地址配置的静态的，ip地址为192.168.184.130
+直接修改配置文件来指定IP,并可以连接到外网(程序员推荐)，编辑 
+
+```sh
+#centos6
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+#centos7
+vim /etc/sysconfig/network-scripts/ifcfg-ens33
+```
+
+
+
+要求：将ip地址配置的静态的，ip地址为192.168.184.130    【前提：修改虚拟机虚拟的网卡网段】
 
 ```sh
 vi /etc/sysconfig/network-scripts/ifcfg-eth0
@@ -2498,7 +2519,7 @@ vi /etc/sysconfig/network-scripts/ifcfg-eth0
 
 •	ifcfg-eth0文件说明
 
-```
+```sh
 DEVICE=eth0                #接口名（设备,网卡）
 HWADDR=00:0C:2x:6x:0x:xx   #MAC地址
 TYPE=Ethernet               #网络类型（通常是Ethemet）
@@ -2520,6 +2541,53 @@ DNS1=192.168.184.2
 
 重启网络服务或者重启系统生效
 `service  network restart` 【重启网络服务】 、`reboot`[重启]
+
+
+
+## 设置主机名和hosts映射
+
+### 设置主机名
+
+1，为了方便记忆，可以给linux系统 置主机名，也可以根据需要修改主机名
+
+2，指令`hostname`：查看主机名
+
+![image-20210512013602916](linux.assets/image-20210512013602916.png)
+
+3·修改文件在`vim /etc/hostname`指定
+
+![image-20210512015058930](linux.assets/image-20210512015058930.png)
+
+4，修改后，重启【`reboot`】生效
+
+### 设置hosts射
+
+思考：如何通过主机名能够找到（比如ping）某个linux系统？
+
++ windows
+
+  + 在`C:\Windows\System32\drivers\etc\hosts`文件指定即可
+  案例：`192.168.200.130  hspedu100`
+
++ linux
+
+  + 在`/etc/hosts`文件指定
+    案例：`192.168.200.1  ThinkPad-PC`【我的电脑  右键 管理  计算机名】
+
+### 主机名解析过程分析（Hosts，DNS）
+
++ Hosts是什么
+  一个文本文件，用来记录IP和Hostname（主机名）的映射关系
+
++ DNS
+
+  1、DNS，就是Domain Name System的缩写，翻译过来就是**域名系统**
+
+  2、是互联网上作为域名和IP地址相互映射的一个分布式数据库
+
+**主机名解析机制分析（Hosts，DNS）**
+
+![image-20210512014846476](linux.assets/image-20210512014846476.png)
 
 # 实操篇 进程管理(重点)
 
@@ -2689,7 +2757,8 @@ init─┬─NetworkManager
 
 ## 服务(service)管理
 
-介绍:
+### 介绍:
+
 服务(service) 本质就是进程，但是是运行在后台的，通常都会监听某个端口，等待其它程序的请求，比如(mysql , sshd  防火墙等)，因此我们又称为守护进程，是Linux中非常重要的知识点。【原理图】
 
 ![image-20210510000722025](linux.assets/image-20210510000722025.png)
@@ -2698,12 +2767,16 @@ init─┬─NetworkManager
 
 `service  服务名 [start | stop | restart | reload | status]`
 
-> 在CentOS7.0后不再使用service ,而是systemctl
+> 在CentOS7.0后不再使用service ,而是systemctl，后面专门讲
+
+> service指令管理的服务在`/etc/init.d`查看
+>
+> ![image-20210512004702243](linux.assets/image-20210512004702243.png)
 
 使用案例：
-1) 查看当前防火墙的状况，关闭防火墙和重启防火墙。[防火墙服务名：iptables]
+1) （centos6     7以后防火墙被systemctl管理）查看当前防火墙的状况，关闭防火墙和重启防火墙。[防火墙服务名：iptables]  
 
-```
+```sh
 [root@hadoop1 ~]$ service iptables status
 表格：filter
 Chain INPUT (policy ACCEPT)
@@ -2749,7 +2822,11 @@ num  target     prot opt source               destination
 [root@hadoop1 ~]$ 
 ```
 
+centos7演示
 
+请使用service指令，查看，关闭，启动network[注意：在虚拟系统演示，因为网络连接会关闭]
+
+![image-20210511233038038](linux.assets/image-20210511233038038.png)
 
 细节讨论：
 
@@ -2768,9 +2845,11 @@ num  target     prot opt source               destination
 
   ![image-20210510001913835](linux.assets/image-20210510001913835.png)
 
-+ 方式2:   /etc/init.d/服务名称
+  ![image-20210511233334737](linux.assets/image-20210511233334737.png)
 
-  ![image-20210510230102187](linux.assets/image-20210510230102187.png)
++ 方式2:   /etc/init.d/服务名称   在7.0中只能查看部分
+
+  ![image-20210511233206018](linux.assets/image-20210511233206018.png)
 
 ### 服务的运行级别(runlevel):
 
@@ -2780,30 +2859,56 @@ Linux系统有7种运行级别(runlevel)：`常用的是级别3和5`
 •	运行级别0：系统停机状态，系统默认运行级别不能设为0，否则不能正常启动
 •	运行级别1：单用户工作状态，root权限，用于系统维护，禁止远程登陆
 •	运行级别2：多用户状态(没有NFS)，不支持网络
-•	运行级别3：完全的多用户状态(有NFS)，登陆后进入控制台命令行模式
+•	运行级别3：完全的多用户状态(有NFS)，无界面，登陆后进入控制台命令行模式
 •	运行级别4：系统未使用，保留
 •	运行级别5：X11控制台，登陆后进入图形GUI模式
-•	运行级别6：系统正常关闭并重启，默认运行级别不能设为6，否则不能正常启动开机的流程说明：
+•	运行级别6：系统正常关闭并重启，默认运行级别不能设为6，否则不能正常启动
+
+
+
+开机的流程说明：
 
 ![image-20210510002439767](linux.assets/image-20210510002439767.png)
 
 > 思考题
 > 如果不小心将默认的运行级别设置成 0 或者7 ，怎么处理？进入单用户模式，修改成正常的即可。。。
 
+
+
+**CentOS7后运行级别说明**
+在/etc/initab进行了简化，如下：
+
+`multi-user.targe：analogous to runlevel 3`   命令行界面
+`graphical.targe：analogous to runlevel 5 `     图形化界面
+
+```sh
+#查看当前运行级别，run：
+systemctl get-default
+
+#设置当前运行级别，run：
+systemctl set-default TARGET.target    # 3
+systemctl set-default graphical.targe  # 5
+```
+
 ### chkconfig指令
 
 •	介绍
-通过chkconfig 命令可以给每个服务的各个运行级别设置自启动/关闭
+
++ 通过chkconfig命令可以给服务的各个运行级别设置自启动/关闭
++ chkconfig指令管理的服务在`/etc/init.d`查看
+
++ 注意：Centos7.0后，很多服务`使用systemctl` 管理（后面马上讲）
+
 •	基本语法
 1)	查看服务`chkconfig --list|grep  xxx`
 
-![image-20210510230346400](linux.assets/image-20210510230346400.png)
+![image-20210511234651543](linux.assets/image-20210511234651543.png)
 
 2)	`chkconfig   服务名 --list`
 
 ![image-20210510230401868](linux.assets/image-20210510230401868.png)
 
-3)	`chkconfig   --level  5   服务名 on/off`
+3)	`chkconfig   --level  5   服务名   on/off`
 
 ![image-20210510230427631](linux.assets/image-20210510230427631.png)
 
@@ -2836,7 +2941,139 @@ Linux系统有7种运行级别(runlevel)：`常用的是级别3和5`
 
 > 1) chkconfig重新设置服务后自启动或关闭，需要重启机器reboot才能生效.
 
-## 动态监控进程
+
+
+### systemctl管理指令
+
+1、基本语法：`systemctl [start | stop | restart | status] 服务名`
+
+2、systemctl指令**管理的服务**在`/usr/lib/systemd/system`**查看**
+
+
+
+**systemctl设置服务的自启动状态**
+1.`systemctl list-unit-files [| grep 服务名]`（查看服务开机启动状态，grep可以进行过滤
+2.`systemctl enable 服务名`（设置服务开机启动）【默认控制3.5级别】
+3.`systemctl disable 服务名`（关闭服务开机启动）
+4.`systemctl is-enabled 服务名`（查询某个服务是否是自启动的）
+应用案例：查看当前防火墙的状况，关闭防火墙和重启防火墙。
+
+```sh
+# 查询防火墙的开机启动状态
+[root@localhost system]$ systemctl list-unit-files | grep fire
+firewalld.service                             enabled 
+
+# 关闭防火墙
+[root@localhost system]$ systemctl stop firewalld.service
+# 开启防火墙
+[root@localhost system]$ systemctl start firewalld.service
+
+#查看防火墙服务状态
+[root@localhost system]$ systemctl status firewalld.service
+```
+
+
+
+细节讨论：
+1，关闭或者启用防火墙后，立即生效。[`telnet  测试某个端口`即可]，
+
+2，这种方式只是临时生效，当重启系统后，还是回归以前对服务的设置。
+
+3，如果希望设置某个服务自启动或关闭永久生效，要使用`systemctl [enable|disable] 服务名`.
+
+### 打开或者关闭指定端口firewall
+
+在真正的生产环境，往往需要将防火墙打开，但问题来了，如果我们把防火墙打开，那么外部请求数据包就不能跟服务器监听端口通讯。这时，需要打开指定的端口。比如80，22，8080等，这个又怎么做呢？老韩给给大家讲一讲。[示意图]
+
+![image-20210512005046985](linux.assets/image-20210512005046985.png)
+
+`firewall指令`：
+
++ 打开端口：`firewall-cmd --permanent --add-port=端口号/协议`
+
++ 关闭端口：`firewall-cmd --permanent --remove-port=端口号/协议`
+
++ 重新载入，才能生效：`firewall-cmd --reload`
+
++ 查询端口是否开放：`firewall-cmd --query-port=端口/协议`
+
+
+
+> 协议类型查询：`netstat -anp`
+>
+> ![image-20210512002743416](linux.assets/image-20210512002743416.png)
+
+应用案例：
+
+1.启用防火墙，测试111端口是否能telnet
+
+```sh
+# 查询防火墙服务,通过grep过滤出来
+[root@localhost sbin]$ ls -l /usr/lib/systemd/system | grep fire
+-rw-r--r--. 1 root root  657 8月   9 2019 firewalld.service
+
+# 打开防火墙
+[root@localhost sbin]$ systemctl start firewalld
+
+# 查询防火墙服务状态
+[root@localhost sbin]$ systemctl status firewalld
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: active (running) since 三 2021-05-12 00:04:05 CST; 27min ago
+
+# 查询111端口是否开发
+[root@localhost sbin]$ firewall-cmd --query-port=111/tcp
+no
+```
+
+Windows测试
+
+![image-20210512003242490](linux.assets/image-20210512003242490.png)
+
+2.开放111端口
+
+```sh
+# 开放111端口
+[root@localhost sbin]$ firewall-cmd --permanent --add-port=111/tcp
+success
+
+# 未reload查询111端口no
+[root@localhost sbin]$ firewall-cmd --query-port=111/tcp
+no
+
+# 重新载入，才能生效
+[root@localhost sbin]$ firewall-cmd --reload
+success
+
+# 查询111端口
+[root@localhost sbin]$ firewall-cmd --query-port=111/tcp
+yes
+```
+
+![image-20210512003556358](linux.assets/image-20210512003556358.png)
+
+3.再次关闭111端口
+
+```
+# 关闭端口
+[root@localhost sbin]# firewall-cmd --permanent --remove-port=111/tcp
+success
+# 未reload查询状态
+[root@localhost sbin]# firewall-cmd --query-port=111/tcp
+yes
+
+# reload
+[root@localhost sbin]# firewall-cmd --reload
+success
+
+# 查询111端口
+[root@localhost sbin]# firewall-cmd --query-port=111/tcp
+no
+```
+
+![image-20210512003808995](linux.assets/image-20210512003808995.png)
+
+## 动态监控进程top
 
 ### 介绍：
 
@@ -2869,7 +3106,7 @@ top：输入此命令，按回车键，查看执行的进程。 k：然后输入
 
 `top -d 10`
 
-## 监控网络状态
+## 监控网络状态netstat 
 
 ### 查看系统网络情况netstat
 
@@ -2891,7 +3128,8 @@ top：输入此命令，按回车键，查看执行的进程。 k：然后输入
 
 ![image-20210510231234958](linux.assets/image-20210510231234958.png)
 
-检测主机连接命令ping：
+### 检测主机连接命令ping：
+
 是一种网络检测检测工具，它主要是用阿检测远程主机是否正常，或是两部主机间的介质是否为断、网线是否脱落或网卡故障。
 如: ping 对方ip地址
 
@@ -2906,7 +3144,7 @@ Linux的分发版本都有采用（suse,redhat, centos 等等），可以算是�
 
 ### rpm包的简单查询指令：
 
-查询已安装的rpm列表 `rpm  –qa|grep xx`
+查询已安装的rpm列表 `rpm  –qa | grep xx`
 rpm包名基本格式：
 一个rpm包名：firefox-45.0.1-1.el6.centos.x86_64.rpm
 
@@ -2921,8 +3159,8 @@ rpm包名基本格式：
 ### rpm包的其它查询指令：
 
 `rpm -qa` :【查询所安装的所有rpm软件包】
-`rpm -qa | more`    【分页显示】
-`rpm -qa | grep X` [案例：`rpm -qa | grep firefox` ]
+`rpm -qa | more`     【分页显示】
+`rpm -qa | grep X`          [案例：`rpm -qa | grep firefox` ]
 
 ![image-20210510231642960](linux.assets/image-20210510231642960.png)
 
@@ -2947,7 +3185,6 @@ rpm包名基本格式：
 
 `rpm -qf 文件全路径名`  【 查询文件所属的软件包】
 `rpm -qf /etc/passwd`
-`rpm -qf /root/install.log`
 
 ![image-20210510231918214](linux.assets/image-20210510231918214.png)
 
@@ -2982,9 +3219,8 @@ rpm包名基本格式：
 + 应用实例
   1）演示卸载和安装firefox浏览器
 
-步骤先找到firefox 的安装rpm 包,你需要挂载上我们安装centos 的iso 文件【centOS安装压缩包】，然后到/media/下去
-找rpm 找。
-cp firefox-45.0.1-1.el6.centos.x86_64.rpm /opt/
+步骤先找到firefox 的安装rpm 包,你需要挂载上我们安装centos 的iso 文件【centOS安装光盘】，然后到/media/下去找rpm 找。
+
 
 ![image-20210510012621907](linux.assets/image-20210510012621907.png)
 
@@ -3143,7 +3379,11 @@ cd apache-tomcat-7.0.70
 
 ​		
 
-3)	开放端口`vim /etc/sysconfig/iptables`
+3)	开放端口`vim /etc/sysconfig/iptables`    centOS6    7参考firewall指令
+
+[]:
+
+
 
 ```sh
 [root@hadoop1 bin]$ vim /etc/sysconfig/iptables   # 编辑防火墙配置
@@ -3474,4 +3714,133 @@ $#（功能描述：这个变量代表命令行中所有参数的个数）
 
 ![image-20210511015504637](linux.assets/image-20210511015504637.png)
 
-预定义变量
+## 预定义变量
+
+### 基本介绍
+
+就是shell设计者事先已经定义好的变量，可以直接在shell）脚本中使用
+
+### 基本语法
+
+`$$`（功能描述：当前进程的进程号（PID））
+`$！`（功能描述：后台运行的最后一个进程的进程号（PID））
+`$？`（功能描述：最后一次执行的命令的返回状态。如果这个变量的值为0，证明上一个命令正确执行；如果这个变量的值为非0（具体是哪个数，由命令自己来决定），则证明上一个命令执行不正确了。
+
+### 应用实例
+
+在一个shell脚本中简单使用一下预定义变量
+
+![image-20210511221855979](linux.assets/image-20210511221855979.png)
+
+![image-20210511221839642](linux.assets/image-20210511221839642.png)
+
+## 运算符
+
+### 基本介绍
+
+学习如何在she11中进行各种运算操作。
+
+### 基本语法
+
+1）`"$((运算式))"`或`"$[运算式]"`
+2）`expr m + n`注意expr运算符间要有空格
+3）`expr m - n`
+4）`expr \*，/，%`乘，除，取余
+
+### 应用实例
+
+案例1：计算（2+3）x4的值
+
+![image-20210511223058173](linux.assets/image-20210511223058173.png)
+
+案例2：请求出命令行的两个参数[整数]的和
+
+![image-20210511223401636](linux.assets/image-20210511223401636.png)
+
+## 条件判断
+
+### 判断语句
+
++ 基本语法
+  `[  condition  ]`（注意condition前后要有空格）
+  #非空返回true，可使用$?验证（0为true，>1为false）
+
++ 应用实例
+  `[ atguigu ]`		返回true
+  `[]`				返回false
+  `[condition] && echo OK || echo notok`       条件满足，执行后面的语句
+
+### 常用判断条件
+
+![image-20210511223907505](linux.assets/image-20210511223907505.png)
+
+
+
+4）应用实例
+案例1："ok"是否等于"ok"
+判断语句：![image-20210511225050732](linux.assets/image-20210511225050732.png)
+案例2：23是否大于等于22
+判断语句：![image-20210511225100848](linux.assets/image-20210511225100848.png)
+案例3：/root/shell/aa.xt目录中的文件是否存在
+判断语句：![image-20210511225111675](linux.assets/image-20210511225111675.png)
+
+## 流程控制
+
+### if 判断
+
+·基本语法
+
+```sh
+if[条件判断式]；then
+	程序
+fi
+```
+
+或者
+
+```sh
+if [ 条件判断式 ]
+then
+		程序
+elif [ 条件判断式 ]
+then
+		程序
+fi
+```
+
+
+
+注意事项：（1）`[ 条件判断式 ]`，中括号和条件判断式之间必须有空格（2）推荐使用第二种方式
+
+
+
+应用实例
+
+案例：请编写·个shell程序，如果输入的参数，大于等于60，则输出"及格了"，如果小于60，则输出"不及格
+
+```sh
+[root@hadoop1 tmp]$ vim test3shell.sh  #创建文件
+
+[root@hadoop1 tmp]$ chmod u+x test3shell.sh #增加可执行权限
+
+[root@hadoop1 tmp]$ ./test3shell.sh 70 #测试
+及格
+```
+
+脚本内容
+
+```sh
+#!/bin/bash
+
+if [ $1 -gt 60 ]
+then
+        echo "及格"
+
+elif [ $1 -le 60 ]
+then
+        echo "不及格"
+
+fi
+```
+
+### case
