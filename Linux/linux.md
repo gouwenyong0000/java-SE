@@ -2115,6 +2115,1363 @@ crontab: installing new crontab
 
 1）Linux来说无论有几介分区，分给哪一目录使用，它归根结底就只有一个根目录，一个独立且唯一的文件结构，Linux中每个分区都是用来组成整个文件系统的一部分。
 
-2）
+2）Linux 采用了一种叫“载入”的处理方法，它的整个文件系统中包含了一整套的文件和目录，且将一个分区和一个目录联系起来。这时要载入的一个分区将使它的存储空间在一个目录下获得。
 
 3）示意图
+
+![image-20210510213912412](linux.assets/image-20210510213912412.png)
+
+### 硬盘说明
+
+1)	Linux 硬盘分IDE 硬盘和SCSI 硬盘，目前基本上是SCSI 硬盘
+
+2)	对于IDE 硬盘，驱动器标识符为“hdx~”,其中“hd”表明分区所在设备的类型，这里是指IDE 硬盘了。“x”为盘号（a 为基本盘，b 为基本从属盘，c 为辅助主盘，d 为辅助从属盘）,“~”代表分区，前四个分区用数字1 到4 表示，它们是主分区或扩展分区，从5 开始就是逻辑分区。例，`hda3` 表示为第一个IDE 硬盘上的第三个主分区或扩展分区,hdb2 表示为第二个IDE 硬盘上的第二个主分区或扩展分区。
+
+3)对于 SCSI 硬盘则标识为“sdx~”，SCSI 硬盘是用“sd”来表示分区所在设备的类型的，其余则和IDE 硬盘的表示方法一样。
+
+### 查看所有设备挂载情况
+
+命令：`lsblk`  或者`lsblk -f`
+
+![image-20210509155412519](linux.assets/image-20210509155412519.png)
+
+```sh
+[root@hadoop1 ~]$ lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sr0     11:0    1  3.7G  0 rom  /media/CentOS_6.8_Final
+sda      8:0    0   20G  0 disk 
+├─sda1   8:1    0  200M  0 part /boot
+├─sda2   8:2    0  200M  0 part [SWAP]
+└─sda3   8:3    0 19.6G  0 part /
+sdb      8:16   0    2G  0 disk 
+└─sdb1   8:17   0  7.8M  0 part /home/newdisk
+[root@hadoop1 ~]$ lsblk -f
+NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
+sr0    iso9660 CentOS_6.8_Final                                      /media/CentOS_6.8_Final
+sda                                                                  
+├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
+├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
+└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
+sdb                                                                  
+└─sdb1 ext4                     a00e0f34-f5a9-49d9-91f9-d568ce722731 /home/newdisk
+```
+
+### 挂载文件的经典案例
+
+![image-20210509154302075](linux.assets/image-20210509154302075.png)
+
+1)	虚拟机添加硬盘
+2)	分区
+3)	格式化
+4)	挂载
+5)	设置可以自动挂载。
+
+#### 虚拟机增加硬盘步骤1   添加硬盘
+
+在【虚拟机】菜单中，选择【设置】，然后设备列表里添加硬盘，然后一路【下一步】，中间只有选择磁盘大小的地方需要修改，至到完成。然后**重启系统（才能识别）！**
+
+![image-20210509164222432](linux.assets/image-20210509164222432.png)
+
+![image-20210509164404175](linux.assets/image-20210509164404175.png)
+
+```sh
+[root@hadoop1 ~]$ lsblk -f  # 查看
+NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
+                               
+sda                                                                  
+├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
+├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
+└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
+sdb  
+```
+
+#### 虚拟机增加硬盘步骤2  --分区
+
+分区命令 `fdisk   /dev/sdb` 
+
+开始对/sdb分区
+
+​	•	m   显示命令列表
+​	•	p    显示磁盘分区同fdisk  –l
+​	•	n    新增分区
+​	•	d     删除分区
+​	•	w   写入并退出
+
+说明：开始分区后输入n，新增分区，然后选择p ，分区类型为主分区。两次回车默认剩余全部空间。最后输入w写入分区并退出，若不保存退出输入q。
+
+```sh
+[root@hadoop1 ~]$ fdisk /dev/sdb
+Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
+Building a new DOS disklabel with disk identifier 0xe0f7e259.
+Changes will remain in memory only, until you decide to write them.
+After that, of course, the previous content won't be recoverable.
+
+Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)
+
+WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
+         switch off the mode (command 'c') and change display units to
+         sectors (command 'u').
+
+Command (m for help): m  # 显示帮助
+Command action
+   a   toggle a bootable flag
+   b   edit bsd disklabel
+   c   toggle the dos compatibility flag
+   d   delete a partition
+   l   list known partition types
+   m   print this menu
+   n   add a new partition
+   o   create a new empty DOS partition table
+   p   print the partition table
+   q   quit without saving changes
+   s   create a new empty Sun disklabel
+   t   change a partition's system id
+   u   change display/entry units
+   v   verify the partition table
+   w   write table to disk and exit
+   x   extra functionality (experts only)
+
+Command (m for help): n
+Command action
+   e   extended
+   p   primary partition (1-4)
+p   # 输入p
+Partition number (1-4): 1
+First cylinder (1-261, default 1): 
+Using default value 1
+Last cylinder, +cylinders or +size{K,M,G} (1-261, default 261): 
+Using default value 261
+
+Command (m for help): w   # write table to disk and exit
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+```
+
+```sh
+[root@hadoop1 ~]$ lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sr0     11:0    1  3.7G  0 rom  
+sda      8:0    0   20G  0 disk 
+├─sda1   8:1    0  200M  0 part /boot
+├─sda2   8:2    0  200M  0 part [SWAP]
+└─sda3   8:3    0 19.6G  0 part /
+sdb      8:16   0    2G  0 disk 
+└─sdb1   8:17   0    2G  0 part 
+```
+
+#### 虚拟机增加硬盘步骤3  --g格式化
+
+格式化磁盘
+分区命令:`mkfs -t  ext4   /dev/sdb1` 
+
+其中ext4是分区类型
+
+```sh
+[root@hadoop1 ~]$ mkfs -t  ext4   /dev/sdb1
+mke2fs 1.41.12 (17-May-2010)
+文件系统标签=
+操作系统:Linux
+块大小=4096 (log=2)
+分块大小=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+131072 inodes, 524112 blocks
+26205 blocks (5.00%) reserved for the super user
+第一个数据块=0
+Maximum filesystem blocks=536870912
+16 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Superblock backups stored on blocks: 
+	32768, 98304, 163840, 229376, 294912
+
+正在写入inode表: 完成                            
+Creating journal (8192 blocks): 完成
+Writing superblocks and filesystem accounting information: 完成
+
+This filesystem will be automatically checked every 25 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+[root@hadoop1 ~]$ 
+```
+
+生成uuid
+
+```sh
+[root@hadoop1 home]$ lsblk -f
+NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
+sr0    iso9660 CentOS_6.8_Final                                      
+sda                                                                  
+├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
+├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
+└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
+sdb                                                                  
+└─sdb1 ext4                     00126dad-647e-4f4a-ae6a-02a4d4b39c49 
+```
+
+#### 虚拟机增加硬盘步骤4  --挂载
+
+挂载: 将一个分区与一个目录联系起来，
+
+•	mount    设备名称 挂载目录
+•			例如：`mount    /dev/sdb1    /newdisk`
+•	umount 设备名称或者 挂载目录
+•			例如： `umount /dev/sdb1 或者umount /newdisk`
+用命令行挂载重启后会失效
+
+```sh
+[root@hadoop1 home]$ mkdir /home/newdisk   #创建文件
+[root@hadoop1 home]$ mount /dev/sd  # 挂载
+sda   sda1  sda2  sda3  sdb   sdb1  
+[root@hadoop1 home]$ mount /dev/sdb1 /home/newdisk/
+[root@hadoop1 home]$ lsblk -f  # 查看挂载是否成功
+NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
+sr0    iso9660 CentOS_6.8_Final                                      
+sda                                                                  
+├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
+├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
+└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
+sdb                                                                  
+└─sdb1 ext4                     00126dad-647e-4f4a-ae6a-02a4d4b39c49 /home/newdisk
+[root@hadoop1 home]$ 
+```
+
+#### 虚拟机增加硬盘步骤5  --永久挂载
+
+永久挂载: 通过修改/etc/fstab实现挂载添加完成后执行mount   –a 即刻生效
+
+`vim /etc/fstab`
+
+![image-20210509170217431](linux.assets/image-20210509170217431.png)
+
+`mount   –a `
+
+## 磁盘情况查询
+
+### 查询系统整体磁盘使用情况
+
+•	基本语法`df -h`
+•	应用实例
+
+查询系统整体磁盘使用情况
+
+```sh
+[root@hadoop1 home]$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda3        20G  3.7G   15G  20% /
+tmpfs           931M   72K  931M   1% /dev/shm
+/dev/sda1       190M   75M  105M  42% /boot
+.host:/          50G   21G   30G  41% /mnt/hgfs
+/dev/sdb1       2.0G  3.0M  1.9G   1% /home/newdisk
+```
+
+### 查询指定目录的磁盘占用情况
+
+基本语法
+
+`du -h  /目录`
+查询指定目录的磁盘占用情况，默认为当前目录
+
+```
+-s 指定目录占用大小汇总
+-h 带计量单位
+-a 含文件
+--max-depth=1  子目录深度
+-c 列出明细的同时，增加汇总值
+```
+
++ 应用实例
+  查询/opt 目录的磁盘占用情况，深度为1
+
+```sh
+[root@hadoop1 home]$ du -axh --max-depth=1 /opt
+24K	/opt/temp
+163M	/opt/vmware-tools-distrib
+74M	/opt/firefox-45.0.1-1.el6.centos.x86_64.rpm
+4.0K	/opt/rh
+24K	/opt/home
+54M	/opt/VMwareTools-10.3.22-15902021.tar.gz
+290M	/opt
+```
+
+### 磁盘情况-工作实用指令
+
+1)	统计/home文件夹下文件的个数
+
+[ grep   匹配到开头是- 表示文件]      [`wc -l` 统计个数]
+
+```sh
+[root@hadoop1 home]$ ls -l /home |grep '^-' |wc -l
+12
+```
+
+2)	统计/home文件夹下目录的个数
+
+```sh
+ls -l /home |grep '^d' |wc -l
+```
+
+3)	统计/home文件夹下文件的个数，包括子文件夹里的
+
+```sh
+ls -lR /home |grep '^-' |wc -l
+```
+
+4)	统计文件夹下目录的个数，包括子文件夹里的
+
+```sh
+ls -lR /home |grep '^d' |wc -l
+```
+
+5)	以树状显示目录结构
+
+【https://segmentfault.com/a/1190000039199938】yum命令报错参考
+
+```sh
+[root@hadoop1 home]$ yum install tree
+
+tree
+```
+
+# 实操篇 网络配置
+
+##  Linux 网络配置原理图(含虚拟机)
+
+![image-20210509191151854](linux.assets/image-20210509191151854.png)
+
+## 查看ip和网关
+
+### 查看虚拟网络编辑器
+
+![image-20210510223115367](linux.assets/image-20210510223115367.png)
+
+### 修改ip 地址(修改虚拟网络的ip)
+
+![image-20210509191612646](linux.assets/image-20210509191612646.png)
+
+### 查看网关
+
+![image-20210509191816123](linux.assets/image-20210509191816123.png)
+
+### 查看windows环境的中VMnet8网络配置(ipconfig指令)
+
+界面查看
+
+![image-20210510223206967](linux.assets/image-20210510223206967.png)
+
+命令查看
+
+![image-20210510223305586](linux.assets/image-20210510223305586.png)
+
+## ping 测试主机之间网络连通性
+
+基本语法
+`ping 目的主机` （功能描述：测试当前服务器是否可以连接目的主机）
+应用实例
+测试当前服务器是否可以连接百度
+
+```
+[root@hadoop100 桌面]# ping www.baidu.com
+```
+
+## linux网络环境配置
+
+### 第一种方法(自动获取)：
+
+说明：登陆后，通过界面的来设置自动获取ip
+
+![image-20210509192519340](linux.assets/image-20210509192519340.png)
+
+
+
+缺点: linux 启动后会自动获取 IP,缺点是每次自动获取的 ip 地址可能不一样。这个不适用于做服务器，因为我们的服务器的 ip 需要时固定的。
+
+### 第二种方法(指定固定的ip)
+
+说明
+直接修改配置文件来指定IP,并可以连接到外网(程序员推荐)，编辑 `vi /etc/sysconfig/network-scripts/ifcfg-eth0`
+要求：将ip地址配置的静态的，ip地址为192.168.184.130
+
+```sh
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+```
+
+•	ifcfg-eth0文件说明
+
+```
+DEVICE=eth0                #接口名（设备,网卡）
+HWADDR=00:0C:2x:6x:0x:xx   #MAC地址
+TYPE=Ethernet               #网络类型（通常是Ethemet）
+UUID=926a57ba-92c6-4231-bacb-f27e5e6a9f44  #随机id
+#系统启动的时候网络接口是否有效（yes/no）
+ONBOOT=yes
+# IP的配置方法[none|static|bootp|dhcp]（引导时不使用协议|静态分配IP|BOOTP协议|DHCP协议） 
+BOOTPROTO=static
+#IP地址
+IPADDR=192.168.184.130
+#网关
+GATEWAY=192.168.184.2
+#域名解析器
+DNS1=192.168.184.2
+
+```
+
+![image-20210510223832603](linux.assets/image-20210510223832603.png)
+
+重启网络服务或者重启系统生效
+`service  network restart` 【重启网络服务】 、`reboot`[重启]
+
+# 实操篇 进程管理(重点)
+
+## 基本介绍
+
+1)	在LINUX中，每个执行的程序（代码）都称为一个进程。每一个进程都分配一个ID号。
+2)	每一个进程，都会对应一个父进程，而这个父进程可以复制多个子进程。例如www服务器。
+3)	每个进程都可能以两种方式存在的。前台与后台，所谓前台进程就是用户目前的屏幕上可以进行操作的。后台进程则是实际在操作，但由于屏幕上无法看到的进程，通常使用后台方式执行。
+4)	一般系统的服务都是以后台进程的方式存在，而且都会常驻在系统中。直到关机才才结束。
+
+## 显示系统执行的进程 ps
+
+### 基本介绍
+
+`ps`命令是用来查看目前系统中，有哪些正在执行，以及它们执行的状况。可以不加任何参数.
+
+![image-20210509233020766](linux.assets/image-20210509233020766.png)
+
+![image-20210510224000915](linux.assets/image-20210510224000915.png)
+
+### ps详解
+
+1)	指令：`ps –aux|grep xxx` ，比如我看看有没有sshd服务`ps -aux | grep sshd`
+2)	指令说明
+•	System V展示风格
+•	USER：用户名称
+•	PID：进程号
+•	%CPU：进程占用CPU的百分比
+•	%MEM：进程占用物理内存的百分比
+•	VSZ：进程占用的虚拟内存大小（单位：KB）
+•	RSS：进程占用的物理内存大小（单位：KB）
+•	TT：终端名称,缩写.
+•	STAT：进程状态，其中S-睡眠，s-表示该进程是会话的先导进程，N-表示进程拥有比普通优先级更低的优先级，R-正在运行，D-短期等待，Z-僵死进程，T-被跟踪或者被停止等等
+•	STARTED：进程的启动时间
+•	TIME：CPU时间，即进程使用CPU的总时间
+•	COMMAND：启动进程所用的命令和参数，如果过长会被截断显示
+
+![image-20210510224119734](linux.assets/image-20210510224119734.png)
+
+### 应用实例
+
+要求：以全格式显示当前所有的进程，查看进程的父进程。
+
+![image-20210510224242468](linux.assets/image-20210510224242468.png)•	`ps -ef`是以全格式显示当前所有的进程
+•	`-e` 显示所有进程。`-f` 全格式。
+•	`ps -ef|grep xxx`
+	•	是BSD风格
+	•	UID：用户ID
+	•	PID：进程ID
+	•	PPID：父进程ID
+	•	C：CPU用于计算执行优先级的因子。数值越大，表明进程是CPU密集型运算，执行优先级会降低；数值越小，表明进程是I/O密集型运算，执行优先级会提高
+	•	STIME：进程启动的时间
+	•	TTY：完整的终端名称
+	•	TIME：CPU时间
+	•	CMD：启动进程所用的命令和参数
+
+思考题，如果我们希望查看sshd 进程的父进程号是多少，应该怎样查询？
+
+```sh
+[root@hadoop1 home]$ ps -ef | grep sshd
+UID         PID   PPID  C STIME TTY          TIME CMD
+root      19276      1  0 21:56 ?        00:00:00 /usr/sbin/sshd
+root      21303  19276  0 21:58 ?        00:00:00 sshd: root@pts/0 
+root      21408  21307  0 22:44 pts/0    00:00:00 grep sshd
+```
+
+## 终止进程kill和killall
+
+### 介绍:
+
+若是某个进程执行一半需要停止时，或是已消了很大的系统资源时，此时可以考虑停止该进程。使用kill命令来完成此项任务。
+
+### 基本语法：
+
+`kill  [选项] 进程号`（功能描述：通过进程号杀死进程）
+`killall 进程名称` （功能描述：通过进程名称杀死进程，也支持通配符，这在系统因负载过大而变得很慢时很有用）
+
++ 常用选项：
+  `-9 :表示强迫进程立即停止`
+
+### 最佳实践：
+
+案例1：踢掉某个非法登录用户
+
+```sh
+[root@hadoop1 home]$ ps -ef | grep sshd
+root      19276      1  0 21:56 ?        00:00:00 /usr/sbin/sshd
+root      21303  19276  0 21:58 ?        00:00:00 sshd: root@pts/0 
+root      21411  19276  2 22:46 ?        00:00:00 sshd: jack [priv]
+jack      21415  21411  0 22:46 ?        00:00:00 sshd: jack@pts/1 
+root      21440  21307  0 22:46 pts/0    00:00:00 grep sshd
+[root@hadoop1 home]$ kill 21415
+[root@hadoop1 home]$ kill 21415
+-bash: kill: (21415) - 没有那个进程
+[root@hadoop1 home]$ ps -ef | grep sshd
+root      19276      1  0 21:56 ?        00:00:00 /usr/sbin/sshd
+root      21303  19276  0 21:58 ?        00:00:00 sshd: root@pts/0 
+root      21442  21307  0 22:47 pts/0    00:00:00 grep sshd
+```
+
+![image-20210509234815461](linux.assets/image-20210509234815461.png)
+
+案例2: 终止远程登录服务sshd, 在适当时候再次重启sshd服务
+
+```sh
+bash-4.1$ ps -ef | grep sshd
+root      21303      1  0 21:58 ?        00:00:00 sshd: root@pts/0 
+root      21922  21919  0 22:49 pts/1    00:00:00 grep sshd
+bash-4.1$ kill 21303
+bash-4.1$ service sshd start  # 重启sshd服务
+```
+
+案例3: 终止多个gedit 编辑器
+
+```sh
+killall gedit 
+```
+
+案例4：强制杀掉一个终端
+
+```sh
+bash-4.1# ps -ef | grep bash
+root      21919  21917  0 22:49 pts/1    00:00:00 /bin/bash
+root      21963  21959  0 22:50 pts/0    00:00:00 -bash
+root      21987  21917  0 22:52 pts/2    00:00:00 /bin/bash
+root      21989  21919  0 22:52 pts/1    00:00:00 grep bash
+bash-4.1# kill -9 21919
+
+```
+
+### 查看进程树pstree
+
++ 基本语法：
+  `pstree [选项]` ,可以更加直观的来看进程信息
++ 常用选项：
+
+```
+-p :显示进程的PID
+-u :显示进程的所属用户
+```
+
+应用实例：
+
+案例1：请你树状的形式显示进程的pid
+
+```sh
+[root@hadoop1 ~]$ pstree
+init─┬─NetworkManager
+     ├─VGAuthService
+     
+     ├─abrtd
+     ├─acpid
+     ├─atd
+     ├─auditd───{auditd}
+     ├─bonobo-activati───{bonobo-activat}
+     ├─clock-applet
+     ├─console-kit-dae───63*[{console-kit-da}]
+     ├─crond
+     ├─cupsd
+     ├─2*[dbus-daemon───{dbus-daemon}]
+     ├─2*[dbus-launch]
+```
+
+案例2：请你树状的形式进程的用户id
+
+`pstree -u`
+
+## 服务(service)管理
+
+介绍:
+服务(service) 本质就是进程，但是是运行在后台的，通常都会监听某个端口，等待其它程序的请求，比如(mysql , sshd  防火墙等)，因此我们又称为守护进程，是Linux中非常重要的知识点。【原理图】
+
+![image-20210510000722025](linux.assets/image-20210510000722025.png)
+
+### service管理指令：
+
+`service  服务名 [start | stop | restart | reload | status]`
+
+> 在CentOS7.0后不再使用service ,而是systemctl
+
+使用案例：
+1) 查看当前防火墙的状况，关闭防火墙和重启防火墙。[防火墙服务名：iptables]
+
+```
+[root@hadoop1 ~]$ service iptables status
+表格：filter
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
+5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination         
+1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+
+[root@hadoop1 ~]$ service iptables stop
+iptables：将链设置为政策 ACCEPT：filter                    [确定]
+iptables：清除防火墙规则：                                 [确定]
+iptables：正在卸载模块：                                   [确定]
+[root@hadoop1 ~]$ service iptables status
+iptables：未运行防火墙。
+[root@hadoop1 ~]$ service iptables start
+iptables：应用防火墙规则：                                 [确定]
+[root@hadoop1 ~]$ service iptables status
+表格：filter
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
+5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination         
+1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+
+[root@hadoop1 ~]$ 
+```
+
+
+
+细节讨论：
+
+1)	关闭或者启用防火墙后，立即生效。[`telnet 测试 某个端口即可`]
+
+![image-20210510001528597](linux.assets/image-20210510001528597.png)
+
+![image-20210510001250412](linux.assets/image-20210510001250412.png)
+
+2)	这种方式只是临时生效，当重启系统后，还是回归以前对服务的设置。
+3)	如果希望设置某个服务自启动或关闭永久生效，要使用chkconfig指令，马上讲。
+
+### 查看服务名:
+
++ 方式1：使用setup -> 系统服务就可以看到。
+
+  ![image-20210510001913835](linux.assets/image-20210510001913835.png)
+
++ 方式2:   /etc/init.d/服务名称
+
+  ![image-20210510230102187](linux.assets/image-20210510230102187.png)
+
+### 服务的运行级别(runlevel):
+
+查看或者修改默认级别： `vi /etc/inittab` 
+Linux系统有7种运行级别(runlevel)：`常用的是级别3和5`
+
+•	运行级别0：系统停机状态，系统默认运行级别不能设为0，否则不能正常启动
+•	运行级别1：单用户工作状态，root权限，用于系统维护，禁止远程登陆
+•	运行级别2：多用户状态(没有NFS)，不支持网络
+•	运行级别3：完全的多用户状态(有NFS)，登陆后进入控制台命令行模式
+•	运行级别4：系统未使用，保留
+•	运行级别5：X11控制台，登陆后进入图形GUI模式
+•	运行级别6：系统正常关闭并重启，默认运行级别不能设为6，否则不能正常启动开机的流程说明：
+
+![image-20210510002439767](linux.assets/image-20210510002439767.png)
+
+> 思考题
+> 如果不小心将默认的运行级别设置成 0 或者7 ，怎么处理？进入单用户模式，修改成正常的即可。。。
+
+### chkconfig指令
+
+•	介绍
+通过chkconfig 命令可以给每个服务的各个运行级别设置自启动/关闭
+•	基本语法
+1)	查看服务`chkconfig --list|grep  xxx`
+
+![image-20210510230346400](linux.assets/image-20210510230346400.png)
+
+2)	`chkconfig   服务名 --list`
+
+![image-20210510230401868](linux.assets/image-20210510230401868.png)
+
+3)	`chkconfig   --level  5   服务名 on/off`
+
+![image-20210510230427631](linux.assets/image-20210510230427631.png)
+
+•	应用实例：
+1)	案例1： 请显示当前系统所有服务的各个运行级别的运行状态
+
+`chkconfig --list`
+
+2)	案例2 ：请查看sshd服务的运行状态
+
+`service sshd status`
+
+3)	案例3： 将sshd 服务在运行级别5下设置为不自动启动，看看有什么效果？
+
+`chkconfig --level 5 sshd off`
+
+4)	案例4： 当运行级别为5时，关闭防火墙。
+
+`chkconfig --level 5 iptables off`
+
+5)	案例5： 在所有运行级别下，关闭防火墙
+
+`chkconfig iptables off`
+
+6)	案例6： 在所有运行级别下，开启防火墙
+
+`chkconfig iptables on`
+
+> 使用细节
+
+> 1) chkconfig重新设置服务后自启动或关闭，需要重启机器reboot才能生效.
+
+## 动态监控进程
+
+### 介绍：
+
+top与ps命令很相似。它们都用来显示正在执行的进程。Top与ps最大的不同之处，在于top在执行一段时间可以更新正在运行的的进程。
+
+### 基本语法：
+
+`top [选项]`
+选项说明：
+
+![image-20210510004254563](linux.assets/image-20210510004254563.png)
+
+交互操作说明![image-20210510004327955](linux.assets/image-20210510004327955.png)
+
+
+
+### 应用实例：
+
+案例1.监视特定用户
+**top：输入此命令，按回车键**，查看执行的进程。 u：**然后输入“u”回车，再输入用户名**，即可
+
+![image-20210510230759708](linux.assets/image-20210510230759708.png)
+
+案例2：终止指定的进程。
+top：输入此命令，按回车键，查看执行的进程。 k：然后输入“k”回车，再输入要结束的进程ID号
+
+![image-20210510230911466](linux.assets/image-20210510230911466.png)
+
+案例3:指定系统状态更新的时间(每隔10秒自动更新)：
+
+`top -d 10`
+
+## 监控网络状态
+
+### 查看系统网络情况netstat
+
+•	基本语法
+`netstat [选项]`
+•	选项说明
+
+
+```sh
+-an  按一定顺序排列输出
+-p  显示哪个进程在调用
+```
+
+![image-20210510231218485](linux.assets/image-20210510231218485.png)
+
+应用案例
+
+请查看服务名为sshd 的服务的信息。
+
+![image-20210510231234958](linux.assets/image-20210510231234958.png)
+
+检测主机连接命令ping：
+是一种网络检测检测工具，它主要是用阿检测远程主机是否正常，或是两部主机间的介质是否为断、网线是否脱落或网卡故障。
+如: ping 对方ip地址
+
+# 实操篇 RPM 与 YUM
+
+## rpm包的管理
+
+### 介绍：
+
+一种用于互联网下载包的打包及安装工具，它包含在某些Linux分发版中。它生成具有.RPM扩展名的文件。RPM是RedHat Package Manager（RedHat软件包管理工具）的缩写，类似windows的setup.exe，这一文件格式名称虽然打上了RedHat的标志，但理念是通用的。
+Linux的分发版本都有采用（suse,redhat, centos 等等），可以算是公认的行业标准了。
+
+### rpm包的简单查询指令：
+
+查询已安装的rpm列表 `rpm  –qa|grep xx`
+rpm包名基本格式：
+一个rpm包名：firefox-45.0.1-1.el6.centos.x86_64.rpm
+
+```
+名称:firefox
+版本号：45.0.1-1
+适用操作系统: el6.centos.x86_64 
+表示centos6.x的64位系统
+如果是i686、i386表示32位系统，noarch表示通用。。
+```
+
+### rpm包的其它查询指令：
+
+`rpm -qa` :【查询所安装的所有rpm软件包】
+`rpm -qa | more`    【分页显示】
+`rpm -qa | grep X` [案例：`rpm -qa | grep firefox` ]
+
+![image-20210510231642960](linux.assets/image-20210510231642960.png)
+
+
+
+`rpm -q 软件包名`:【查询软件包是否安装】
+`rpm -q firefox`
+
+`rpm -qi 软件包名`：【查询软件包信息】
+`rpm -qi firefox`
+
+![image-20210510231714433](linux.assets/image-20210510231714433.png)
+
+
+
+`rpm -ql 软件包名` :【查询软件包中的文件的位置】
+`rpm -ql firefox`
+
+![image-20210510231740848](linux.assets/image-20210510231740848.png)
+
+
+
+`rpm -qf 文件全路径名`  【 查询文件所属的软件包】
+`rpm -qf /etc/passwd`
+`rpm -qf /root/install.log`
+
+![image-20210510231918214](linux.assets/image-20210510231918214.png)
+
+
+
+### 卸载rpm包：
+
++ 基本语法
+  `rpm -e RPM包的名称`
+
++ 应用案例
+  1）删除firefox软件包
+
+  ```sh
+  rpm -e  firefox
+  ```
+
++ 细节讨论
+
+  + 1）如果其它软件包依赖于您要卸载的软件包，卸载时则会产生错误信息。
+    如：$rpm-e foo removing these packages would break dependencies:foo is needed by bar-1.0-1
+  + 2）如果我们就是要删除foo这个rpm包，可以增加参数-nodeps，就可以`强制删除`，但是一般不推荐这样做，因为依赖于该软件包的程序可能无法运行如：`rpm-e--nodeps foo`
+
+### 安装rpm包：
+
++ 基本语法
+  `rpm-ivh RPM包全路径名称`
++ 参数说明
+  i=install安装
+  v=verbose提示
+  h-hash进度条
++ 应用实例
+  1）演示卸载和安装firefox浏览器
+
+步骤先找到firefox 的安装rpm 包,你需要挂载上我们安装centos 的iso 文件【centOS安装压缩包】，然后到/media/下去
+找rpm 找。
+cp firefox-45.0.1-1.el6.centos.x86_64.rpm /opt/
+
+![image-20210510012621907](linux.assets/image-20210510012621907.png)
+
+```sh
+[root@hadoop1 media]$ ls -l /media/    # 光驱默认挂在/media目录下
+总用量 4
+dr-xr-xr-x. 7 root root 4096 5月  23 2016 CentOS_6.8_Final
+[root@hadoop1 media]$ ls -l /media/CentOS_6.8_Final/Packages | grep fire   # rpm包位置
+-r--r--r--. 2 root root 77493120 5月  12 2016 firefox-45.0.1-1.el6.centos.x86_64.rpm
+-r--r--r--. 2 root root   121940 12月  8 2014 system-config-firewall-1.2.27-7.2.el6_6.noarch.rpm
+-r--r--r--. 3 root root   444740 12月  8 2014 system-config-firewall-base-1.2.27-7.2.el6_6.noarch.rpm
+-r--r--r--. 2 root root    40068 12月  8 2014 system-config-firewall-tui-1.2.27-7.2.el6_6.noarch.rpm
+
+# 复制到opt目录下
+[root@hadoop1 media]$ cp  /media/CentOS_6.8_Final/Packages/firefox-45.0.1-1.el6.centos.x86_64.rpm /opt/
+```
+
+安装
+
+```sh
+rpm-ivh /opt/firefox-45.0.1-1.el6.centos.x86_64.rpm 
+```
+
+## yum
+
+### 介绍：
+
+Yum 是一个Shell前端软件包管理器。基于RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软件包。
+
+![image-20210510232850964](linux.assets/image-20210510232850964.png)
+
+### yum的基本指令
+
++ 查询yum服务器是否有需要安装的软件
+  			`yum list|grep xx软件列表`
+
++ 安装指定的yum包
+  	     `yum install xxx  `下载安装yum
+
+  应用实例：
+  案例：请使用yum的方式来安装firefox
+
+1.先查看一下firefox rpm 在yum 服务器有没有
+
+```sh
+[root@hadoop1 media]$ yum list|grep firefox
+firefox.x86_64                              78.5.0-1.el6.centos         @updates
+firefox.i686                                78.5.0-1.el6.centos         updates 
+```
+
+2.安装【默认安装最新版本】
+
+```sh
+yum install firefox
+```
+
+![image-20210510233043692](linux.assets/image-20210510233043692.png)
+
+
+
+# JavaEE定制篇  搭建JavaEE环境
+
+## 概述
+
+![image-20210510233732940](linux.assets/image-20210510233732940.png)
+
+
+
+## 安装JDK
+
+### 安装步骤
+
+0)	先将软件通过xftp5 上传到 /opt 下
+
+![image-20210510234600633](linux.assets/image-20210510234600633.png)1)	解压缩到 /opt
+
+```sh
+# 解压压缩包
+[root@hadoop1 opt]$ tar -zxvf jdk-7u79-linux-x64.gz 
+```
+
+解压后文件目录
+
+![image-20210510234711429](linux.assets/image-20210510234711429.png)
+
+进入bin目录下执行`./java`
+
+2)	配置环境变量的配置文件`vim  /etc/profile`  添加
+
+> 快捷键G到文件末尾
+> 进入jdk1.7.0_79/bin下   使用`pwd`查询路径
+
+在末尾添加
+
+```sh
+JAVA_HOME=/opt/jdk1.7.0_79     
+PATH=/opt/jdk1.7.0_79/bin:$PATH    # 或者PATH=$JAVA_HOME/bin:$PATH
+export JAVA_HOME PATH    # 输出变量，让环境变量剩下
+```
+
+3) 需要注销用户，环境变量才能生效。
+
+如果是在3 运行级别， `logout`
+
+如果是在5 运行级别，
+
+![image-20210510235421235](linux.assets/image-20210510235421235.png)
+
+
+
+或者 `source /etc/profile`命令是配置生效
+
+4) 在任何目录下就可以使用java 和javac
+
+测试是否安装成功
+编写一个简单的Hello.java 输出"hello,world!"
+
+```sh
+[root@hadoop1 opt]$ touch Hello.java
+[root@hadoop1 opt]$ vim Hello.java 
+[root@hadoop1 opt]$ javac Hello.java 
+[root@hadoop1 opt]$ java Hello
+```
+
+```sh
+public class Hello{
+        public static void main(String[] args){
+                System.out.println("hello----");
+
+        }
+}
+```
+
+## tomcat的安装
+
+步骤:
+
+1)	解压缩到/opt
+
+```sh
+[root@hadoop1 opt]$ tar -zxvf apache-tomcat-7.0.70.tar.gz 
+```
+
+2)	启动tomcat   ./startup.sh
+
+```sh
+#先进入到tomcat的bin目录
+cd apache-tomcat-7.0.70
+#运行启动脚本
+./startup.sh
+```
+
+使用Linux 本地的浏览是可以访问到tomcat
+
+![image-20210511000814805](linux.assets/image-20210511000814805.png)
+
+​		
+
+3)	开放端口`vim /etc/sysconfig/iptables`
+
+```sh
+[root@hadoop1 bin]$ vim /etc/sysconfig/iptables   # 编辑防火墙配置
+```
+
+![image-20210511001213338](linux.assets/image-20210511001213338.png)
+
+4)  重启防火墙
+
+```sh
+[root@hadoop1 bin]$ service iptables restart  # 重启防火墙服务
+
+[root@hadoop1 bin]$ service iptables status   # 查看端口状态
+```
+
+测试是否安装成功：
+在windows、Linux 下 访问 http://linuxip:8080
+
+## Eclipse的安装步骤 :
+
+1)	解压缩到/opt
+
+```sh
+tar - zxvf eclipse- j ee-mars -2- linux-gtk-x86_64. tar. gz
+```
+
+2)	启动eclipse，配置jre和server
+
+​      启动方法1: 创建一个快捷方式
+​     启动方式2: 进入到eclipse 解压后的文件夹，然后执行./eclipse 即可
+
+3)	编写Hello world 程序并测试成功！
+
+
+
+4)	编写jsp 页面,并测试成功!
+
+![image-20210511003346237](linux.assets/image-20210511003346237.png)
+
+
+
+## mysql5.6的安装
+
+安装的步骤和文档
+[说明: 因为mysql安装时间很长，所以在授课时，可以考虑最先安装mysql]相关的安装软件在课件
+
+> 注意: 先删除一下Mysql 相关的软件..
+
+
+
+```sh
+一：卸载旧版本
+
+#使用下面的命令检查是否安装有MySQL Server
+
+#有的话通过下面的命令来卸载掉
+#目前我们查询到的是这样的：
+[root@hsp ~]$ rpm -qa | grep mysql
+mysql-libs-5.1.73-7.el6.x86_64
+#如果查询到了，就删除吧
+
+rpm -e mysql_libs  #普通删除模式
+rpm -e --nodeps mysql_libs   # 强力删除模式，如果使用上面命令删除时，提示有依赖的其它文件，则用该命令可#以对其进行强力删除
+
+```
+
+二：安装MySQL
+
+```sh
+#安装编译代码需要的包
+# 安装gcc
+yum -y install make gcc-c++ cmake bison-devel  ncurses-devel
+
+#下载MySQL 5.6.14 【这里我们已经下载好了,看软件文件夹】
+
+tar -zxvf mysql-5.6.14.tar.gz
+cd mysql-5.6.14
+#编译安装[源码=》编译]
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/usr/local/mysql/data -DSYSCONFDIR=/etc -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DMYSQL_UNIX_ADDR=/var/lib/mysql/mysql.sock -DMYSQL_TCP_PORT=3306 -DENABLED_LOCAL_INFILE=1 -DWITH_PARTITION_STORAGE_ENGINE=1 -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+
+#编译并安装   # 先执行make在执行 make install
+make && make install
+
+#整个过程需要30分钟左右……漫长的等待
+```
+
+三：配置MySQL    
+
+```sh
+#设置权限
+#使用下面的命令查看是否有mysql用户及用户组
+
+cat /etc/passwd 查看用户列表
+cat /etc/group  查看用户组列表
+#如果没有就创建
+
+groupadd mysql
+useradd -g mysql mysql
+# 递归修改/usr/local/mysql权限  修改所有者mysql和所在组mysql
+chown -R mysql:mysql /usr/local/mysql
+
+#初始化配置，进入安装路径（在执行下面的指令），执行初始化配置脚本，创建系统自带的数据库和表
+cd /usr/local/mysql
+scripts/mysql_install_db --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data --user=mysql    #[这是一条指令]
+#注：在启动MySQL服务时，会按照一定次序搜索my.cnf，先在/etc目录下找，找不到则会搜索"$basedir/my.cnf"，在本例中就是 /usr/local/mysql/my.cnf，这是新版MySQL的配置文件的默认位置！
+
+#注意：在CentOS 6.8版操作系统的最小安装完成后，在/etc目录下会存在一个my.cnf，需要将此文件更名为其他的名字，如：/etc/my.cnf.bak，否则，该文件会干扰源码安装的MySQL的正确配置，造成无法启动。
+#修改名称，防止干扰：
+mv /etc/my.cnf /etc/my.cnf.bak
+
+#启动MySQL
+#添加服务，拷贝服务脚本到init.d目录，并设置开机启动 
+#[注意在 /usr/local/mysql 下执行]
+cp support-files/mysql.server /etc/init.d/mysql
+chkconfig mysql on   # 设置自启动
+service mysql start  #启动MySQL
+
+#执行下面的命令修改root密码
+cd /usr/local/mysql/bin
+./mysql -uroot  
+mysql> SET PASSWORD = PASSWORD('root');
+
+简单使用：
+创建一个数据库 DB1
+创建一张表 user
+添加一个用户，如果成功，说明我们的数据库就安装成功了！
+```
+
+## centOS7.0防火墙
+
+```sh
+# firewall命令：查看已经开放的端口：
+firewall-cmd --list-ports
+
+#开启端口
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+
+--命令含义：
+–zone #作用域
+–add-port=80/tcp #添加端口，格式为：端口/通讯协议
+–permanent #永久生效，没有此参数重启后失效
+```
+
+```sh
+firewall-cmd --reload #重启firewall
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+firewall-cmd --state #查看默认防火墙状态（关闭后显示notrunning，开启后显示running）
+```
+
+# 大数据定制篇 Shell 编程
+
+## 为什么要学习Shell编程
+
+1)	Linux运维工程师在进行服务器集群管理时，需要编写Shell程序来进行服务器管理。
+2)	对于JavaEE和Python程序员来说，工作的需要，你的老大会要求你编写一些Shell脚本进行程序或者是服务器的维护，比如编写一个定时备份数据库的脚本。
+3)	对于大数据程序员来说，需要编写Shell程序来管理集群。
+
+## Shell是什么
+
+Shell是一个命令行解释器，它为用户提供了一个向Linux内核发送请求以便运行程序的界面系统级程序，用户可以用Shell来启动、挂起、停止甚至是编写一些程序。
+
+![image-20210511005704947](linux.assets/image-20210511005704947.png)
+
+## shell 编程快速入门-Shell 脚本的执行方式
+
+### 脚本格式要求
+
+1)	脚本以`#!/bin/bash`开头
+2)	脚本需要有可执行权限
+
+### 编写第一个Shell脚本
+
+需求说明：创建一个Shell脚本，输出hello world!
+
+```sh
+#!/bin/bash
+# 像控制台输出'hello worls
+echo 'hello world'
+```
+
+### 脚本的常用执行方式
+
+•	方式1(输入脚本的绝对路径或相对路径)
+1)	首先要赋予helloworld.sh 脚本的`+x权限`
+2)	执行脚本
+
+```sh
+[root@hadoop1 tmp]$ chmod u+x hell.sh    # 添加权限   或者chmod 744 myShell.sh
+[root@hadoop1 tmp]$ ./hell.sh   # 执行脚本
+```
+
+•	方式2(sh+脚本)
+说明：不用赋予脚本+x权限，直接执行即可。
+
+```sh
+[root@hadoop1 tmp]$ sh hell.sh 
+```
+
+## shell 的变量
+
+### Shell的变量的介绍
+
+1）	Linux Shell中的变量分为，系统变量和用户自定义变量。
+2）	系统变量：$HOME、$PWD、$SHELL、$USER等等
+比如：echo $HOME   等等..
+
+```sh
+#!/bin/bash
+echo 'hello worls'
+# 必须使用双引号
+echo "path=$PATH"
+echo "user=$USER"                
+```
+
+```sh
+[root@hadoop1 tmp]$ sh hell.sh 
+hello worls
+path=/opt/jdk1.7.0_79/bin:/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+user=root
+```
+
+3）	显示当前shell中所有变量：`set`
+
+![image-20210511011439251](linux.assets/image-20210511011439251.png)
+
+### shell变量的定义
+
++ 基本语法
+
+  1)	定义变量：`变量=值`
+  2)	撤销变量：`unset 变量`
+  3)	声明静态变量：`readonly 变量`，注意：不能unset
+
++ 快速入门
+  案例1：定义变量A
+
+  案例2：撤销变量A
+
+  ![image-20210511012203808](linux.assets/image-20210511012203808.png)
+
+  案例3：声明静态的变量B=2，不能unset
+
+  ![image-20210511012241332](linux.assets/image-20210511012241332.png)
+
+  案例4：可把变量提升为全局环境变量，可供其他shell程序使用
+
+  export
+
+### 定义变量的规则
+
+1)	变量名称可以由字母、数字和下划线组成，但是不能以数字开头。
+2)	`等号两侧不能有空格`
+3)	变量名称一般**习惯为大写**
+
+### 将命令的返回值赋给变量
+
+![image-20210511012524178](linux.assets/image-20210511012524178.png)
+
+![image-20210511013025615](linux.assets/image-20210511013025615.png)
+
+
+
+## 设置环境变量
+
+### 基本语法
+
+  1)	`export 变量名=变量值` （功能描述：将shell变量输出为环境变量）
+
+  2)	`source 配置文件`   （功能描述：让修改后的配置信息立即生效）
+  3)	`echo $变量名`  （功能描述：查询环境变量的值）
+
+### 快速入门
+
+![image-20210511013351451](linux.assets/image-20210511013351451.png)
+
+1)	在/etc/profile文件中定义TOMCAT_HOME环境变量
+2)	查看环境变量TOMCAT_HOME的值
+3)	在另外一个shell程序中使用TOMCAT_HOME
+
+![image-20210511013630661](linux.assets/image-20210511013630661.png)
+
+```sh
+[root@hadoop1 tmp]$ source /etc/profile  #配置文件生效
+[root@hadoop1 tmp]$ vim  myshell.sh #使用刚自定义环境变量
+[root@hadoop1 tmp]$ sh myshell.sh # 运行脚本
+```
+
+![image-20210511013847564](linux.assets/image-20210511013847564.png)
+
+
+
+注意：在输出TOMCAt_HOME 环境变量前，需要让其生效`source /etc/profile` 
+
+## 注释
+
+```shell
+:<<!
+	多行注释内容
+!
+
+# 单行注释
+
+```
+
+## 位置参数变量
+
+### 介绍
+
+当我们执行一个shell脚本时，如果希望获取到命令行的参数信息，就可以使用到位置参数变量
+比如：./myshell.sh 100 200 , 这个就是一个执行shell的命令行，可以在myshell  脚本中获取到参数信息（100 和200）
+
+### 基本语法
+
+```
+$n （功能描述：n为数字，$0代表命令本身，$1-$9代表第一到第九个参数，十以上的参数，十以上的参数需要用大括号包含，如${10}）
+$* （功能描述：这个变量代表命令行中所有的参数，$*把所有的参数看成一个整体）
+$@（功能描述：这个变量也代表命令行中所有的参数，不过$@把每个参数区分对待）
+$#（功能描述：这个变量代表命令行中所有参数的个数）
+```
+
+### 应用实例
+
+案例：编写一个shell脚本 myshell.sh ， 在脚本中获取到命令行的各个
+
+![image-20210511015447642](linux.assets/image-20210511015447642.png)
+
+![image-20210511015504637](linux.assets/image-20210511015504637.png)
+
+预定义变量
