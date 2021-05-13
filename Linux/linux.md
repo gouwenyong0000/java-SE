@@ -181,11 +181,11 @@ windows，android，车载系统1inux等。
 3.	centos会出现一个vm的安装包
 4.	点击右键解压, 得到一个安装文件
 5.	进入该vm解压的目录，该文件在 /root/桌面/vmware-tools-distrib/下
-6.	安装./vmware-install.pl
+6.	安装`./vmware-install.pl`
 7.	全部使用默认设置即可
 8.	需要reboot重新启动即可生效
 
-
+> 需要gcc   通过`gcc -v`查看
 
 ## 设置共享 文件夹
 
@@ -594,11 +594,11 @@ uid=502(zwj) gid=503(shaolin) 组=503(shaolin)
 ## 指定运行级别
 
 基本介绍:
-运行级别说明：
+运行级别说明：【7种】
 0：关机
 1：单用户【找回丢失密码】
 2：多用户状态没有网络服务
-3：多用户状态有网络服务
+3：**多用户状态有网络服务**
 4：系统未使用保留给用户
 5：图形界面
 6：系统重启
@@ -646,6 +646,21 @@ id:5:initdefault:
 [root@hadoop1 etc]$ init 3   # 图形化界面自动切换到命令行
 [root@hadoop1 etc]$ init 5   # 命令行自动切换到图形化界面
 [root@hadoop1 etc]$ init 0   # 关机
+```
+
+**CentOS7后运行级别说明**
+在/etc/initab进行了简化，如下：
+
+`multi-user.targe：analogous to runlevel 3`   命令行界面
+`graphical.targe：analogous to runlevel 5 `     图形化界面
+
+```sh
+#查看当前运行级别，run：
+systemctl get-default
+
+#设置当前运行级别，run：
+systemctl set-default TARGET.target    # 3
+systemctl set-default graphical.targe  # 5
 ```
 
 
@@ -720,8 +735,8 @@ cd: cd [-L|-P] [dir]
 基本语法
 ls [选项] [目求或是文件]
 常用选项
-	-a：显示当前目录所有的文件和目录，包括隐藏的。
-	-1：以列表的方式显示信息应用实例
+	`-a`：显示当前目录所有的文件和目录，包括隐藏的。
+	`-1`：以列表的方式显示信息应用实例
 案例：查看当前目录的所有内容信息
 
 ```sh
@@ -794,7 +809,7 @@ mkdir指令用于创建目录
 `mkdir  [选项] 要创建的目录`
 •常用选项
 
-- **-p** ：创建多级目录
+- `-p` ：创建多级目录
 
 
 
@@ -1419,6 +1434,8 @@ grep 过滤查找，管道符，“|”，表示将**前一个命令的处理结
 
 ![image-20210429220155787](linux.assets/image-20210429220155787.png)
 
+`-v` : 反向过滤：及返回不匹配的行
+
 应用实例
 案例1: 请在hello.txt 文件中，查找 "yes"  所在行，并且显示行号
 
@@ -1988,7 +2005,7 @@ jack01.txt
 
 <img src="linux.assets/image-20210508003736825.png" alt="image-20210508003736825" style="zoom:80%;" />
 
-## 概述
+### 概述
 
 任务调度：是指系统在某个时间执行的特定的命令或程序。
 任务调度分类：
@@ -1997,13 +2014,15 @@ jack01.txt
 
 2.个别用户工作：个别用户可能希望执行某些程序，比如对mysql数据库的备份。
 
+![image-20210512203835181](linux.assets/image-20210512203835181.png)
+
 + 基本语法
   `crontab [选项]`
 
 + 常用选项
   ![image-20210508001751668](linux.assets/image-20210508001751668.png)
 
-## 快速入门
+### crontab快速入门
 
 设置任务调度文件：`/etc/crontab`
 设置个人任务调度步骤：
@@ -2020,11 +2039,9 @@ no crontab for root - using an empty one
 crontab: installing new crontab
 ```
 
+### **时间命令参数细节说明**
 
-
-**命令参数细节说明**
-
-五个占位符的说明
+**`五个占位符`的说明**
 
 ![image-20210508001948614](linux.assets/image-20210508001948614.png)
 
@@ -2032,7 +2049,7 @@ crontab: installing new crontab
 
 ![image-20210508003328146](linux.assets/image-20210508003328146.png)
 
-## 任务调度应用实例
+### 任务调度应用实例
 
 **案例1：每隔1分钟，就将当前的日期信息，追加到 /tmp/mydate 文件中**
 
@@ -2043,6 +2060,8 @@ crontab: installing new crontab
 ②`crontab –e`
 
 ③添加内容：`*/1 * * * * /home/mytask1.sh`
+
+
 
 **案例2：每隔1分钟，将当前日期和日历都追加到/home/mycal 文件中**
 
@@ -2060,6 +2079,8 @@ crontab: installing new crontab
 
 ③添加内容：`*/1 * * * * /home/mytask2.sh`
 
+
+
 **案例3:    每天凌晨2:00 将mysql数据库testdb ，备份到文件mydb.bak中。**
 
 ①创建` touch /home/mytask3.sh`
@@ -2075,11 +2096,72 @@ crontab: installing new crontab
 
 ③添加内容：`0 2 * * * /home/mytask3.sh`
 
-## crond 相关指令:
+### crond 相关指令:
 
 1)	`crontab –r`：终止任务调度。
 2)	`crontab –l`：列出当前有那些任务调度
 3)	`service crond restart`   [重启任务调度]
+
+
+
+## at定时任务
+
+![image-20210512202343553](linux.assets/image-20210512202343553.png)
+
+### 基本介绍
+
+1、`at命令是一次性定时计划任务`，at的守护进程atd会以后台模式运行，检查作业队列来运行
+2、默认情况下，atd守护进程每60秒检查作业队列，有作业时，会检查作业运行时间，如果时间与当前时间匹配，则运行此作业【*运行完毕即从队列中删除*】
+3、at命令是一次性定时计划任务，执行完一个任务后不再执行此任务了
+4、在使用at命令的时候，一定要保证atd进程的启动，可以使用相关指令来查看[`ps -ef | grep atd`]
+
+
+
+### at命令格式
+
+`at [选项] [时间]`
+Ctrl +D结束at命令的输入，注意 输入两次
+
+![image-20210512202122726](linux.assets/image-20210512202122726.png)
+
+### at时间定义
+
+at指定时间的方法：
+1、接受在当天的hh:mm（小时：分钟）式的时间指定。假如该时间已过去，那么就放在第二天执行。例如：04：00
+
+2、使用midnight（深夜），noon（中午），teatime（饮茶时间，一般是下午4点）等比较模糊的词语来指定时间
+3、采用12小时计时制，即在时间后面加上AM（上午）或PM（下午）来说明是上午还是下午。例如：12pm
+4、指定命令执行的具体日期，指定格式为month day（月日）或mm/dd/yy（月/日/年）或dd.mm.yy日.月年），指定的日期必须跟在指定时间的后面。例如：04：00 2021-03-1
+
+5、使用相对计时法。指定格式为：now + count time-units，now就是当前时间，time-units是时间单位，这里能够是minutes（分钟），hours（小时）、days（天），weeks（星期）.count是时间的数量几天，几小时。例如：now + 5 minutes
+6、直接使用today（今天）、tomorrow（明天）来指定完成命令的时间。
+
+
+
+### 应用实例
+
+案例1：2天后的下午5点执行/bin/ls/home
+
+![image-20210512202623682](linux.assets/image-20210512202623682.png)
+
+案例2：atq命令来查看系统中没有执行的工作任务
+
+```sh
+[root@localhost ~]$ atq
+1	Fri May 14 17:00:00 2021 a root
+```
+
+案3：明天17点钟，输出时间到指定文件内比如/root/date100.log
+
+![image-20210512202834307](linux.assets/image-20210512202834307.png)
+
+案例4：2分钟后，输出时间到指定文件内比如/root/date200.log
+
+![image-20210512203412764](linux.assets/image-20210512203412764.png)
+
+案例5：删除已经设置的任务，`atrm 编号`
+
+![image-20210512203611956](linux.assets/image-20210512203611956.png)
 
 
 
@@ -2091,13 +2173,13 @@ crontab: installing new crontab
 
 + 1）mbr分区：
 
-  + 1 最多支持四个主分区
+  + 1 、最多支持四个主分区
 
-  + 2 系统只能安装在主分区
+  + 2 、系统只能安装在主分区
 
-  + 3 扩展分区要占一个主分区
+  + 3 、扩展分区要占一个主分区
 
-  + 4 MBR最大只支持2TB，但拥有最好的兼容性
+  + 4 、MBR最大只支持2TB，但拥有最好的兼容性
 
 + 2）gtp分区：
 
@@ -2119,11 +2201,11 @@ crontab: installing new crontab
 
 3）示意图
 
-![image-20210510213912412](linux.assets/image-20210510213912412.png)
+![image-20210512204537234](linux.assets/image-20210512204537234.png)
 
 ### 硬盘说明
 
-1)	Linux 硬盘分IDE 硬盘和SCSI 硬盘，目前基本上是SCSI 硬盘
+1)	Linux 硬盘分IDE 硬盘和SCSI 硬盘，目前**基本上是SCSI 硬盘**
 
 2)	对于IDE 硬盘，驱动器标识符为“hdx~”,其中“hd”表明分区所在设备的类型，这里是指IDE 硬盘了。“x”为盘号（a 为基本盘，b 为基本从属盘，c 为辅助主盘，d 为辅助从属盘）,“~”代表分区，前四个分区用数字1 到4 表示，它们是主分区或扩展分区，从5 开始就是逻辑分区。例，`hda3` 表示为第一个IDE 硬盘上的第三个主分区或扩展分区,hdb2 表示为第二个IDE 硬盘上的第二个主分区或扩展分区。
 
@@ -2166,6 +2248,12 @@ sdb
 4)	挂载
 5)	设置可以自动挂载。
 
+
+
+> 描述：添加一块硬盘，分成两个区，分别挂载到/mnt/boot、/mnt/sysroot
+
+
+
 #### 虚拟机增加硬盘步骤1   添加硬盘
 
 在【虚拟机】菜单中，选择【设置】，然后设备列表里添加硬盘，然后一路【下一步】，中间只有选择磁盘大小的地方需要修改，至到完成。然后**重启系统（才能识别）！**
@@ -2175,24 +2263,24 @@ sdb
 ![image-20210509164404175](linux.assets/image-20210509164404175.png)
 
 ```sh
-[root@hadoop1 ~]$ lsblk -f  # 查看
-NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
-                               
-sda                                                                  
-├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
-├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
-└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
-sdb  
+[root@localhost ~]# lsblk
+NAME            MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+sda               8:0    0  20G  0 disk 
+├─sda1            8:1    0   1G  0 part /boot
+└─sda2            8:2    0  19G  0 part 
+  ├─centos-root 253:0    0  17G  0 lvm  /
+  └─centos-swap 253:1    0   2G  0 lvm  [SWAP]
+sdb               8:16   0  20G  0 disk   # 新添加的硬盘名称
 ```
 
 #### 虚拟机增加硬盘步骤2  --分区
 
-分区命令 `fdisk   /dev/sdb` 
+分区命令 `fdisk /dev/sdb` 
 
-开始对/sdb分区
+开始对`/sdb`分区
 
 ​	•	m   显示命令列表
-​	•	p    显示磁盘分区同fdisk  –l
+​	•	p    显示磁盘分区同`fdisk  –l`
 ​	•	n    新增分区
 ​	•	d     删除分区
 ​	•	w   写入并退出
@@ -2200,6 +2288,7 @@ sdb
 说明：开始分区后输入n，新增分区，然后选择p ，分区类型为主分区。两次回车默认剩余全部空间。最后输入w写入分区并退出，若不保存退出输入q。
 
 ```sh
+# 对新添加的硬盘sdb进行
 [root@hadoop1 ~]$ fdisk /dev/sdb
 Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
 Building a new DOS disklabel with disk identifier 0xe0f7e259.
@@ -2250,18 +2339,20 @@ Syncing disks.
 ```
 
 ```sh
-[root@hadoop1 ~]$ lsblk
-NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-sr0     11:0    1  3.7G  0 rom  
-sda      8:0    0   20G  0 disk 
-├─sda1   8:1    0  200M  0 part /boot
-├─sda2   8:2    0  200M  0 part [SWAP]
-└─sda3   8:3    0 19.6G  0 part /
-sdb      8:16   0    2G  0 disk 
-└─sdb1   8:17   0    2G  0 part 
+[root@localhost ~]$ lsblk
+NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda               8:0    0   20G  0 disk 
+├─sda1            8:1    0    1G  0 part /boot
+└─sda2            8:2    0   19G  0 part 
+  ├─centos-root 253:0    0   17G  0 lvm  /
+  └─centos-swap 253:1    0    2G  0 lvm  [SWAP]
+sdb               8:16   0   20G  0 disk 
+├─sdb1            8:17   0 19.5G  0 part 
+└─sdb2            8:18   0  499M  0 part 
+# 将sdb硬盘分成sdb1  sdb2两个分区
 ```
 
-#### 虚拟机增加硬盘步骤3  --g格式化
+#### 虚拟机增加硬盘步骤3  --格式化
 
 格式化磁盘
 分区命令:`mkfs -t  ext4   /dev/sdb1` 
@@ -2269,44 +2360,68 @@ sdb      8:16   0    2G  0 disk
 其中ext4是分区类型
 
 ```sh
-[root@hadoop1 ~]$ mkfs -t  ext4   /dev/sdb1
-mke2fs 1.41.12 (17-May-2010)
+# 对sdb1分区格式化
+[root@localhost ~]$ mkfs -t  ext4   /dev/sdb1
+mke2fs 1.42.9 (28-Dec-2013)
 文件系统标签=
-操作系统:Linux
+OS type: Linux
 块大小=4096 (log=2)
 分块大小=4096 (log=2)
 Stride=0 blocks, Stripe width=0 blocks
-131072 inodes, 524112 blocks
-26205 blocks (5.00%) reserved for the super user
+1281120 inodes, 5114880 blocks
+255744 blocks (5.00%) reserved for the super user
 第一个数据块=0
-Maximum filesystem blocks=536870912
-16 block groups
+Maximum filesystem blocks=2153775104
+157 block groups
 32768 blocks per group, 32768 fragments per group
-8192 inodes per group
+8160 inodes per group
 Superblock backups stored on blocks: 
-	32768, 98304, 163840, 229376, 294912
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208, 
+	4096000
 
+Allocating group tables: 完成                            
+正在写入inode表: 完成                            
+Creating journal (32768 blocks): 完成
+Writing superblocks and filesystem accounting information: 完成   
+# 对sdb2分区格式化
+[root@localhost ~]$ mkfs -t  ext4   /dev/sdb2
+mke2fs 1.42.9 (28-Dec-2013)
+文件系统标签=
+OS type: Linux
+块大小=1024 (log=0)
+分块大小=1024 (log=0)
+Stride=0 blocks, Stripe width=0 blocks
+128016 inodes, 510976 blocks
+25548 blocks (5.00%) reserved for the super user
+第一个数据块=1
+Maximum filesystem blocks=34078720
+63 block groups
+8192 blocks per group, 8192 fragments per group
+2032 inodes per group
+Superblock backups stored on blocks: 
+	8193, 24577, 40961, 57345, 73729, 204801, 221185, 401409
+
+Allocating group tables: 完成                            
 正在写入inode表: 完成                            
 Creating journal (8192 blocks): 完成
-Writing superblocks and filesystem accounting information: 完成
-
-This filesystem will be automatically checked every 25 mounts or
-180 days, whichever comes first.  Use tune2fs -c or -i to override.
+Writing superblocks and filesystem accounting information: 完成 
 [root@hadoop1 ~]$ 
 ```
 
-生成uuid
+校验格式化成功：生成uuid
 
 ```sh
 [root@hadoop1 home]$ lsblk -f
-NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
-sr0    iso9660 CentOS_6.8_Final                                      
-sda                                                                  
-├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
-├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
-└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
-sdb                                                                  
-└─sdb1 ext4                     00126dad-647e-4f4a-ae6a-02a4d4b39c49 
+
+NAME            FSTYPE      LABEL UUID                                   MOUNTPOINT
+sda                                                                      
+├─sda1          xfs               ddfa3e72-23ae-4fcc-b6f9-227a4fc80e55   /boot
+└─sda2          LVM2_member       C8E352-asFy-tsKh-3HvL-ys83-023e-33bOWz 
+  ├─centos-root xfs               1ef423ff-a5fe-4e54-bf3a-0c3fe707ca6a   /
+  └─centos-swap swap              a61c857f-d418-4041-846b-059dd5c96f06   [SWAP]
+sdb                                                                      
+├─sdb1          ext4              f6fe40a2-9912-4bc3-a034-22f06992af36   
+└─sdb2          ext4              2efa9170-bafb-4cb1-8faa-f9d88d4bd195  
 ```
 
 #### 虚拟机增加硬盘步骤4  --挂载
@@ -2314,31 +2429,30 @@ sdb
 挂载: 将一个分区与一个目录联系起来，
 
 •	mount    设备名称 挂载目录
-•			例如：`mount    /dev/sdb1    /newdisk`
+			例如：`mount  /dev/sdb1  /newdisk`
 •	umount 设备名称或者 挂载目录
-•			例如： `umount /dev/sdb1 或者umount /newdisk`
+			例如： `umount /dev/sdb1 或者umount /newdisk`
 用命令行挂载重启后会失效
 
 ```sh
-[root@hadoop1 home]$ mkdir /home/newdisk   #创建文件
-[root@hadoop1 home]$ mount /dev/sd  # 挂载
-sda   sda1  sda2  sda3  sdb   sdb1  
-[root@hadoop1 home]$ mount /dev/sdb1 /home/newdisk/
-[root@hadoop1 home]$ lsblk -f  # 查看挂载是否成功
-NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
-sr0    iso9660 CentOS_6.8_Final                                      
-sda                                                                  
-├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
-├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
-└─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
-sdb                                                                  
-└─sdb1 ext4                     00126dad-647e-4f4a-ae6a-02a4d4b39c49 /home/newdisk
-[root@hadoop1 home]$ 
+[root@hadoop1 home]$ mkdir -p /mnt/boot /mnt/sysroot   #创建文件
+[root@localhost ~]$ mount  /dev/sdb2  /mnt/boot  #将sdb2分区挂载到/mnt/boot
+[root@localhost ~]$ mount  /dev/sdb1  /mnt/sysroot #将sdb1分区挂载到/mnt/sysroot
+[root@localhost ~]$ lsblk
+NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda               8:0    0   20G  0 disk 
+├─sda1            8:1    0    1G  0 part /boot
+└─sda2            8:2    0   19G  0 part 
+  ├─centos-root 253:0    0   17G  0 lvm  /
+  └─centos-swap 253:1    0    2G  0 lvm  [SWAP]
+sdb               8:16   0   20G  0 disk 
+├─sdb1            8:17   0 19.5G  0 part /mnt/sysroot
+└─sdb2            8:18   0  499M  0 part /mnt/boot
 ```
 
 #### 虚拟机增加硬盘步骤5  --永久挂载
 
-永久挂载: 通过修改/etc/fstab实现挂载添加完成后执行mount   –a 即刻生效
+永久挂载: 通过`修改/etc/fstab`实现挂载添加完成后执行`mount –a` 即刻生效
 
 `vim /etc/fstab`
 
@@ -2541,6 +2655,67 @@ DNS1=192.168.184.2
 
 重启网络服务或者重启系统生效
 `service  network restart` 【重启网络服务】 、`reboot`[重启]
+
+### ip设置脚本
+
+**ip-dhcp**脚本
+
+```sh
+cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-ens33
+OXY_METHOD=none
+BROWSER_ONLY=no
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=ca4c1b0d-43b5-465e-9240-a3dec871ce67
+DEVICE=ens33
+
+ONBOOT=yes
+
+BOOTPROTO=dhcp
+EOF
+
+systemctl restart network
+```
+
+**ip-static**脚本
+
+```sh
+read -p "ip: " ip1
+
+cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-ens33
+OXY_METHOD=none
+BROWSER_ONLY=no
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=ca4c1b0d-43b5-465e-9240-a3dec871ce67
+DEVICE=ens33
+
+ONBOOT=yes
+
+# BOOTPROTO=dhcp
+BOOTPROTO=static
+IPADDR=$ip1
+NETMASK=255.255.255.0
+GATEWAY=192.168.64.2
+DNS1=114.114.114.114
+EOF
+
+systemctl restart network
+```
+
+
 
 
 
@@ -3349,7 +3524,6 @@ export JAVA_HOME PATH    # 输出变量，让环境变量剩下
 public class Hello{
         public static void main(String[] args){
                 System.out.println("hello----");
-
         }
 }
 ```
@@ -3535,7 +3709,7 @@ systemctl disable firewalld.service #禁止firewall开机启动
 firewall-cmd --state #查看默认防火墙状态（关闭后显示notrunning，开启后显示running）
 ```
 
-# 大数据定制篇 Shell 编程
+# 定制篇 Shell 编程
 
 ## 为什么要学习Shell编程
 
@@ -3681,7 +3855,7 @@ user=root
 
 ## 注释
 
-```shell
+```sh
 :<<!
 	多行注释内容
 !
@@ -3699,11 +3873,11 @@ user=root
 
 ### 基本语法
 
-```
-$n （功能描述：n为数字，$0代表命令本身，$1-$9代表第一到第九个参数，十以上的参数，十以上的参数需要用大括号包含，如${10}）
-$* （功能描述：这个变量代表命令行中所有的参数，$*把所有的参数看成一个整体）
-$@（功能描述：这个变量也代表命令行中所有的参数，不过$@把每个参数区分对待）
-$#（功能描述：这个变量代表命令行中所有参数的个数）
+```sh
+$n 	#（功能描述：n为数字，$0代表命令本身，$1-$9代表第一到第九个参数，十以上的参数，十以上的参数需要用大括号包含，如${10}）
+$* 	#功能描述：这个变量代表命令行中所有的参数，$*把所有的参数看成一个整体）
+$@	#（功能描述：这个变量也代表命令行中所有的参数，不过$@把每个参数区分对待）
+$# 	#（功能描述：这个变量代表命令行中所有参数的个数）
 ```
 
 ### 应用实例
@@ -3768,21 +3942,40 @@ $#（功能描述：这个变量代表命令行中所有参数的个数）
 + 应用实例
   `[ atguigu ]`		返回true
   `[]`				返回false
-  `[condition] && echo OK || echo notok`       条件满足，执行后面的语句
+  `[ condition ] && echo OK || echo notok`       条件满足，执行后面的语句
 
 ### 常用判断条件
 
-![image-20210511223907505](linux.assets/image-20210511223907505.png)
+```sh
+1）
+=字符串比较
 
+2）两个整数的比较
+-lt小于
+-le小于等于little equal
+-eq等于
+-gt大于
+-ge大于等于
+-ne不等于
 
+3）按照文件权限进行判断
+-r有读的权限
+-w有写的权限
+-x有执行的权限
+
+4）按照文件类型进行判断
+-f文件存在并且是一个常规的文件
+-e文件存在
+-d文件存在并是一个目录
+```
 
 4）应用实例
 案例1："ok"是否等于"ok"
 判断语句：![image-20210511225050732](linux.assets/image-20210511225050732.png)
 案例2：23是否大于等于22
-判断语句：![image-20210511225100848](linux.assets/image-20210511225100848.png)
+判断语句：![image-20210512210045334](linux.assets/image-20210512210045334.png)
 案例3：/root/shell/aa.xt目录中的文件是否存在
-判断语句：![image-20210511225111675](linux.assets/image-20210511225111675.png)
+判断语句：![image-20210512210146080](linux.assets/image-20210512210146080.png)
 
 ## 流程控制
 
@@ -3791,7 +3984,7 @@ $#（功能描述：这个变量代表命令行中所有参数的个数）
 ·基本语法
 
 ```sh
-if[条件判断式]；then
+if[ 条件判断式 ]; then
 	程序
 fi
 ```
@@ -3808,8 +4001,6 @@ then
 fi
 ```
 
-
-
 注意事项：（1）`[ 条件判断式 ]`，中括号和条件判断式之间必须有空格（2）推荐使用第二种方式
 
 
@@ -3823,20 +4014,20 @@ fi
 
 [root@hadoop1 tmp]$ chmod u+x test3shell.sh #增加可执行权限
 
-[root@hadoop1 tmp]$ ./test3shell.sh 70 #测试
+[root@hadoop1 tmp]$ ./test3shell.sh 70 #通过为止参数变量传值
 及格
 ```
 
-脚本内容
+脚本内容  
 
-```sh
+```shell
 #!/bin/bash
 
-if [ $1 -gt 60 ]
+if [ $1 -ge 60 ]
 then
         echo "及格"
 
-elif [ $1 -le 60 ]
+elif [ $1 -lt 60 ]
 then
         echo "不及格"
 
@@ -3844,3 +4035,1083 @@ fi
 ```
 
 ### case
+
+语法格式
+
+```sh
+case $变量名 in
+"值1")
+    command1
+    command2
+    ...
+    commandN
+    ;;
+"值2")
+    command1
+    command2
+    ...
+    commandN
+    ;;
+ *)
+	如果变量的值都不是以上的值，则执行此程序
+	;;
+esac
+```
+
+case 工作方式如上所示，取值后面必须为单词 **in**，每一模式必须以右括号结束。取值可以为变量或常数，匹配发现取值符合某一模式后，其间所有命令开始执行直至 **;;**。
+
+取值将检测匹配的每一个模式。一旦模式匹配，则执行完匹配模式相应命令后不再继续其他模式。如果无一匹配模式，使用星号 `*` 捕获该值，再执行后面的命令。
+
+实例：
+
+```sh
+echo '输入 1 到 4 之间的数字:'
+echo '你输入的数字为:'
+read aNum
+case $aNum in
+    1)  echo '你选择了 1'
+    ;;
+    2)  echo '你选择了 2'
+    ;;
+    3)  echo '你选择了 3'
+    ;;
+    4)  echo '你选择了 4'
+    ;;
+    *)  echo '你没有输入 1 到 4 之间的数字'
+    ;;
+esac
+```
+
+输入不同的内容，会有不同的结果，例如：
+
+```
+输入 1 到 4 之间的数字:
+你输入的数字为:
+3
+你选择了 3
+```
+
+下面的脚本匹配字符串：
+
+```sh
+*#!/bin/sh*
+
+site="runoob"
+
+**case** "$site" **in**
+  "runoob"**)** **echo** "菜鸟教程"
+  **;;**
+  "google"**)** **echo** "Google 搜索"
+  **;;**
+  "taobao"**)** **echo** "淘宝网"
+  **;;**
+**esac**
+```
+
+输出结果为：
+
+```
+菜鸟教程
+```
+
+### for循环
+
+```sh
+# 基本语法1
+for变量in值1值2值3...
+do
+	程序/代码
+done
+
+```
+
+应用实例testFor1.sh
+案例1：打印命令行输入的参数[这里可以看出$*和$@的区别]
+
+```sh
+#!/bin/bash
+
+# 注意$*是把输入的参数，当做一个整体，所以，只会输出一句
+for i in "$*"
+do
+     echo " '$ *' num is $i"
+done
+
+
+echo "=========================================="
+
+# 使用$@来获取输入的参数，注意，这时是分别对待，所以有几个参数，就输出几句
+
+for i in "$@"
+do
+     echo "  '$ @' num is $i"
+done
+
+```
+
+测试
+
+```sh
+chomd u+x test1.sh		# 增加可执行权限
+
+运行结果：
+[root@localhost ~]$ ./test1.sh 100 200 300  # 运行，通过为止参数传值
+ '$ *' num is 100 200 300
+==============================================
+  '$ @' num is 100
+  '$ @' num is 200
+  '$ @' num is 300
+
+```
+
+```sh
+# 基本语法2
+for（（初始值：循环控制条件：变量化））
+do
+	程序/代码
+done
+```
+
+案例  
+
+```sh
+#!/bin/bash
+
+#案例1：从1加到100的值输出显示，如何把100做成一个变量
+SUM=0
+
+for((i=1; i<=$1; i++))   #$1  从命令行获取参数
+do
+	SUM=$[$SUM+i]
+done
+
+echo "sum = $SUM"
+
+```
+
+```sh
+# 测试
+[root@localhost ~]$ sh test2.sh 50
+sum = 1275
+```
+
+### while循环
+
+```sh
+while [ 条件判断式 ]
+do
+	程序
+done
+```
+
+> 注意：while和[有空格，条件判断式和[也有空格
+
+```sh
+#!/bin/bash
+
+#案例1：从命令行输入一个数n，统计从1+..+ n的值是多少？
+
+# -le 表示 <=
+SUM=0
+i=0
+while [ $i -le $1 ]
+do
+	SUM=$[$SUM+$i]  # 计算
+	i=$[$i+1]   # 自增1
+done
+
+echo "sum = $SUM"
+```
+
+测试：
+
+```sh
+[root@localhost ~]$ sh test.sh 100 
+sum = 5050
+```
+
+## read读取控制台输入
+
+### 基本语法
+
+`read （选项）（参数）`
+
++ 选项：
+  `-p`：指定读取值时的提示符；
+  `-t`：指定读取值时等待的时间（秒），如果没有在指定的时间内输入，就不再等待了。
+
++ 参数
+  变量：指定读取值的变量名
+
+### 应用实例
+
+  testRead.sh
+
+  ```sh
+  #!/bin/bash
+  
+  #案例1：读取控制台输入一个num1值
+  read -p "请输入一个数：" NUM1
+  echo "NUM1=$NUM1"
+  
+  #案例2：读取控制台输入一个num2值，在10秒内输入。
+  read -t 10 -p "请输入一个数：" NUM2
+  echo "NUM2=$NUM2"
+  ```
+
+```sh
+# 测试
+[root@localhost ~]$ sh testRead.sh 
+请输入一个数：10
+NUM1=10
+请输入一个数：20   # 超过10s未输入就结束阻塞继续运行下面代码
+NUM2=20
+```
+
+## 函数
+
+###   函数介绍
+
+shell编程和其它编程语言一样，有系统函数，也可以自定义函数。系统函数中，我们这里就介绍两个。
+
+### 系统函数
+
++ `basename`基本语法
+
+  **功能**：返回完整路径最后 / 的部分，常用于**获取文件名**
+
+
+  `basename [pathname] [suffix]`
+  `basename [string] [suffix]`功能描述：basename命令会删掉所有的前缀包括最后一个（‘/’）字符，然后将字符串显示出来。
+
+
+  **选项**：suffix为后缀，如果suffix被指定了，basename会将pathname或string中的suffix去掉。
+
+应用实例
+案例1：请返回/home/aaa/test.txt的"test.txt"部分
+
+```sh
+[root@localhost aaa]$ ls -l /home/aaa/test.txt 
+-rw-r--r--. 1 root root 0 5月  12 23:26 /home/aaa/test.txt
+
+[root@localhost aaa]$ basename /home/aaa/test.txt
+test.txt
+
+[root@localhost aaa]$ basename /home/aaa/test.txt .txt
+test
+```
+
++ `dirname`基本语法
+
+  **功能**：返回完整路径最后/的前面的部分，常用于**返回路径部分**
+
+
+  `dirname 文件绝对路径`（功能描述：从给定的包含绝对路径的文件名中去除文件名（非目录的部分），然后返回剩下的路径（目录的部分））
+
+应用实例
+案例1：请返回/home/aaa/test.txt的/home/aaa
+
+```sh
+[root@localhost aaa]$ dirname /home/aaa/test.txt 
+/home/aaa
+```
+
+### 自定义函数
+
+```sh
+[function] funname[()]
+{
+	Action；
+	[return int:]
+}
+
+# 用直接写函数名：funname [值]
+```
+
+> 1、可以带function fun() 定义，也可以直接fun() 定义,不带任何参数。
+>
+> 2、参数返回，可以显示加：return 返回，如果不加，将以最后一条命令运行结果，作为返回值。 return后跟数值n(0-255
+
+应用实例
+案例1：计算输入两个参数的和（动态获取），getSum
+
+```sh
+#!/bin/bash
+
+#案例1：计算输入两个参数的和（动态的获取），getSum
+#定义函数getsum
+function getSum()
+{
+	SUM=$[$n1+$n2]
+	echo "和=$SUM"
+	return 10
+} 
+
+#输入两个值
+read -p  "请输入一个数n1=" n1
+read -p  "请输入一个数n2=" n2
+
+# 调用自定义函数
+A=`getSum $n1 $n1`
+echo "函数返回值=$A"
+```
+
+```sh
+# 测试
+[root@localhost aaa]$ sh testFun.sh 
+请输入一个数n1=10
+请输入一个数n2=20
+函数返回值=和=30
+```
+
+## Shell编程综合案例
+
+需求分析
+
++ 每天凌晨2：30备份数据库hspEduDB到/data/backup/db
++ 备份开始和备份结束能够给出相应的提示信息
++ 备份后的文件要求以备份时间为文件名，并打包成.tar.gz的形式，比如：2021-03-12 230201.tar.gz
++ 在备份的同时，检查是否有10天前备份的数据库文件，如果有就将其删除。
+
+![image-20210512235036270](linux.assets/image-20210512235036270.png)
+
+shell脚本`/usr/sbin/mysql_db_backup.sh`
+
+```sh
+#!/bin/bash
+
+# 备份目录
+BACKUP=/data/backup/db
+#当前时间
+DATETIME=$(date +%Y-%m-%d_%H%M%S)
+
+echo $DATETIME
+
+#数据库地址
+HOST=192.168.64.1
+#数据库用户名
+DB_USER=root
+#数据库密码
+DB_PW=root
+#备份的数据库名
+DATABASE=gouwenyong
+
+#创建备份目录，如果不存在，就创建
+[ ! -d "${BACKUP}/${DATETIME}" ] && mkdir -p "${BACKUP}/${DATETIME}"
+
+
+# 备份数据库
+mysqldump -u${DB_USER} -p${DB_PW} --host=${HOST} -q -R --databases ${hspedu} | gzip > ${BACKUP}/${DATETIME}/${DATETIME}.sql.gz
+
+# 将文件处理成tar.gz
+cd $BACKUP
+tar -zcvf ${DATETIME}.tar.gz ${DATETIME}
+# 删除对应的备份目录
+rm -rf ${BACKUP}/${DATETIME}
+
+
+# 删除10天备份文件进行
+find ${BACKUP} -atime +10 -name "*.tar.gz" -exec rm -rf {} \;
+
+echo "备份数据库${DATABASE}成功"
+```
+
+crond定时运行：
+
+```sh
+crontab -e
+
+# 添加任务
+30 2 * * * ./usr/sbin/mysql_db_backup.sh
+
+# 查询任务
+crontab -l
+```
+
+# centOS8.1
+
+## CentOS介绍及下载
+
+CentOS 是基于 Red Hat Enterprise Linux (RHEL / 业界最知名的发行版) 源代码再编译出来的免费版，因此不仅继承 RHEL 优越的稳定性（与 Debian 不分上下），还提供免费更新，因此在服务器提供商、中小型公司中装机量几乎是最大最流行的 Linux 系统，现在也已正式加入红帽公司。从事互联网技术的同学，CentOS 应该是值得你深入了解学习研究的……
+
+**CentOS Linux 和 CentOS Stream 区别**
+
+在 CentOS 的官网上，你会看到有两个不同的版本 CentOS Linux 和 CentOS Stream。其中 CentOS Linux 就是我们传统使用的稳定版系统。那么 CentOS Stream 是什么版本呢？
+
+其实 Centos Stream 是一个面向开发者的滚动发布的 Linux 发行版，它介于 Fedora Linux 的上游开发和 RHEL 的下游开发之间而存在。你可以把 CentOS Streams 当成是用来体验最新红帽系 Linux 特性的一个版本。
+
+因此，如果你不是开发者，并打算将 CentOS 用于服务器，用于正式生产环境使用、追求稳定性，或者个人日常使用，都更推荐使用传统的 CentOS Linux 这个版本。
+
+**镜像下载说明**
+
+[阿里CentOS8下载](https://mirrors.aliyun.com/centos/8/isos/x86_64/)
+
+[清华CentOS8下载](https://mirrors.tuna.tsinghua.edu.cn/centos/8/isos/x86_64/)
+
+[CentOS8官网下载](https://www.centos.org/download/)
+
+## 安装过程
+
+1.开启CPU虚拟化
+
+
+
+2.新建虚拟机，稍后安装系统
+
+![image-20210513010642384](linux.assets/image-20210513010642384.png)
+
+![image-20210513010817262](linux.assets/image-20210513010817262.png)
+
+
+
+3.加载安装镜像
+
+![image-20210513010919329](linux.assets/image-20210513010919329.png)
+
+4.开启虚拟机进行引导安装
+
+![image-20210513011011208](linux.assets/image-20210513011011208.png)
+
+5.选择语言
+
+![image-20210513011116685](linux.assets/image-20210513011116685.png)
+
+6.选择安装软件
+
+
+
+带界面GUI     勾选【传统nuix兼容性   开发工具   性能工具】
+
+> 生产环境：最小安装
+
+
+
+7.分区操作
+
+![image-20210513011622985](linux.assets/image-20210513011622985.png)
+
+
+
+![image-20210513012056980](linux.assets/image-20210513012056980.png)
+
+![image-20210513012332726](linux.assets/image-20210513012332726.png)
+
+```
+挂载点		期望容量	设备类型	文件系统
+/boot 分区    1G    	标准分区 	ext4
+
+swap 分区     2G    	标准分区  	swap
+
+/ 分区        17g    	标准分区 	ext4
+```
+
+8.开启kdump
+
+【内存崩溃转存机制】生产环境打开
+
+9.设置root密码
+
+10.设置新用户
+
+## centos8网络配置【不同】
+
+centos8更新后网络配置发生了变化，主要是在配置结束后网络重启这块。
+
+变化1:网络配置文件名称改变，配置文件地址没有变化`/etc/sysconfig/network-scripts`
+
+```sh
+[root@localhost network-scripts]$ pwd
+/etc/sysconfig/network-scripts
+[root@localhost network-scripts]$  ls
+ifcfg-ens33
+```
+
+变化2:网络配置内容改变，相对centos7精简了不少配置，下面以配置静态ip为例
+
+```bash
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+
+#改为static
+BOOTPROTO=static
+
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=8bbf70ef-1879-4d3d-aab4-17fd06b8e25c
+DEVICE=ens33
+
+
+#改为yes
+ONBOOT=yes
+
+#add by yuhua
+IPADDR=192.168.64.128
+NETMASK=255.255.255.0
+GATEWAY=192.168.225.2
+DNS1=114.114.114.114
+DNS2=8.8.8.8
+```
+
+变化3:网络重启方法发生了改变，原来的network.service服务不再生效。改为了nmcli命令，详细介绍请查阅资料。
+
+```bash
+[root@localhost network-scripts]$ nmcli --help
+
+用法：nmcli [选项] OBJECT 
+
+选项：
+
+  -o[verview]                                    概览模式（隐藏默认值）
+  -t[erse]                                       简洁输出
+  -p[retty]                                      整齐输出
+  -m[ode] tabular|multiline                      输出模式
+  -c[olors] auto|yes|no                          是否在输出中使用颜色
+  -f[ields] |all|common       指定要输出的字段
+  -g[et-values] |all|common   -m tabular -t -f 的快捷方式
+  -e[scape] yes|no                               在值中转义列分隔符
+  -a[sk]                                         询问缺少的参数
+  -s[how-secrets]                                允许显示密码
+  -w[ait]                                    为完成的操作设置超时等待时间
+  -v[ersion]                                     显示程序版本
+  -h[elp]                                        输出此帮助
+
+对象：
+  g[eneral]       网络管理器（NetworkManager）的常规状态和操作
+  n[etworking]    整体联网控制
+  r[adio]         网络管理器无线电开关
+  c[onnection]    网络管理器的连接
+  d[evice]        由网络管理器管理的设备
+  a[gent]         网络管理器的密钥（secret）代理或 polkit 代理
+  m[onitor]       监视网络管理器更改
+```
+
+centos8网卡默认是关闭的，在重启网络配置前需要先打开网卡（重点），再重启网络。
+
+```bash
+# 启动网卡
+[root@localhost network-scripts]$ nmcli c up ens33
+连接已成功激活（D-Bus 活动路径：/org/freedesktop/NetworkManager/ActiveConnection/2
+
+#重启网络
+[root@localhost network-scripts]$ nmcli c reload
+
+[root@localhost network-scripts]$ ping www.baidu.com
+PING www.a.shifen.com (180.101.49.12) 56(84) bytes of data.
+64 bytes from 180.101.49.12 (180.101.49.12): icmp_seq=1 ttl=128 time=20.2 ms
+64 bytes from 180.101.49.12 (180.101.49.12): icmp_seq=2 ttl=128 time=20.5 ms
+...
+
+到此ping外网可以通了，但是ping本机不通，重启一下虚拟机就可以。
+
+--拓展：
+
+#关闭网卡
+nmcli c down ens33
+
+#查看链接
+nmcli connection
+```
+
+## 8.0与7.0区别
+
+![image-20210513012906026](linux.assets/image-20210513012906026.png)
+
+# 高级篇 日志管理
+
+## 基本介绍
+
+1、日志文件是重要的系统信息文件，其中记录了许多**重要的系统事件**，包括用户的登录信息、系统的启动信息、系统的安全信息、邮件相关信息、各种服务相关信息等。
+
+2、日志对于**安全来说也很重要**，它记录了系统每天发生的各种事情，通过日志来检查错误发生的原因或者受到攻击时攻击者留下的痕迹。
+
+3、可以这样理解日志是用来*记录重大事件的工具*
+
+
+
+## 系统常用的日志
+
+`/var/log/`目录就是系统日志文件的保存位置，看张图
+
+![image-20210513014334912](linux.assets/image-20210513014334912.png)
+
+
+
+![image-20210513014741930](linux.assets/image-20210513014741930.png)
+
+
+
+**应用案例**
+使用root用户通过xshell6登陆，第一次使用错误的密码，第二次使用正确的密码登录成功看看在日志文件`/var/log/secure`里有没有记录相关信息
+
+![image-20210513015522991](linux.assets/image-20210513015522991.png)
+
+
+
+## 日志管理服务`rsyslogd` 
+
+CentOS7.6日志服务是`rsyslogd`，CentOS6.x日志服务是`syslogd`；rsyslogd功能更强大。rsyslogd的使用、日志文件的格式，和syslogd服务兼容的。
+
+![image-20210513221027283](linux.assets/image-20210513221027283.png)
+
+查询Linux中的rsyslogd服务**是否启动**
+`ps -aux | grep "rsyslog" | grep -v "grep"`
+
+> 【第二次是过滤掉`grep -v`反向匹配】
+
+查询rsyslogd服务的**自启动状态**
+`systemctl list-unit-files | grep rsyslog`
+
+### 日志配置文件
+
+配置文件：`/etc/rsyslog.conf`
+
+![image-20210513022147407](linux.assets/image-20210513022147407.png)
+
+编辑文件时的格式为：`*.*`存放日志文件其中第一个`*`代表日志类型，第二个`*`代表日志级别
+1.日志类型分为：
+
+```
+auth		##pam产生的日志
+authpriv	##ssh，ftp等登录信息的验证信息
+corn		#时间任务相关
+kern		##内核
+lpr			#打印
+mail		##邮件
+mark(syslog)-rsyslog	#服务内部的信息，时间标识
+news		#新闻组
+user		#用户程序产生的相关信息
+uucp		##unix to nuix copy主机之间相关的通信
+local 1-7	#自定义的日志设备
+```
+
+2，日志级别分为：
+
+```
+debug	##有调试信息的，日志通信最多
+info	##一般信息日志，最常用
+notice	#最具有重要性的普通条件的信息warning##警告级别
+err		#错误级别，阻止某个功能或者模块不能正常工作的信息
+crit	#并严重级别，阻止整个系统或者整个软件不能正常工作的信息
+alert	##需要立刻修改的信息
+emerg	##内核崩溃等重要信息
+none	##什么都不记录
+注意：从上到下，级别从低到高，记录信息越来越少
+```
+
+由日志服务rsyslogd记录的日志文件，日志文件的格式包含以下4列：
+
++ 事件产生的时间
++ 产生事件的服务器的主机名
++ 产生事件的服务名或程序名
++ 事件的具体信息
+
+日志如何查看实例
+查看一下/var/log/secure日志，这个日志中记录的是用户验证和授权方面的信息来分析如何查看
+
+![image-20210513021959684](linux.assets/image-20210513021959684.png)
+
+
+
+### 应用实例
+
+在`vim /etc/rsyslog.conf`中添加一个日志文件`/var/og/hsp.log`，当有事件发送时（比如sshd服务相关事件），该文件会接收到信息并保存，给小伙伴演示，，看看是否有日志保存
+
+
+
+在`/etc/rsyslog.conf`增加一条规则记录所有日志【参考邮件服务】
+
+```sh
+*.*         -/var/og/hsp.log
+```
+
+过滤查看：`cat /var/og/hsp.log | grep sshd ` 
+
+![image-20210513022658315](linux.assets/image-20210513022658315.png)
+
+## 日志轮替
+
+### 基本介绍
+
+日志轮替就是把旧的日志文件移动并改名，同时建立新的空日志文件，当旧日志文件超出保存的范围之后，就会进行删除
+
+### 日志轮替文件命名
+
+1、**centos7使用logrotate进行日志轮替管理**，要想改变日志轮替文件名字，通过`/etc/logrotate.conf`配置文件中"`dateext`"参数
+
+2、如果配置文件中有"`dateext`"参数，那么日志会用**日期**来作为日志文件的后缀，例如"secure-20201010"。这样日志文件名不会重叠，也就不需要日志文件的改名，只需要指定保存日志个数，删除多余的日志文件即可
+
+3，如果配置文件中**没有"`dateext`"参数**，日志文件就需要进行改名了。当第一次进行日志轮替时**，当前的secure"日志会目动改名为"secure.1"，然新建"secure"日志，用来保存新的日志**。当第二次进行日志轮替时，"secure.1"会自动改名为"secure.2"，当前的"secure"日志会自动改名为"secure.1"，然后也会新建"secure"日志，用来保存新的日志，以此类推。
+
+
+
+### `logrotate`配置文件
+
+
+
+`/etc/logrotate.conf`为logrotate的全局配置文件
+
+```sh
+[root@localhost ~]$ vim /etc/logrotate.conf 
+
+# see "man logrotate" for details
+# rotate log files weekly,每周对日志文件进行一次轮替
+weekly
+
+# keep 4 weeks worth of backlogs  共保存4份日志文件，当建立新的日志文件时，旧的将会被删除
+rotate 4
+
+# create new (empty) log files after rotating old ones 创建新的空的日志文件，在日志轮替后
+create
+
+# use date as a suffix of the rotated file  使用日期作为日志轮替文件的后缀
+dateext
+
+# uncomment this if you want your log files compressed
+#compress
+
+# 自定义规则1
+# RPM packages drop log rotation information into this directory
+#包含/etc/logrotate.d/目录中所有的子配置文件，也就是说会把这个目录中所有子配置文件读取进来
+
+include /etc/logrotate.d
+
+# 自定义规则2
+# no packages own wtmp and btmp -- we'll rotate them here
+#下面是【单独设置】，【优先级更改】  --针对wtmp和btmp自定义
+/var/log/wtmp {
+    monthly  #每月对日志文件进行一次轮替
+    create 0664 root utmp #建立的新日志文件，权限是0664，所有者是root，所属组是utmp维
+    minsize 1M  #日志文件最小轮替大小是1MB，也就是日志一定要超过1MB才会轮替，否则就算时间达到一个月，也不进行日志转储
+    rotate 1  #仅保留一个日志备份。也就是只有wtmp和wtmp.1日志保留而已
+}
+
+/var/log/btmp {
+    missingok  #如果日志不存在，则忽略该日志的警告信息
+    monthly
+    create 0600 root utmp
+    rotate 1
+}
+```
+
+**参数说明**
+
+![image-20210513213101003](linux.assets/image-20210513213101003.png)
+
+
+
+### 把自己的日志加入日志轮替
+
+**第一种**方法是直接在`/etc/logrotate.conf`配置文件中写入该日志的轮替策略
+
+**第二种**方法是在`/etc/logrotate.d/`目录中新建立该日志的轮替文件，在该轮替文件中写入正确的轮替策略，`因为该目录中的文件都会被"include"到主配置文件中`，所以也可以把日志加入轮替。
+
+
+
+*推荐使用第二种方法*，因为系统中需要轮替的日志非常多，如果全都直接写入/etc/logrotate.conf配置文件，那么这个文件的可管理性就会非常差，不利于此文件的维护。在/etc/logrotate.d/配置轮替文件一览
+
+### 应用实例
+
+看一个案例，在`/etc/logrotate.conf`进行配置，或者直接在`/etc/logrotate.d/ 下创建文件hsplog`编写如下内容，具体轮替的效果可以参考**/var/log下的bopt.log**情况.
+
+```sh
+# 对hsp.log文件自定义轮替策略
+/var/log/hsp.log{
+	missingok 
+	daily 
+	copytruncate 
+	rotate 7
+	notifempty
+}
+```
+
+### 日志轮替机制原理
+
+![image-20210513221512490](linux.assets/image-20210513221512490.png)
+
+日志轮替之所以可以在指定的时间备份日志，是**依赖系统定时任务**。在`/etc/cron.daily/`目录，就会发现这个目录中是有`logrotate`文件（可执行），logrotate通过这个文件依赖定时任务执行的。
+
+![image-20210513220328346](linux.assets/image-20210513220328346.png)
+
+
+
+## 查看内存日志`journalctl`
+
+`journalctl` 可以查看内存日志，这里我们看看常用的指令`journalctl`		##查看全部
+`journalctl -n 3`		##查看最新3条
+`journalctl --since 19:00--until 19:10:10`#查看起始时间到结束时间的日志可加日期
+
+`journalctl -p err`	##报错日志
+`journalctl -o verbose`	##日志详细内容
+`journalctl -PID=1245 _COMM=sshd`#查看包含这些参数的日志（在详细日志查看）
+或者`journalctl | grep sshd`
+
+
+
+注意：journalctl查看的是**内存日志**，重启清空
+
+演示案例：使用`journalctl | grep sshd`来看看用户登录清空，重启系统，再次查询，看看日志有什么变化没有.
+
+# 高级篇-定制自己的Linux系统
+
+
+
+## 基本介绍
+
+通过裁剪现有Linux系统（CentOS7.6），创建属于自己的min Linux小系统，可以加深我们对tlinux的理解。
+老韩利用centos7.6，搭建一个小小linux系统，很有趣。
+
+
+
+## 基本原理
+
+启动流程介绍：
+制作Linux小系统之前，再了解一下Linux的启动流程：
+1、首先Linux要通过自检，检查硬件设备有没有故障
+
+2、如果有多块启动盘的话，需要在BIOS中选择启动磁盘
+
+3、启动MBR中的bootloader引导程序
+
+4、加载内核文件
+
+5、执行所有进程的父进程、老祖宗systemd
+
+6、欢迎界面
+
+在Linux的启动流程中，加载内核文件时关键文件
+
+1）kernel文件：vmlinuz-3.10.0-957.el7.x86 64
+
+2）initrd文件：initramfs-3.10.0-957.el7.x8664.img
+
+## 制作min linux思路分析
+
+1，在现有的Linux系统（centos7.6）上加一块硬盘/dev/sdb，在硬盘上分两个分区，一个是/boot，一个是/，并将其格式化。需要明确的是，现在加的这个硬盘在现有的Linux系统中是/dev/sdb但是，当我们把东西全部设置好时，要把这个硬盘拔除，放在新系统上，此时，就是/dev/sda
+2.在/dev/sdb硬盘上，将其打造成独立的Linux系统，里面的所有文件是需要拷贝进去的
+3.作为能独立运行的Linux系统，内核是一定不能少，要把内核文件和initramfs文件也一起拷到/dev/sdb上
+
+4.以上步骤完成，我们的自制Linux就完成，创建一个新的linux虚拟机，将其硬盘指向我们创建的硬盘，启动即可
+
+
+
+# linux内核源码介绍&内核升级
+
+## linux0.01内核源码
+
+### 基本介绍
+
+Linux的内核源代码可以从网上下载，解压缩后文件一般也都位于linux目录下。内核源代码有很多版本，可以从linux0.01内核入手，总共的代码1w行左右，最新版本5.9.8总共代码超过700w行，非常庞大
+
+内核地址：https://www.kernel.org/
+
+
+
+
+
+linux0.01内核源码目录&阅读
+
+老韩提示阅读内核源码技巧
+
+1、linuxo.01的阅读需要懂c语言
+2、阅读源码前，应知道Linux内核源码的整体分布情况。现代的**操作系统一般由进程管理、内存管理、文件系统、驱动程序和网络**等组成。Linux内核源码的各个目录大致与此相对应
+3、在阅读方法或顺序上，有纵向与横向之分。所谓纵向就是顺着程序的执行顺序逐步进行；所谓横向，就是按模块进行。它们经常结合在一起进行。
+4、对于Linux启动的代码可顺着Linux的启动顺序一步步来阅读；对于像内存管理部分，可以单独拿出来进行阅读分析。实际上这是一个反复的过程，不可能读一遍就理解
+
+linux内核源码阅读&目录介绍&main.c说明
+
+![image-20210514001802438](linux.assets/image-20210514001802438.png)
+
+![image-20210514002146338](linux.assets/image-20210514002146338.png)
+
+## linux内核最新版和内核升级
+
+内核地址：https://www.kernel.org/查看
+
+### 下载&解压最新版
+
+```sh
+wget ttps://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.8.16.tar.gz
+tar-zxvf linux-5.8.16.tar.gz
+```
+
+### linux内核升级
+
+将Centos系统从7.6内核升级到7.8版本内核（兼容性问题）
+
+![image-20210514002936982](linux.assets/image-20210514002936982.png)
+
+具体步骤
+
+```sh
+uname -a	#查看当前的内核版本
+yum info kernel -q	#检测内核版本，显示可以升级的内核
+yum update kernel	#升级内核
+yum list kernel -q	#查看已经安装的内核
+```
+
+> 重启后，手动选择内核
+>
+> ![image-20210514003552580](linux.assets/image-20210514003552580.png)
+
+# linux系统备份与恢复
+
+## 基本介绍
+
+实体机无法做快照，如果系统出现异常或者数据损坏，后果严重，要重做系统，还会造成数据丢失。所以我们可以使用备份和恢复技术
+linux的备份和恢复很简单，有两种方式：
+1）把需要的文件（或者分区）用TAR打包就行，下次需要恢复的时候，再解压开覆盖即可
+
+2）使用`dump`和`restore`命令
+
+安装dump和restore
+
+如果linux上没有dump和restore指令，需要先安装
+
+```sh
+yum -y install dump 
+yum -y install restore
+```
+
+## 使用dump完成备份
+
+### 基本介绍
+
+**dump支持分卷和增量备份**（所谓增量备份是指备份上次备份后修改/增加过的文件，也称差异备份）
+
+`dump [-cu] [-123456789] [-f<备份后文件名2] [-T<日期>] [目录或文件系统]`
+`dump []-wW` 
+
+
+
+说明：
+
+`-c`：创建新的归档文件，并将由一个或多个文件参数所指定的内容写入归档文件的开头。
+`-0123456789`：备份的层级。0为最完整备份，会备份所有文件。若指定0以上的层级，则备份至上一次备份以来修改或新增的文件，到9后，可以再次轮替【**增量备份最多九次，然后全量备份再次循环**】
+`-f<备份后文件名>`：指定备份后文件名
+`-j`：**调用bzlib库压缩备份文件**，也就是将备份后的文件压缩成bz2格式，让文件更小
+`-T<日期>`：指定开始备份的时间与日期
+`-u`：备份完毕后，在`/etc/umpdares`中记录备份的文件系统，层级，日期与时间等
+`-t`：指定文件名，若该文件已存在备份文件中，则列出名称
+`-W`：显示需要备份的文件及其最后一次备份的层级，时间，日期
+`-w`：与`-W`类似，但仅显示需要备份的文件。
+
+
+
+### 应用实例
+
+案例1：将/boot分区所有内容备份到/opt/boot.bak0.bz2文件中，备份层级为"0"**【全量】**
+`dump -0uj -f /opt/boot.bak0.bz2 /boot`
+
+
+
+案例2：在/boot目录下增加新文件，备份层级为"1"（只备份上次使用层次“0”备份后发生过改变的数据），注意比较看看这次生成的备份文件boo1.bak有多大**【增量】**
+
+`dump -1uj -f /opt/boot.bak1.bz2 /boot`
+
+![image-20210514005703381](linux.assets/image-20210514005703381.png)
+
+老韩提醒：通过dump命令在配合crontab可以实现无人值守备份
+
+
+
+### `dump -W`
+
+显示需要备份的文件及其最后一次备份的层级，时间，日期
+
+![image-20210514005810388](linux.assets/image-20210514005810388.png)
+
+### 查看备份时间文件
+
+`cat /etc/dumpdates`
+
+![image-20210514005841232](linux.assets/image-20210514005841232.png)
+
+
+
+
+
+### dump备份文件或者目录
+
+前面我们在备份**分区时，是可以支持增量备份的**，如果备份`文件或者目录，不再支持增量备份，即只能使用0级别备份`
+
+
+
+案例，使用dump备份/etc整个目录
+`dump -0j -f /opt/etc.bak.bz2 /etc/`
+
+> 下面这条语句会报错，提示DUMP：Only level 0 dumps are allowed on a subdirectory 
+> `dump -1j -f /opt/etc.bak.bz2 /etc/`
+
+## 使用restore完成恢复
+
+### 基本介绍
+
+restore命令用来恢复已备份的文件，可以从dump生成的备份文件中恢复原文件
+
+### restore基本语法
+
+`restore [模式选项] [选项]`
+
++ 说明下面四个模式，不能混用，在一次命令中，只能指定一种
+  `-C`：使用对比模式，将备份的文件与已存在的文件相互对比。
+  `-i`：使用交互模式，在进行还原操作时，restors指令将依序询问用户
+  `-r`：进行还原模式
+  `-t`：查看模式，看备份文件有哪些文件
+
++ 选项
+  `-f<备份设备>`：从指定的文件中读取备份数据，进行还原操作
+
+
+
+### 应用案例
+
+案例1：restore命令比较模式，比较备份文件和原文件的区别
+
+测试
+`mv /boot/hello.java /boot/hello100.java`
+
+`restore -C -f /boot.bak1.bz2  `     //注意和最新的文件比较
+
+![image-20210514011339561](linux.assets/image-20210514011339561.png)
+
+
+
+案例2：restore命令查看模式，看备份文件有哪些数据/文件
+
+测试：`restore -t -f boot.bak0.bz2`
+
+
+
+案例3：restore命令还原模式，**注意细节**：如果你有增量备份，需要把增量备份文件也进行恢复，有几个增量备份文件就要恢复几个，按顺序来恢复即可。
+
+测试
+`mkdir /opt/boottmp`
+`cd /opt/boottmp`
+`restore -r -f /opt/boot.bak0.bz2`  //恢复到第1次完全备份状态【0】
+`restore -r -f /opt/boot.bak1.bz2`  //恢复到第2次增量备份状态【1】
+
+
+
+案例4：restore命令恢复备份的文件，或者整个目录的文件
+基本语法：`restore -r -f 备份好的文件`
+测试   将文件恢复到etctmp目录下
+`mkdir etctmp`
+`cd etctmp/`
+`restore -r -f/opt/etc.bak0.bz2`
+
+# linux可视化管理工具
+
+## webmin
+
+
+
+
+
+## bt运维工具
