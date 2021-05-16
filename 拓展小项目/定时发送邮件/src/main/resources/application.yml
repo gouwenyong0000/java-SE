@@ -1,0 +1,17 @@
+spring:
+  mail:
+    username: xxxxxx@qq.com  # 邮箱地址
+    password: xxxxxxxxxxx    # SMTP|POP3|IMAP协议授权码
+    host: smtp.qq.com        # 服务器地址。参考邮箱服务运营商提供的信息。
+    properties:
+      mail:
+        smtp:
+          auth: true         # 开启smtp协议验证
+    port: 587
+# 发给谁的邮箱
+she:
+  mail: XXXXXXX@qq.com
+
+
+
+
