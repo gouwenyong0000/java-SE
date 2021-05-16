@@ -3164,15 +3164,19 @@ firewalld.service                             enabled
 
 `firewall指令`：
 
-+ 打开端口：`firewall-cmd --permanent --add-port=端口号/协议`
+```sh
+# 打开端口：
+firewall-cmd --permanent --add-port=端口号/协议
 
-+ 关闭端口：`firewall-cmd --permanent --remove-port=端口号/协议`
+# 关闭端口：
+firewall-cmd --permanent --remove-port=端口号/协议
 
-+ 重新载入，才能生效：`firewall-cmd --reload`
+# 重新载入，才能生效：
+firewall-cmd --reload
 
-+ 查询端口是否开放：`firewall-cmd --query-port=端口/协议`
-
-
+# 查询端口是否开放：
+firewall-cmd --query-port=端口/协议
+```
 
 > 协议类型查询：`netstat -anp`
 >
@@ -3229,20 +3233,20 @@ yes
 
 3.再次关闭111端口
 
-```
+```sh
 # 关闭端口
-[root@localhost sbin]# firewall-cmd --permanent --remove-port=111/tcp
+[root@localhost sbin]$ firewall-cmd --permanent --remove-port=111/tcp
 success
 # 未reload查询状态
-[root@localhost sbin]# firewall-cmd --query-port=111/tcp
+[root@localhost sbin]$ firewall-cmd --query-port=111/tcp
 yes
 
 # reload
-[root@localhost sbin]# firewall-cmd --reload
+[root@localhost sbin]$ firewall-cmd --reload
 success
 
 # 查询111端口
-[root@localhost sbin]# firewall-cmd --query-port=111/tcp
+[root@localhost sbin]$ firewall-cmd --query-port=111/tcp
 no
 ```
 
@@ -5110,8 +5114,493 @@ restore命令用来恢复已备份的文件，可以从dump生成的备份文件
 
 ## webmin
 
+### 基本介绍
 
+Webmin是功能强大的基于Web的Unix/inux系统管理工具。管理员通过浏览器访问Webmin的各种管理功能并完成相应的管理操作。除了各版本的linux以外还可用于：AIX，HPUX，Solaris、Unixware、rix和FreeBSD等系统
+
+![image-20210516175329255](linux.assets/image-20210516175329255.png)
+
+
+
+### 安装webmin&配置
+
+
+
+1. 下载地址：http://download.webmin.com/download/yum/
+
+![image-20210516175403663](linux.assets/image-20210516175403663.png)
+
+
+
+也可以使用
+
+```sh
+wget http://download.webmin.com/download/yum/webmin-1.700-1.noarch.rpm
+```
+
+2. 安装
+
+```sh
+nerpm -ivh webmin-1.700-1.noarch.rpm
+```
+
+3. 重置密码`/usr/libexec/webmin/changepass.pl /etc/webmin root test` 
+   root是webmin的用户名，不是OS的，这里就是把webmin的root用户密码改成了test
+
+4. 修改webmin服务的端口号（默认是10001出于安全目的）
+
+   ```sh
+   vim /etc/webmin/miniserv.conf   #修改端口
+   ```
+
+5. 将port-10000修改为其他端口号，如port-10001【避免使用浏览器保护的端口https://www.v2ex.com/t/696650】
+
+6. 重启webmin
+
+   ```sh
+   /etc/webmin/restart		#重启
+   /etc/webmin/start		#启动
+   /etc/webmin/stop		#停止
+   ```
+
+7.防火墙放开6666端口
+
+```sh
+ #配置防火墙开放6666端
+firewall-cmd --zone=public --add-port=10001/tcp --permanent   
+#更新防火墙配置
+firewall-cmd --reload
+#查看已经开放的端口号
+firewall-cmd --zone=public --list-ports
+
+ #关闭端口
+firewall-cmd --zone=public --remove-port=10001/tcp --permanent  
+```
+
+8. 登录webmin
+   在浏览器中`http://ip：10001` 访问了  或者在linux中`curl http://ip：10001 `
+   用root账号和重置的新密码test
+
+![image-20210516181746007](linux.assets/image-20210516181746007.png)
+
+
+
+### 简单使用
+
+比如修改语言设置，IP访问控制，查看进程，修改密码，任务调度，mysql等.
+
+
+
+![image-20210516181810253](linux.assets/image-20210516181810253.png)
 
 
 
 ## bt运维工具
+
+### 基本介绍
+
+bt宝塔Linux面板是提升运维效率的服务器管理软件，支持一键LAMP/LNMP/集群/监控/网站/FTP/数据库/JAVA等多项服务器管理功能。
+
+### 安装和使用
+
+1）安装：
+
+```sh
+yum install -y wget && wget -O install.sh http://download.bt.cn/install/install_6.0.sh && sh install.sh
+
+# 解释
+1. 安装wget下载工具
+2.使用wget工具从网络地址http://download.bt.cn/install/instal1_6.0.sh下载文件并重命名为install.sh
+3.运行install.sh
+4.&&表示上一条命令执行完毕执行下一条
+```
+
+2）安装成功后控制台会显示登录地址，账户密码，复制浏览器打开登录，
+
+![image-20210516190339891](linux.assets/image-20210516190339891.png)
+
+
+
+3）如果bt的用户名，密码忘记了，使用`bt default`可以查看
+
+![image-20210516190851894](linux.assets/image-20210516190851894.png)
+
+### 使用介绍
+
+比如可以登录终端，配置，快捷安装运行环境和系统工具，添加计划任务脚本
+
+![image-20210516190917762](linux.assets/image-20210516190917762.png)
+
+# Linux面试题
+
+#### 分析日志t.log（访问量），将各个ip地址截取，并统计出现次数，并按从大到小排序（腾讯）
+
+```
+http://192.168.200.10/index1.html
+http://192.168.200.10/index2.html
+http://192.168.200.20/index1.html
+http://192.168.200.30/index1.html
+http://192.168.200.40/index1.html 
+http://192.168.200.30/order.html 
+http://192.168.200.10/order.html
+```
+
+```sh
+# 答案：					
+cat t.log | cut -d "/" -f 3 | sort | uniq -c| sort -nr 	
+# 结果
+      3 192.168.200.10
+      2 192.168.200.30
+      1 192.168.200.40
+      1 192.168.200.20
+# 解释
+cat t.log \				# 显示内容
+	| cut -d "/" -f 3 \  # cut每一行按/分割，取第三部分
+	| sort \			# sort排序，统计前需要排序
+	| uniq -c \			# uniq分组统计
+	| sort -nr 			# -nr倒序
+```
+
+> cut命令不能使用空格分割，参考awk命令
+
+#### 统计连接到服务器的各个ip情况，并按连接数从大到小排序（腾讯）
+
+> state显示ESTABLISHED表示建立连接
+
+![image-20210516192352604](linux.assets/image-20210516192352604.png)
+
+```sh
+netstat -an | grep ESTABLISHED | awk -F " " '{print $5}' | cut -d ':' -f 1 | sort | uniq -c | sort -nr				   
+
+     10 192.168.64.1
+      4 127.0.0.1
+      3 104.207.151.13
+      2 192.168.64.130
+# 解释
+netstat -an \				    #查看网络连接	
+	| grep ESTABLISHED \		# 过滤出ESTABLISHED状态 表示连接
+	| awk -F " " '{print $5}' \  # awk命令：按 空格分割  取第五块
+	| cut -d ':' -f 1 \			# cut命令：按：分割，去第一块
+	| sort \				   # 正序排序
+	| uniq -c \				   # 统计数量
+	| sort -nr				   # 倒序排序
+```
+
+#### 问题：如忘记了mysql5.7数据库的ROOT用户的密码，如何找回？（滴滴）
+
+1. 在`vim /etc/my.cnf` 配置部分添加`skip-grant-tables`
+2. 重启mysql服务`service mysqld restart`
+
+3. 使用空密码登入mysql，进入mysql数据库，
+
+```mysql
+# 更改mysql数据库中user表中root用户的authentication_string为新密码
+update mysql.user set authentication_string=PASSWORD('root') where user='root';
+
+# 刷新权限
+flush privileges;
+```
+
+4. 删除`/etc/my.cnf`  配置部分的`skip-grant-tables`
+
+5. 重启mysql服务`service mysqld restart`
+
+6. 使用新密码登入
+
+#### 写出指令：统计ip访问情况，要求分析nginx访问目志（access.log），找出访问页面数量在前2位的ip（美团）
+
+![image-20210516221556430](linux.assets/image-20210516221556430.png)
+
+```sh
+$ cat access.log | awk -F " " '{print $1}' | sort | uniq -c | sort -nr | head -2
+#结果：
+      7 192.168.130.20
+      2 192.168.130.25
+
+
+cat access.log \  # cat查看
+	| awk -F " " '{print $1}' \ # 按空格分割取第一部分
+	| sort \		# 统计前排序
+	| uniq -c \		# 统计数量
+	| sort -nr \ 	# 倒序排序
+	| head -2 		# 从头显示2个
+```
+
+#### 使用tepdump监听本机，将来自ip 192.168.200.1，tcp端口为22的数据，保存输出到tcndumplog 用做将来数据分析（美团）【`>>`重定向】
+
+```sh
+# 监听ens33网卡 中来自192.168.64.1:22的访问包数据
+tcpdump -i ens33 host 192.168.64.1 and port 22 >> /opt/interview/tcpdump.log
+```
+
+#### 常用的Nginx模块，用来做什么（头条）
+
+```
+rewrite模块，实现重写功能
+access模块：来源控制
+ssl模块：安全加密
+ngx_htp_gzip_module：网络传输压缩模块划
+ngx_http proxy_module 模块实现代理
+ngx_http_upstream_module 模块实现定义后端服务器列表
+ngx_cache_purge 实现缓存清除功能
+```
+
+#### 如果你是系统管理员，在进行Linux系统权限划分时，应考虑哪些因素？（腾讯）
+
+1. 首先阐述Linux权限的主要对象
+   ![image-20210516224611903](linux.assets/image-20210516224611903.png)
+   ![image-20210516224640306](linux.assets/image-20210516224640306.png)
+2. 根据自己实际经验谈考虑因素
+   + 注意权限分离，比如；工作中，Linux系统权限和数据库权限不要在同一个部门
+   + 权限最小原则（即：在满足使用的情况下最少优先）
+   + 减少使用root用户，尽量用普通用户+sudo提权进行日常操作。
+   + 重要的系统文件，比如/etc/passwd，/etc/shadow ，/etc/fstab，/etc/sudoers等，日常建议使用`chattr`（change attribute）锁定，需要操作时再打开。【演示比如：锁定/etc/passwd 让任何用户都不能随意useradd，除非解除锁定】
+     ![image-20210516225209595](linux.assets/image-20210516225209595.png)
+   + 使用SUID，SGID，Sticky 设置特殊权限。
+   + 可以利用工具，比如**chkrootkit**/**rootkit hunter** 检测rootkit脚本（rootkit是入侵者使用工具，在不察觉的建立了入侵系统途径）[演示使用`wget ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar.gz`]
+   + 利用工具**Tripwire**检测**文件系统完整性**
+
+
+
+#### 权限思考题
+
+> 对test目录有写权限【w】就可以删除/目录下的文件/创建文件目录
+>
+> 对test有执行权限【x】可以进入目录
+
+1. 用户tom对目录/home/test有执行x和读r写w权限，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（ok）？能修改吗（no）？**能删除吗？（ok）**
+
+   ```sh
+   /home/test				rwx
+   /home/test/hello.java	 r--
+   
+   tom对hello.java
+   读	 √
+   修改	×
+   删除	√
+   ```
+
+2. 用户tom对目录/home/test只有读写权限，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（no）？能修改吗（no）？能删除吗（no）？
+    ```sh
+   /home/test				rw-
+   /home/test/hello.java	 r--
+   
+   tom对hello.java
+   读	 ×
+   修改	×
+   删除	×
+   ```
+3. 用户tom对目录/home/test只有执行权限x，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（ok）？能修改吗（no）？能删除吗（no）？
+   ```sh
+   /home/test				--x
+   /home/test/hello.java	 r--
+   
+   tom对hello.java
+   读	 √
+   修改	×
+   删除	×
+   ```
+4. 用户tom对目录/home/tet只有执行和写权限，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（ok）？能修改吗（no）？能删除吗（ok）？
+   ```sh
+   /home/test				-wx
+   /home/test/hello.java	 r--
+   
+   tom对hello.java
+   读	 √
+   修改	×
+   删除	√
+   ```
+
+#### 说明Centos7启动流程，并说明和CentOS6相同和不同的地方（腾讯）
+
+![image-20210517011334101](linux.assets/image-20210517011334101.png)
+
+![image-20210517011346090](linux.assets/image-20210517011346090.png)
+
+```sh
+第一步、硬件启动阶段
+　　这一步和CentOS6差不多，详细请看图
+第二步、GRUB2引导阶段
+
+　　从这一步开始，CentOS6和CentOS7的启动流程区别开始展现出来了。CentOS7的主引导程序使用的是grub2。
+
+　　这一步的流程：显示加载两个镜像，再加载MOD模块文件，把grub2程序加载执行，接着解析配置文件/boot/grub2/grub.cfg，根据配置文件加载内核镜像到内存，之后构建虚拟根文件系统，最后转到内核。
+
+　　在这里grub.cfg配置文件已经比较复杂了，但并不用担心，到了CentOS7中一般是使用命令进行配置，而不直接去修改配置文件了。不过我们可以看到grub.cfg配置文件开头注释部分说明了由/etc/grub.d/目录下文件和/etc/default/grub文件组成。
+
+　　一般修改好配置后都需要使用命令grub2-mkconfig -o /boot/grub2/grub.cfg，将配置文件重新生成。
+第三步、内核引导阶段
+
+　　这一步与CentOS6也差不多，加载驱动，切换到真正的根文件系统，唯一不同的是执行的初始化程序变成了/usr/lib/systemd/systemd
+
+第四步、systemed初始化阶段（又叫系统初始化阶段）
+　　CentOS7中我们的初始化进程变为了systemd。执行默认target配置文件/etc/systemd/system/default.target（这是一个软链接，与默认运行级别有关）。然后执行sysinit.target来初始化系统和basic.target来准备操作系统。接着启动multi-user.target下的本机与服务器服务，并检查/etc/rc.d/rc.local文件是否有用户自定义脚本需要启动。最后执行multi-user下的getty.target及登录服务，检查default.target是否有其他的服务需要启动。
+
+　　注意：/etc/systemd/system/default.target指向了/lib/systemd/system/目录下的graphical.target或multiuser.target。而graphical.target依赖multiuser.target，multiuser.target依赖basic.target，basic.target依赖sysinit.target，所以倒过来执行。
+
+　　System概述（了解）：systemd即为system daemon，是Linux下的一种init软件，开发目标是提供更优秀的框架以表示系统服务间的以来关系，并依此实现系统初始化时服务的并行启动，同时达到降低Shell系统开销的效果，最终代替现在常用的System V与BSD风格的init程序。
+
+　　与多数发行版使用的System V风格的init相比，systemd采用了以下的新技术：A.采用Socket激活式与总线激活式服务，以提高相互依赖的各服务的并行运行性能；B.用Cgroup代替PID来追踪进程，即使是两次fork之后生成的守护进程也不会脱离systemd的控制。
+
+　　unit对象：unit表示不同类型的systemd对象，通过配置文件进行标识和配置；文件中主要包含了系统服务、监听socket、保存的系统快照以及其他与init相关的信息。（也就是CentOS6中的服务器启动脚本）
+
+(1)./etc/systemd/system/default.target
+
+　　这是一个软链接，和默认运行级别相关
+
+# ll /etc/systemd/system/default.target
+lrwxrwxrwx. 1 root root 36 12月  9 15:47 /etc/systemd/system/default.target -> /lib/systemd/system/graphical.target
+我们可以到这个目录下看看
+# cd /lib/systemd/system/
+# ls *.target
+anaconda.target            local-fs.target           runlevel2.target
+basic.target               machines.target           runlevel3.target
+bluetooth.target           multi-user.target         runlevel4.target
+cryptsetup-pre.target      network-online.target     runlevel5.target
+cryptsetup.target          network-pre.target        runlevel6.target
+ctrl-alt-del.target        network.target            shutdown.target
+default.target             nfs-client.target         sigpwr.target
+emergency.target           nss-lookup.target         sleep.target
+final.target               nss-user-lookup.target    slices.target
+getty-pre.target           paths.target              smartcard.target
+getty.target               poweroff.target           sockets.target
+graphical.target           printer.target            sound.target
+halt.target                rdma-hw.target            suspend.target
+hibernate.target           reboot.target             swap.target
+hybrid-sleep.target        remote-cryptsetup.target  sysinit.target
+initrd-fs.target           remote-fs-pre.target      system-update.target
+initrd-root-fs.target      remote-fs.target          timers.target
+initrd-switch-root.target  rescue.target             time-sync.target
+initrd.target              rpcbind.target            umount.target
+iprutils.target            rpc_pipefs.target         virt-guest-shutdown.target
+kexec.target               runlevel0.target
+local-fs-pre.target        runlevel1.target
+这里可以看到runlevel开头的target文件，对应着CentOS6的启动级别，不过一样是软链接，指向了同目录下的其他文件，也算一种向下兼容吧
+
+# ll runlevel*.target
+lrwxrwxrwx. 1 root root 15 4月   5 22:10 runlevel0.target -> poweroff.target
+lrwxrwxrwx. 1 root root 13 4月   5 22:10 runlevel1.target -> rescue.target
+lrwxrwxrwx. 1 root root 17 4月   5 22:10 runlevel2.target -> multi-user.target
+lrwxrwxrwx. 1 root root 17 4月   5 22:10 runlevel3.target -> multi-user.target
+lrwxrwxrwx. 1 root root 17 4月   5 22:10 runlevel4.target -> multi-user.target
+lrwxrwxrwx. 1 root root 16 4月   5 22:10 runlevel5.target -> graphical.target
+lrwxrwxrwx. 1 root root 13 4月   5 22:10 runlevel6.target -> reboot.target
+可以看到我的default.target与runlevel5.target指向的是同一个文件，可以看出我的默认运行级别是5。
+
+(2)./usr/lib/systemd/system/
+
+这个目录存储每个服务的脚本，类似CentOS6的/etc/init.d/。
+
+(2)./run/systemd/system/
+
+系统执行过程中产生的脚本。
+
+(3)./etc/systemd/system/
+
+类似于CentOS6的/etc/rc.d/rc#.d/SXX类文件的功能，管理员建立的执行脚本，大部分是软链接
+
+Over
+
+```
+
+#### 问题：列举Linux高级命令，至少6个（百度）
+
+```
+netstat	//网络状态监控
+top//系统运行状态
+lsblk//查看硬盘分区
+find
+ps-aux//查看运行进程
+chkconfig//查看服务启动状态
+systemctl//管理系统服务器
+```
+
+#### 问题：Linux查看内存[`top`]、io读写[`iotop`]、磁盘存储[`df -lh`]、端口占用[`netstat -tunlp`]、进程查看命令[`ps-aux | grep ps_name`]是什么？（瓜子）
+
+
+
+#### 使用Linux命令计算t2.txt第二列的和并输出（美团）
+
+![image-20210516234714741](linux.assets/image-20210516234714741.png)
+
+```sh
+# 		   wak: 以空格分割，并将第二部分求和，打印sum
+cat t2.txt | awk -F " " '{sum+=$2} END {print sum}'
+```
+
+#### Shell脚本里如何检查一个文件是否存在？并给出提示（百度）
+
+```sh
+if[ -f 文件名 ] then echo "存在" else  echo "不存在" fi
+```
+
+#### 用shell写一个脚本，对文本t3.txt中无序的一列数字排序，并将总和输出（百度）
+
+![image-20210517000333998](linux.assets/image-20210517000333998.png)
+
+```sh
+sort -n t3.txt | awk  '{sum+=$0;print $0} END {print "和="sum}'
+```
+
+#### 请用指令写出查找当前文件夹（/home）下所有的文本文件内容中包含有字符"cat"的文件名称（金山）
+
+![image-20210517000641448](linux.assets/image-20210517000641448.png)
+
+```sh
+grep -r "cat" /home | cut -d ":" -f 1
+```
+
+#### 请写出统计/home目录下所有文件个数和所有文件总行数的指令（在金山面试题扩展）
+
+```sh
+find /home -name "*.*" |  wc -l		 # 统计每个目录下
+find /home -name "*.*" | xargs wc -l # 显示每个文件的行数
+```
+
+![image-20210517001444399](linux.assets/image-20210517001444399.png)
+
+#### 列出你了解的web服务器负载架构（滴滴）
+
+Nginx、Haproxy、Keepalived、LVS
+
+
+
+#### 每天晚上10点30分，打包站点目录/var/spool/mail备份到/home目录下（每次备份按时间生成不同的备份包比如按照年月日时分秒）（滴滴）
+
+1.编写脚本
+
+```sh
+#!/bin/bash
+
+# `` 返回命令执行结果
+FILE_NAME=`date +%Y-%m-%d_%H_%M_%S`
+
+# 进入var目录后，执行打包，将mail目录下打包mail-date.tar.gz
+cd /var && /bin/tar -zcf /home/mail-${FILE_NAME}.tar.gz mail/
+```
+
+2. 配置定时任务
+
+`crontab -e` 编辑定时任务，添加如下内容
+
+`30 22 * * * /bin/sh /root/mail.sh`
+
+#### 如何优化Linux系统，说出你的方法（瓜子）
+
+1）对Linux的架构的优化，和原则分析（示意图）
+
+![image-20210517005910220](linux.assets/image-20210517005910220.png)
+
+2）对linux系统本身的优化-规则
+（1）不用root，使用sudo提示权限
+（2）定时的自动更新服务时间，使用`nptdate npt1.aliyun.com`，让croud定时更新
+（3）配置yum源，指向国内镜像（清华，163）
+（4）配置合理的防火墙策略，打开必要的端口，关闭不必要的端口
+（5）打开最大文件数（调整文件的描述的数量）`vim/etc/profile ` 添加 `ulimit -SHn 65535`
+（6）配置合理的监控策略
+（7）配置合理的系统重要文件的备份策略
+（8）对安装的软件进行优化，比如nginx，apache
+（9）内核参数进行优化/etc/sysetl.conf
+（10）锁定一些重要的系统文件`chattr` /etc/passwd /ect/shadow /etc/inittab
+（11）禁用不必要的服务`setup`，`ntsysv`
+
