@@ -624,7 +624,7 @@ Dockerfile
 Dockerfile 文件
 -------------
 
-```sh
+```dockerfile
 #以centos7为基础,安装oracle jdk8和tomcat7
 FROM centos:7
 #ADD命令将压缩包传入镜像中的指定目录,并同时解压缩
@@ -642,7 +642,7 @@ EXPOSE 8080
 ENTRYPOINT /usr/tomcat/bin/startup.sh && tail -F /usr/tomcat/logs/catalina.out
 ```
 
-```sh
+```dockerfile
 FROM centos:7
 ADD jdk-8u212-linux-x64.tar.gz /opt/
 ADD apache-tomcat-7.0.96.tar.gz /usr/

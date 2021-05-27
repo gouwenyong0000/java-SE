@@ -227,7 +227,7 @@ CentOS Linux release 7.7.1908 (Core)
 			- `yum -y install gcc`
 			- `yum -y install gcc-c++`
 
-		- 卸载旧版本
+		- 卸载旧版本【二选一】
 	
 		  - `yum -y remove docker docker-common docker-selinux docker-engine`
 		
@@ -246,24 +246,27 @@ CentOS Linux release 7.7.1908 (Core)
 		                      docker-engine
 		    ```
 		    
-		    
-
+		  
 		- 安装需要的软件包
-
+		
 			- `yum install -y yum-utils device-mapper-persistent-data lvm2`
-
+		
 		- 设置stable镜像仓库
-
+		
 			- > 大坑【国外速度慢】
 		>
 				> - `yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
-		>	
-				>    报错：1   [Errno 14] curl#35 - TCP connection reset by peer 2   [Errno 12] curl#35 - Timeout
-
-			- **推荐**
-			
-				- `yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo`
-	
+		>		
+				>    报错：
+				1   [Errno 14] curl#35 - TCP connection reset by peer 
+				2   [Errno 12] curl#35 - Timeout
+		
+		```sh
+		# **推荐**
+		
+		yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+		```
+		
 		- 更新yum软件包索引
 		
 			- `yum makecache fast`
@@ -271,9 +274,9 @@ CentOS Linux release 7.7.1908 (Core)
 		- 安装DOCKER CE版本：社区版本免费
 		
 			- `yum -y install docker-ce`
-
+		
 		- 启动docker
-	
+		
 			- `systemctl start docker`
 		
 		- 测试
@@ -904,7 +907,7 @@ docker commit /docker push？？
 - 为什么 Docker 镜像要采用这种分层结构呢
 
     最大的一个好处就是 - 共享资源 
-      
+    
       比如：有多个镜像都从相同的 base 镜像构建而来，那么宿主机只需在磁盘上保存一份base镜像，同时内存中也只需加载一份 base 镜像，就可以为所有容器服务了。而且镜像的每一层都可以被共享。
 
 ### 特点
@@ -1164,15 +1167,15 @@ docker commit /docker push？？
 - 小总结
 
    从应用软件的角度来看，Dockerfile、Docker镜像与Docker容器分别代表软件的三个不同阶段，
-   
-   \*  Dockerfile是软件的原材料
-   
-   \*  Docker镜像是软件的交付品
-   
-   \*  Docker容器则可以认为是软件的运行态。
-   
-   Dockerfile面向开发，Docker镜像成为交付标准，Docker容器则涉及部署与运维，三者缺一不可，合力充当Docker体系的基石。
-   ![image-20210521012444404](Docker基础篇之快速上手.assets/image-20210521012444404.png)
+  
+     \*  Dockerfile是软件的原材料
+  
+     \*  Docker镜像是软件的交付品
+  
+     \*  Docker容器则可以认为是软件的运行态。
+  
+     Dockerfile面向开发，Docker镜像成为交付标准，Docker容器则涉及部署与运维，三者缺一不可，合力充当Docker体系的基石。
+     ![image-20210521012444404](Docker基础篇之快速上手.assets/image-20210521012444404.png)
 
 1 Dockerfile，需要定义一个Dockerfile，Dockerfile定义了进程需要的一切东西。Dockerfile涉及的内容包括执行代码或者是文件、环境变量、依赖包、运行时环境、动态链接库、操作系统的发行版、服务进程和内核进程(当应用进程需要和系统服务和内核进程打交道，这时需要考虑如何设计namespace的权限控制)等等;
 
@@ -1213,7 +1216,7 @@ docker commit /docker push？？
   - 用来在构建镜像过程中设置环境变量
 
      `ENV MY_PATH /usr/mytest`这个环境变量可以在后续的任何RUN指令中使用，这就如同在命令前面指定了环境变量前缀一样；也可以在其它指令中直接使用这些环境变量， 
-     比如：`WORKDIR $MY_PATH`
+       比如：`WORKDIR $MY_PATH`
 
 - `ADD`
 
@@ -1350,15 +1353,15 @@ docker commit /docker push？？
   		   - crul命令解释
 
   		      ```
-  		      curl命令可以用来执行下载、发送各种HTTP请求，指定HTTP头部等操作。
-  		      如果系统没有curl可以使用yum install curl安装，也可以下载安装。
-  		      curl是将下载文件输出到stdout
-  		      
-  		      使用命令：curl http://www.baidu.com
-  		      执行后，www.baidu.com的html就会显示在屏幕上了
-  		      
-  		      这是最简单的使用方法。用这个命令获得了http://curl.haxx.se指向的页面，同样，如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地。如果下载的是HTML文档，那么缺省的将只显示文件头部，即HTML文档的header。要全部显示，请加参数 -i
-  		      ```
+  		        curl命令可以用来执行下载、发送各种HTTP请求，指定HTTP头部等操作。
+  		        如果系统没有curl可以使用yum install curl安装，也可以下载安装。
+  		        curl是将下载文件输出到stdout
+  		        
+  		        使用命令：curl http://www.baidu.com
+  		        执行后，www.baidu.com的html就会显示在屏幕上了
+  		        
+  		        这是最简单的使用方法。用这个命令获得了http://curl.haxx.se指向的页面，同样，如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地。如果下载的是HTML文档，那么缺省的将只显示文件头部，即HTML文档的header。要全部显示，请加参数 -i
+  		     ```
   		
   		- 问题
   		
@@ -1375,12 +1378,12 @@ docker commit /docker push？？
   		- 制作ENTROYPOINT版查询IP信息的容器
   		
   		   ```dockerfile
-  		   FROM centos
-  		   RUN yum install -y curl
-  		   ENTRYPOINT [ "curl", "-s", "http://ip.cn" ]
-  		   ```
-  		   
-  		   ![image-20210525010918911](Docker基础篇之快速上手.assets/image-20210525010918911.png)
+  		     FROM centos
+  		     RUN yum install -y curl
+  		     ENTRYPOINT [ "curl", "-s", "http://ip.cn" ]
+  		  ```
+  		  
+  		     ![image-20210525010918911](Docker基础篇之快速上手.assets/image-20210525010918911.png)
 
 - ONBUILD测试
 
@@ -1465,7 +1468,7 @@ docker commit /docker push？？
 	    - 备注
 	
 	       Docker挂载主机目录Docker访问出现cannot open directory .: Permission denied
-	       解决办法：在挂载目录后多加一个`--privileged=true`参数即可
+	         解决办法：在挂载目录后多加一个`--privileged=true`参数即可
 	
 	- 验证
 	    ![image-20210525014251632](Docker基础篇之快速上手.assets/image-20210525014251632.png)
@@ -1581,7 +1584,6 @@ docker commit /docker push？？
 - 从docker hub上(阿里云加速器)拉取mysql镜像到本地标签为5.6
   ![image-20210525021729614](Docker基础篇之快速上手.assets/image-20210525021729614.png)
 
-  
 - 使用mysql5.6镜像创建容器(也叫运行镜像)
 
 	- 使用mysql镜像
@@ -1620,8 +1622,8 @@ docker commit /docker push？？
 	- 数据备份小测试(可以不做)
 	
 	   ```sh
-	   docker exec myql服务容器ID sh -c ' exec mysqldump --all-databases -uroot -p"123456" ' > /zzyyuse/all-databases.sql
-	   ```
+	     docker exec myql服务容器ID sh -c ' exec mysqldump --all-databases -uroot -p"123456" ' > /zzyyuse/all-databases.sql
+	  ```
 
 ### 安装redis
 
