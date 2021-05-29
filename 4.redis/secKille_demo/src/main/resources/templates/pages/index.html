@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>秒杀页面</title>
+</head>
+<body>
+<h1>秒杀商品iPhone12 Pro max...</h1>
+<form id="msform" action="/Seckill/doseckill">
+    <div>
+        <!--    秒杀商品id-->
+        <input type="hidden" id="prodid" name="prodid" value="0101">
+        <!--    秒杀用户-->
+        <span>用户id：</span> <input name="userid" th:value="${userid}">
+    </div>
+
+    <input type="button" id="miaosha_btn" name="seckill_btn" value="秒杀点我"/>
+</form>
+
+<script src="/jquery/jquery-3.1.0.js"></script>
+<script>
+    $(function () {
+        $("#miaosha_btn").click(function () {
+            var url = $("#msform").attr("action");
+            $.post(url, $("#msform").serialize(), function (data) {
+                if (data == false) {
+                    alert("抢光了");
+                    $("#miaosha_btn").attr("disabled", true);
+                } else {
+                    alert("抢购成功")
+                }
+            });
+        })
+    })
+</script>
+</body>
+
+
+</html>

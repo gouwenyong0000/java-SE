@@ -1,4 +1,118 @@
-## 
+NoSQL数据库简介](#nosql数据库简介)
+- [技术发展](#技术发展)
+  - [Web1.0时代](#web10时代)
+  - [Web2.0时代](#web20时代)
+  - [解决CPU及内存压力](#解决cpu及内存压力)
+  - [解决IO压力](#解决io压力)
+- [NoSQL数据库](#nosql数据库)
+  - [NoSQL数据库概述](#nosql数据库概述)
+  - [NoSQL适用场景](#nosql适用场景)
+  - [NoSQL不适用场景](#nosql不适用场景)
+  - [Memcache](#memcache)
+  - [Redis](#redis)
+  - [MongoDB](#mongodb)
+- [行式存储数据库（大数据时代）](#行式存储数据库大数据时代)
+  - [行式数据库](#行式数据库)
+  - [列式数据库](#列式数据库)
+    - [Hbase](#hbase)
+    - [Cassandra\[kəˈsændrə\]](#cassandrakəˈsændrə)
+- [图关系型数据库](#图关系型数据库)
+- [DB-Engines 数据库排名](#db-engines-数据库排名)
+
+- [Redis概述安装](#redis概述安装)
+  - [应用场景](#应用场景)
+    - [配合关系型数据库做高速缓存](#配合关系型数据库做高速缓存)
+    - [多样的数据结构存储持久化数据](#多样的数据结构存储持久化数据)
+  - [Redis安装](#redis安装)
+    - [安装步骤](#安装步骤)
+    - [安装目录：`/usr/local/bin`](#安装目录usrlocalbin)
+    - [前台启动（不推荐）](#前台启动不推荐)
+    - [后台启动（推荐）](#后台启动推荐)
+    - [Redis介绍相关知识](#redis介绍相关知识)
+- [常用五大数据类型](#常用五大数据类型)
+  - [Redis键(key)](#redis键key)
+  - [Redis字符串(String)](#redis字符串string)
+    - [简介](#简介)
+    - [常用命令](#常用命令)
+    - [数据结构](#数据结构)
+  - [Redis列表(List)](#redis列表list)
+    - [简介](#简介-1)
+    - [常用命令](#常用命令-1)
+    - [数据结构](#数据结构-1)
+  - [Redis集合(Set)](#redis集合set)
+    - [简介](#简介-2)
+    - [常用命令](#常用命令-2)
+    - [数据结构](#数据结构-2)
+  - [Redis哈希(Hash)](#redis哈希hash)
+    - [简介](#简介-3)
+    - [常用命令](#常用命令-3)
+    - [数据结构](#数据结构-3)
+  - [Redis有序集合Zset(sorted set)](#redis有序集合zsetsorted-set)
+    - [简介](#简介-4)
+    - [常用命令](#常用命令-4)
+    - [数据结构](#数据结构-4)
+    - [跳跃表（跳表）](#跳跃表跳表)
+- [Redis配置文件介绍](#redis配置文件介绍)
+  - [\#\#\#Units单位\#\#\](#units单位)
+  - [\#\#\#INCLUDES包含\#\#\](#includes包含)
+  - [\#\#\#网络相关配置 \#\#\](#网络相关配置-)
+    - [bind](#bind)
+    - [protected-mode](#protected-mode)
+    - [Port](#port)
+    - [tcp-backlog](#tcp-backlog)
+    - [timeout](#timeout)
+    - [tcp-keepalive](#tcp-keepalive)
+  - [\#\#\#GENERAL通用\#\#\](#general通用)
+    - [daemonize](#daemonize)
+    - [pidfile](#pidfile)
+    - [loglevel](#loglevel)
+    - [logfile](#logfile)
+    - [databases 16](#databases-16)
+  - [\#\#\#SECURITY安全\#\#\](#security安全)
+    - [设置密码](#设置密码)
+  - [\#\#\#\# LIMITS限制 \#\#\](#-limits限制-)
+    - [maxclients](#maxclients)
+    - [maxmemory](#maxmemory)
+    - [maxmemory-policy](#maxmemory-policy)
+    - [maxmemory-samples](#maxmemory-samples)
+- [Redis的发布和订阅](#redis的发布和订阅)
+  - [什么是发布和订阅](#什么是发布和订阅)
+  - [Redis的发布和订阅](#redis的发布和订阅-1)
+  - [发布订阅命令行实现](#发布订阅命令行实现)
+- [Redis新数据类型](#redis新数据类型)
+  - [Bitmaps](#bitmaps)
+    - [简介](#简介-5)
+    - [命令](#命令)
+    - [Bitmaps与set对比](#bitmaps与set对比)
+  - [HyperLogLog](#hyperloglog)
+    - [简介](#简介-6)
+    - [命令](#命令-1)
+  - [Geospatial](#geospatial)
+    - [简介](#简介-7)
+    - [命令](#命令-2)
+- [Redis_Jedis_测试](#redis_jedis_测试)
+  - [Jedis所需要的jar包](#jedis所需要的jar包)
+  - [连接Redis注意事项](#连接redis注意事项)
+  - [Jedis常用操作](#jedis常用操作)
+    - [创建动态的工程](#创建动态的工程)
+    - [创建测试程序](#创建测试程序)
+  - [测试相关数据类型](#测试相关数据类型)
+    - [Jedis-API: Key](#jedis-api-key)
+    - [Jedis-API: String](#jedis-api-string)
+    - [Jedis-API: Set](#jedis-api-set)
+    - [Jedis-API: hash](#jedis-api-hash)
+    - [Jedis-API: zset](#jedis-api-zset)
+  - [Redis\_Jedis\_实例](#redis_jedis_实例)
+    - [完成一个手机验证码功能](#完成一个手机验证码功能)
+  - [Redis与1Spring Boot整合](#redis与1spring-boot整合)
+  - [整合步骤](#整合步骤)
+- [Redis\_事务\_锁机制\_秒杀](#redis_事务_锁机制_秒杀)
+  - [Redis的事务定义](#redis的事务定义)
+  - [Multi、Exec、discard](#multiexecdiscard)
+  - [事务的错误处理](#事务的错误处理)
+  - [为什么要做成事务](#为什么要做成事务)
+  - [事务冲突的问题](#事务冲突的问题)
+  - [redis-cli \--cluster create \--cluster-replicas 1 192.168.11.101:6379 192.168.11.101:6380 192.168.11.101:6381 192.168.11.101:6389 192.168.11.101:6390 192.168.11.101:6391](#redis-cli---cluster-create---cluster-replicas-1-192168111016379-192168111016380-192168111016381-192168111016389-192168111016390-192168111016391)
 
 # NoSQL数据库简介
 
@@ -1262,7 +1376,7 @@ public class JedisTest {
 ## 测试相关数据类型
 
 ### Jedis-API: Key
-
+[常用五大数据类型](#常用五大数据类型)
 ```java
 jedis.set("k1","v1"); //set
 jedis.set("k2","v2");
@@ -1593,7 +1707,7 @@ public class RedisTestController {
 
 Redis事务是一个单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。
 
-Redis事务的主要作用就是串联多个命令防止别的命令插队。
+Redis事务的主要作用就是**串联多个命令**防止别的命令插队。
 
 ## Multi、Exec、discard
 
@@ -1621,11 +1735,13 @@ Redis事务的主要作用就是串联多个命令防止别的命令插队。
 
 ## 事务的错误处理
 
-组队中某个命令出现了报告错误，执行时整个的所有队列都会被取消。
++ **组队**中某个命令出现了报告错误，执行时整个的所有**队列都会被取消**。
 
 ![image-20210528015517363](Redis.assets/image-20210528015517363.png)
 
-如果执行阶段某个命令报出了错误，则只有报错的命令不会被执行，而其他的命令都会执行，不会回滚。
+
+
++ 如果**执行**阶段某个命令报出了错误，则**只有报错的命令不会被执行**，而**其他的命令都会执行**，不会回滚。
 
 ![image-20210528015525330](Redis.assets/image-20210528015525330.png)
 
@@ -1635,7 +1751,7 @@ Redis事务的主要作用就是串联多个命令防止别的命令插队。
 
 ## 事务冲突的问题
 
-1.  **例子**
+### 例子
 
 一个请求想给金额减8000
 
@@ -1645,25 +1761,25 @@ Redis事务的主要作用就是串联多个命令防止别的命令插队。
 
 ![image-20210528015551700](Redis.assets/image-20210528015551700.png)
 
-2.  **悲观锁**
+### 悲观锁
 
 ![image-20210528015600239](Redis.assets/image-20210528015600239.png)
 
 **悲观锁(Pessimistic Lock)**, 顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。**传统的关系型数据库里边就用到了很多这种锁机制**，比如**行锁**，**表锁**等，**读锁**，**写锁**等，都是在做操作之前先上锁。
 
-3.  **乐观锁**
+### 乐观锁
 
 ![image-20210528015610221](Redis.assets/image-20210528015610221.png)
 
 **乐观锁(Optimistic Lock),** 顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。**乐观锁适用于多读的应用类型，这样可以提高吞吐量**。Redis就是利用这种check-and-set机制实现事务的。
 
-4.  **WATCH key \[key \...\]**
+### `WATCH key [key ...]`
 
-在执行multi之前，先执行watch key1 \[key2\],可以监视一个(或多个) key ，如果在事务**执行之前这个(或这些) key 被其他命令所改动，那么事务将被打断。**
+在**执行multi之前**，先执行`watch key1 [key2]`,可以监视一个(或多个) key ，如果在**事务执行之前这个(或这些)被监视的 key 被其他命令所改动，那么事务将被打断，即命令队列全部不执行。**【相当于乐观锁，监视key的版本号，如果此次修改版本号不一致，】
 
 ![image-20210528015622762](Redis.assets/image-20210528015622762.png)
 
-5.  **unwatch**
+### `unwatch`
 
 取消 WATCH 命令对所有 key 的监视。
 
@@ -1671,7 +1787,7 @@ Redis事务的主要作用就是串联多个命令防止别的命令插队。
 
 [[http://doc.redisfans.com/transaction/exec.html]{.underline}](http://doc.redisfans.com/transaction/exec.html)
 
-6.  **Redis事务三特性**
+## Redis事务三特性
 
 -   单独的隔离操作
 
@@ -1685,167 +1801,419 @@ Redis事务的主要作用就是串联多个命令防止别的命令插队。
 
     -   事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚
 
-11. **Redis\_事务\_秒杀案例**
+# Redis\_事务\_秒杀案例
 
-    1.  **解决计数器和人员记录的事务操作**
+## 解决计数器和人员记录的事务操作
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps72.jpg](media/image109.jpeg){width="5.788888888888889in" height="1.78125in"}
+![image-20210529010532119](Redis.assets/image-20210529010532119.png)
 
-2.  **Redis事务\--秒杀并发模拟**
 
-使用工具ab模拟测试
+
+### 代码实现：
+
+创建springboot项目
+
+#### pom.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.g</groupId>
+    <artifactId>demo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>demo</name>
+    <description>Demo project for Spring Boot</description>
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <!-- spring2.X集成redis所需common-pool2-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+#### application.yml
+
+```yaml
+server:
+    port: 8080
+spring:
+    thymeleaf:
+        prefix: classpath:/templates/pages/
+        suffix: .html
+```
+
+#### 静态页面
+
+<img src="Redis.assets/image-20210529162647577.png" alt="image-20210529162647577" style="zoom:50%;" />
+
+
+
+```html	
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>秒杀页面</title>
+</head>
+<body>
+<h1>秒杀商品iPhone12 Pro max...</h1>
+<form id="msform" action="/Seckill/doseckill">
+    <div>
+        <!--    秒杀商品id-->
+        <input type="hidden" id="prodid" name="prodid" value="0101">
+        <!--    秒杀用户-->
+        <span>用户id：</span> <input name="userid" th:value="${userid}">
+    </div>
+
+    <input type="button" id="miaosha_btn" name="seckill_btn" value="秒杀点我"/>
+</form>
+
+<script src="/jquery/jquery-3.1.0.js"></script>
+<script>
+    $(function () {
+        $("#miaosha_btn").click(function () {
+            var url = $("#msform").attr("action");
+            $.post(url, $("#msform").serialize(), function (data) {
+                if (data == false) {
+                    alert("抢光了");
+                    $("#miaosha_btn").attr("disabled", true);
+                } else {
+                    alert("抢购成功")
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>
+```
+
+#### controller返回首页及秒杀接口
+
+```java
+package com.g.demo.controller;
+
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import redis.clients.jedis.Jedis;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.UUID;
+
+@Controller
+public class SecKillController {
+    /**
+     * 返回秒杀页面
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping("/")
+    public String index(HttpServletRequest request) {
+        String userid = UUID.randomUUID().toString();
+        request.setAttribute("userid", userid);
+        System.out.println(userid);
+        return "index";
+    }
+
+    /**
+     * 秒杀过程
+     *
+     * @return
+     */
+    @PostMapping("/Seckill/doseckill")
+    @ResponseBody
+    public boolean doseckill(String prodid, String userid) {
+        //1 uid和prodid非空判断
+        if (Strings.isBlank(prodid) || Strings.isBlank(userid)) {
+            return false;
+        }
+
+        //2 连接redis
+        Jedis jedis = new Jedis("192.168.64.130", 6379);
+
+        //3 拼接key
+        // 3.1 库存key
+        String kcKey = "sk:" + prodid + ":qt";
+        // 3.2 秒杀成功用户key
+        String userKey = "sk:" + prodid + ":user";
+        //4 获取库存，如果库存null，秒杀还没有开始
+        if (jedis.get(kcKey) == null) {
+            System.out.println("秒杀还没有开始，请等待");
+            jedis.close();
+            return false;
+        }
+
+        // 5 判断用户是否重复秒杀操作
+        if (jedis.sismember(userKey, userid)) {
+            System.out.println("已经秒杀成功了，不能重复秒杀");
+            jedis.close();
+            return false;
+        }
+
+        //6 判断如果商品数量，库存数量小于1，秒杀结束
+        if (Integer.parseInt(jedis.get(kcKey)) < 1) {
+            System.out.println("秒杀已经结束了");
+            jedis.close();
+            return false;
+        }
+
+        //7 秒杀过程
+        //7.1 库存-1
+        jedis.decr(kcKey);
+        //7.2 把秒杀成功用户添加清单里面
+        jedis.sadd(userKey, userid);
+
+        jedis.close();
+        return true;
+    }
+
+}
+```
+
+## Redis事务--秒杀并发模拟
+
+### 使用工具ab模拟测试
 
 CentOS6 默认安装
 
 CentOS7需要手动安装
 
-1.  **联网：yum install httpd-tools**
+1.  联网：`yum install httpd-tools`
 
 2.  **无网络**
 
-（1） 进入cd /run/media/root/CentOS 7 x86\_64/Packages（路径跟centos6不同）
+（1） 进入`cd /run/media/root/CentOS 7 x86_64/Packages`（路径跟centos6不同）
 
 （2） 顺序安装
 
+```
 apr-1.4.8-3.el7.x86\_64.rpm
-
 apr-util-1.5.2-6.el7.x86\_64.rpm
-
 httpd-tools-2.4.6-67.el7.centos.x86\_64.rpm
+```
 
-3.  **测试及结果**
+### 测试及结果
 
-    1.  **通过ab测试**
+#### 通过ab测试
 
-vim postfile 模拟表单提交参数,以&符号结尾;存放当前目录。
++ 请求参数
 
-内容：prodid=0101&
+> vim postfile 模拟表单提交参数,
+>
+> 以&符号结尾;
+>
+> 存放当前目录。
 
-ab -n 2000 -c 200 -k -p \~/postfile -T application/x-www-form-urlencoded http://192.168.2.115:8081/Seckill/doseckill
+内容：`prodid=0101&`
 
-2.  **超卖**
++ 发送
 
-+--------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
-| ![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps78.jpg](media/image110.jpeg){width="1.21875in" height="3.3333333333333335in"} | ![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps79.jpg](media/image111.jpeg){width="3.75in" height="1.4375in"} |
-|                                                                                                                                                  |                                                                                                                                   |
-|                                                                                                                                                  |                                                                                                                                   |
-+--------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
+```sh
+ab -n 2000 -c 200 -k -p ~/postfile -T application/x-www-form-urlencoded http://192.168.64.1:8080/Seckill/doseckill
 
-3.  **超卖问题**
+# 参数说明
+-n 请求数量
+-c 并发数
+-p 请求参数文件
+-T Content-Type
+```
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps80.jpg](media/image112.jpeg){width="5.697916666666667in" height="3.625in"}
+### 超卖
 
-4.  **利用乐观锁淘汰用户，解决超卖问题。**
+![image-20210529163806431](Redis.assets/image-20210529163806431.png)
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps81.jpg](media/image113.jpeg){width="5.832638888888889in" height="2.75in"}
+#### 超卖问题
 
-+--------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| //增加乐观锁                                           | ![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps82.jpg](media/image114.jpeg){width="2.8618055555555557in" height="2.6881944444444446in"} |
-|                                                        |                                                                                                                                                             |
-| jedis.watch(qtkey);                                    | ![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps83.jpg](media/image115.jpeg){width="1.3229166666666667in" height="3.3229166666666665in"} |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //3.判断库存                                           |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| String qtkeystr = jedis.get(qtkey);                    |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| if(qtkeystr==null \|\| \"\".equals(qtkeystr.trim())) { |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| System.out.println(\"未初始化库存\");                  |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| jedis.close();                                         |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| return false ;                                         |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| }                                                      |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| int qt = Integer.parseInt(qtkeystr);                   |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| if(qt\<=0) {                                           |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| System.err.println(\"已经秒光\");                      |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| jedis.close();                                         |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| return false;                                          |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| }                                                      |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //增加事务                                             |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| Transaction **multi** = jedis.multi();                 |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //4.减少库存                                           |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //jedis.decr(qtkey);                                   |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| **multi**.decr(qtkey);                                 |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //5.加人                                               |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //jedis.sadd(usrkey, uid);                             |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| **multi**.sadd(usrkey, uid);                           |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //执行事务                                             |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| List\<Object\> list = **multi**.exec();                |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| //判断事务提交是否失败                                 |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| if(list==null \|\| list.size()==0) {                   |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| System.out.println(\"秒杀失败\");                      |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| jedis.close();                                         |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| return false;                                          |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| }                                                      |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| System.err.print**ln(\"秒杀成**功\");                  |                                                                                                                                                             |
-|                                                        |                                                                                                                                                             |
-| jedis.close();                                         |                                                                                                                                                             |
-+--------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+
+![image-20210529170913179](Redis.assets/image-20210529170913179.png)
 
-5.  **继续增加并发测试**
+#### 利用乐观锁淘汰用户，解决超卖问题。
 
-    1.  **连接有限制**
+![image-20210529170936327](Redis.assets/image-20210529170936327.png)
 
-ab -n 2000 -c 200 -k -p postfile -T \'application/x-www-form-urlencoded\' <http://192.168.140.1:8080/seckill/doseckill>
+```java
+package com.g.demo.controller;
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps84.jpg](media/image116.jpeg){width="5.788888888888889in" height="0.7673611111111112in"}
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Transaction;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
+import java.util.UUID;
+
+@Controller
+public class SecKillController {
+    /**
+     * 返回秒杀页面
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping("/")
+    public String index(HttpServletRequest request) {
+        String userid = UUID.randomUUID().toString();
+        request.setAttribute("userid", userid);
+        System.out.println(userid);
+        return "index";
+    }
+
+    /**
+     * 秒杀过程
+     *
+     * @return
+     */
+    @PostMapping("/Seckill/doseckill")
+    @ResponseBody
+    public boolean doseckill(String prodid, String userid) {
+
+        userid = UUID.randomUUID().toString();
+        //1 uid和prodid非空判断
+        if (Strings.isBlank(prodid) || Strings.isBlank(userid)) {
+            return false;
+        }
+
+        //2 连接redis
+       Jedis jedis = new Jedis("192.168.64.130", 6379);
+
+        //3 拼接key
+        // 3.1 库存key
+        String kcKey = "sk:" + prodid + ":qt";
+        // 3.2 秒杀成功用户key
+        String userKey = "sk:" + prodid + ":user";
+
+        //监视库存 -----乐观锁
+        jedis.watch(kcKey);
+
+        //4 获取库存，如果库存null，秒杀还没有开始
+        if (jedis.get(kcKey) == null) {
+            System.out.println("秒杀还没有开始，请等待");
+            jedis.close();
+            return false;
+        }
+
+        // 5 判断用户是否重复秒杀操作
+        if (jedis.sismember(userKey, userid)) {
+            System.out.println("已经秒杀成功了，不能重复秒杀");
+            jedis.close();
+            return false;
+        }
+
+        //6 判断如果商品数量，库存数量小于1，秒杀结束
+        if (Integer.parseInt(jedis.get(kcKey)) < 1) {
+            System.out.println("秒杀已经结束了");
+            jedis.close();
+            return false;
+        }
+
+        //7 秒杀过程
+        //使用事务
+        Transaction multi = jedis.multi();
+
+        //组队操作
+        multi.decr(kcKey);
+        multi.sadd(userKey,userid);
+
+        //执行   -- 
+        List<Object> results = multi.exec();
+
+        if(results == null || results.size()==0) {
+            System.out.println("秒杀失败了....");
+            jedis.close();
+            return false;
+        }
+
+//        //7.1 库存-1
+//        jedis.decr(kcKey);
+//        //7.2 把秒杀成功用户添加清单里面
+//        jedis.sadd(userKey, userid);
+
+        jedis.close();
+        return true;
+    }
+
+}
+```
+
+### 继续增加并发测试
+
+
+
+1.  **暴露问题：连接有限制**
+
+![image-20210529171334859](Redis.assets/image-20210529171334859.png)
+
+
 
 增加-r参数，-r Don\'t exit on socket receive errors.
 
-**ab -n 2000 -c 100 -r -p postfile -T \'application/x-www-form-urlencoded\' <http://192.168.140.1:8080/seckill/doseckill>**
+`ab -n 2000 -c 100 -r -p postfile -T 'application/x-www-form-urlencoded' http://192.168.140.1:8080/seckill/doseckill`
 
-2.  **已经秒光，可是还有库存**
+2.  **暴露问题：已经秒光，可是还有库存**
 
-ab -n 2000 -c 100 -p postfile -T \'application/x-www-form-urlencoded\' [[http://192.168.137.1:8080/seckill/doseckill]{.underline}](http://192.168.137.1:8080/seckill/doseckill)
+`ab -n 2000 -c 100 -p postfile -T 'application/x-www-form-urlencoded' http://192.168.137.1:8080/seckill/doseckill`
 
-已经秒光，可是还有库存。原因，就是乐观锁导致很多请求都失败。先点的没秒到，后点的可能秒到了。
+已经秒光，可是还有库存。原因，**就是乐观锁导致很多请求都失败**。先点的没秒到，后点的可能秒到了。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps85.jpg](media/image117.jpeg){width="2.7736111111111112in" height="0.9916666666666667in"}
+![image-20210529171841056](Redis.assets/image-20210529171841056.png)
 
-3.  **连接超时，通过连接池解决**
+3. **暴露问题：连接超时，通过连接池解决**
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps86.jpg](media/image118.jpeg){width="5.788888888888889in" height="0.8041666666666667in"}
+![image-20210529171851279](Redis.assets/image-20210529171851279.png)
 
-4.  **连接池**
+### 连接池
 
 节省每次连接redis服务带来的消耗，把连接好的实例反复利用。
 
@@ -1853,21 +2221,87 @@ ab -n 2000 -c 100 -p postfile -T \'application/x-www-form-urlencoded\' [[http://
 
 代码见项目中
 
+```java
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+/**
+连接池工具类
+*/
+public class JedisPoolUtil extends JedisPool {
+    private static volatile JedisPool jedisPool = null;
+
+    private JedisPoolUtil() {
+    }
+
+    public static JedisPool getJedisPoolInstance() {
+        if (null == jedisPool) {
+            synchronized (JedisPoolUtil.class) {
+                if (null == jedisPool) {
+                    JedisPoolConfig poolConfig = new JedisPoolConfig();
+                    poolConfig.setMaxTotal(200);
+                    poolConfig.setMaxIdle(32);
+                    poolConfig.setMaxWaitMillis(100 * 1000);
+                    poolConfig.setBlockWhenExhausted(true);
+                    poolConfig.setTestOnBorrow(true);  // ping  PONG
+
+                    jedisPool = new JedisPool(poolConfig, "192.168.64.130", 6379, 60000);
+                }
+            }
+        }
+        return jedisPool;
+    }
+/*
+  自Jedis3.0版本后jedisPool.returnResource()遭弃用,官方重写了Jedis的close方法用以代替
+  @link redis.clients.jedis.Jedis#close()
+ * <pre>
+ *   @Override
+ *   public void close() {
+ *     if (dataSource != null) {
+ *       JedisPoolAbstract pool = this.dataSource;
+ *       this.dataSource = null;
+ *       if (client.isBroken()) {
+ *         pool.returnBrokenResource(this);
+ *       } else {
+ *         pool.returnResource(this);
+ *       }
+ *     } else {
+ *       super.close();
+ *     }
+ *   }
+ * </pre>
+ */
+//    public static void release(JedisPool jedisPool, Jedis jedis) {
+//        if (null != jedis) {
+//            jedisPool.returnResource(jedis);
+//        }
+//    }
+}
+```
+
 -   链接池参数
 
     -   MaxTotal：控制一个pool可分配多少个jedis实例，通过pool.getResource()来获取；如果赋值为-1，则表示不限制；如果pool已经分配了MaxTotal个jedis实例，则此时pool的状态为exhausted。
-
     -   maxIdle：控制一个pool最多有多少个状态为idle(空闲)的jedis实例；
-
     -   MaxWaitMillis：表示当borrow一个jedis实例时，最大的等待毫秒数，如果超过等待时间，则直接抛JedisConnectionException；
-
     -   testOnBorrow：获得一个jedis实例的时候是否检查连接可用性（ping()）；如果为true，则得到的jedis实例均是可用的；
 
-    1.  **解决库存遗留问题**
+修改秒杀代码中获取连接池的方式
 
-        1.  **LUA脚本**
+```java
+ //2 连接redis
+//        Jedis jedis = new Jedis("192.168.64.130", 6379);
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps87.jpg](media/image119.jpeg){width="1.4375in" height="1.34375in"}
+//替换为连接池
+JedisPool jedisPool = JedisPoolUtil.getJedisPoolInstance();
+Jedis jedis = jedisPool.getResource();
+```
+
+## 解决库存遗留问题
+
+#### LUA脚本
+
+![image-20210529175254755](Redis.assets/image-20210529175254755.png)
 
 Lua 是一个小巧的[[脚本语言]{.underline}](http://baike.baidu.com/item/%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80)，Lua脚本可以很容易的被C/C++ 代码调用，也可以反过来调用C/C++的函数，Lua并没有提供强大的库，一个完整的Lua解释器不过200k，所以Lua不适合作为开发独立应用程序的语言，而是作为嵌入式脚本语言。
 
@@ -1877,7 +2311,7 @@ Lua 是一个小巧的[[脚本语言]{.underline}](http://baike.baidu.com/item/%
 
 [[https://www.w3cschool.cn/lua/]{.underline}](https://www.w3cschool.cn/lua/)
 
-2.  **LUA脚本在Redis中的优势**
+### LUA脚本在Redis中的优势
 
 将复杂的或者多步的redis操作，写为一个脚本，一次提交给redis执行，减少反复连接redis的次数。提升性能。
 
@@ -1889,15 +2323,134 @@ LUA脚本是类似redis事务，有一定的原子性，不会被其他命令插
 
 redis 2.6版本以后，通过lua脚本解决**争抢问题**，实际上是**redis 利用其单线程的特性，用任务队列的方式解决多任务并发问题**。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps88.jpg](media/image120.jpeg){width="5.788888888888889in" height="2.1708333333333334in"}
+![image-20210529175307491](Redis.assets/image-20210529175307491.png)
 
-2.  **Redis\_事务\_秒杀案例\_代码**
 
-    1.  **项目结构**
 
-![](media/image121.png){width="2.238888888888889in" height="2.1791666666666667in"}
+### lua抢购代码
 
-2.  **第一版：简单版**
+lua脚本工具类
+
+```java
+public class SecKill_redisByScript {
+
+    private static final  org.slf4j.Logger logger = LoggerFactory.getLogger(SecKill_redisByScript.class) ;
+
+    public static void main(String[] args) {
+        JedisPool jedispool =  JedisPoolUtil.getJedisPoolInstance();
+
+        Jedis jedis=jedispool.getResource();
+        System.out.println(jedis.ping());
+
+        Set<HostAndPort> set=new HashSet<HostAndPort>();
+
+        //	doSecKill("201","sk:0101");
+    }
+
+    static String secKillScript ="local userid=KEYS[1];\r\n" + 
+            "local prodid=KEYS[2];\r\n" + 
+            "local qtkey='sk:'..prodid..\":qt\";\r\n" +
+            "local usersKey='sk:'..prodid..\":usr\";\r\n" +
+            "local userExists=redis.call(\"sismember\",usersKey,userid);\r\n" +
+            "if tonumber(userExists)==1 then \r\n" +
+            "   return 2;\r\n" +
+            "end\r\n" +
+            "local num= redis.call(\"get\" ,qtkey);\r\n" +
+            "if tonumber(num)<=0 then \r\n" +
+            "   return 0;\r\n" +
+            "else \r\n" +
+            "   redis.call(\"decr\",qtkey);\r\n" +
+            "   redis.call(\"sadd\",usersKey,userid);\r\n" +
+            "end\r\n" +
+            "return 1" ;
+
+    static String secKillScript2 =
+            "local userExists=redis.call(\"sismember\",\"{sk}:0101:usr\",userid);\r\n" +
+                    " return 1";
+
+    public static boolean doSecKill(String uid,String prodid) throws IOException {
+
+        JedisPool jedispool =  JedisPoolUtil.getJedisPoolInstance();
+        Jedis jedis=jedispool.getResource();
+
+        //String sha1=  .secKillScript;
+        String sha1=  jedis.scriptLoad(secKillScript);
+        Object result= jedis.evalsha(sha1, 2, uid,prodid);
+
+        String reString=String.valueOf(result);
+        if ("0".equals( reString )  ) {
+            System.err.println("已抢空！！");
+        }else if("1".equals( reString )  )  {
+            System.out.println("抢购成功！！！！");
+        }else if("2".equals( reString )  )  {
+            System.err.println("该用户已抢过！！");
+        }else{
+            System.err.println("抢购异常！！");
+        }
+        jedis.close();
+        return true;
+    }
+}
+```
+
+修改抢购接口代码
+
+```java
+@Controller
+public class SecKillController {
+    /**
+     * 返回秒杀页面
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping("/")
+    public String index(HttpServletRequest request) {
+        String userid = UUID.randomUUID().toString();
+        request.setAttribute("userid", userid);
+        System.out.println(userid);
+        return "index";
+    }
+
+    /**
+     * 秒杀过程
+     *
+     * @return
+     */
+    @PostMapping("/Seckill/doseckill")
+    @ResponseBody
+    public boolean doseckill(String prodid, String userid) {
+
+        userid = UUID.randomUUID().toString();
+        //1 uid和prodid非空判断
+        if (Strings.isBlank(prodid) || Strings.isBlank(userid)) {
+            return false;
+        }
+        //调用lua脚本的实现【使用连接池】
+        try {
+            return SecKill_redisByScript.doSecKill(userid, prodid);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+ 
+    }
+
+}
+
+```
+
+
+
+## Redis\_事务\_秒杀案例\_代码
+
+1.  **项目结构**
+
+<img src="Redis.assets/image-20210529162647577.png" alt="image-20210529162647577" style="zoom:50%;" />
+
+### 第一版：简单版
+
+[简单实现代码](###代码实现：)
 
 老师点10次，正常秒杀
 
@@ -1905,53 +2458,46 @@ redis 2.6版本以后，通过lua脚本解决**争抢问题**，实际上是**re
 
 使用工具ab模拟并发测试，会出现超卖情况。查看库存会出现负数。
 
-3.  **第二版：加事务-乐观锁(解决超卖),但出现遗留库存和连接超时**
+### 第二版：加事务-乐观锁(解决超卖),但出现遗留库存和连接超时
 
-4.  **第三版：连接池解决超时问题**
+[参考](####利用乐观锁淘汰用户，解决超卖问题。)
 
-5.  **第四版：解决库存依赖问题，LUA脚本**
+### 第三版：连接池解决超时问题
 
-+-------------------------------------------------------------+
-| local userid=KEYS\[1\];                                     |
-|                                                             |
-| local prodid=KEYS\[2\];                                     |
-|                                                             |
-| local qtkey=\"sk:\"..prodid..\":qt\";                       |
-|                                                             |
-| local usersKey=\"sk:\"..prodid.\":usr\';                    |
-|                                                             |
-| local userExists=redis.call(\"sismember\",usersKey,userid); |
-|                                                             |
-| if tonumber(userExists)==1 then                             |
-|                                                             |
-| return 2;                                                   |
-|                                                             |
-| end                                                         |
-|                                                             |
-| local num= redis.call(\"get\" ,qtkey);                      |
-|                                                             |
-| if tonumber(num)<=0 then                                   |
-|                                                             |
-| return 0;                                                   |
-|                                                             |
-| else                                                        |
-|                                                             |
-| redis.call(\"decr\",qtkey);                                 |
-|                                                             |
-| redis.call(\"sadd\",usersKey,userid);                       |
-|                                                             |
-| end                                                         |
-|                                                             |
-| return 1;                                                   |
-+-------------------------------------------------------------+
+[详情](###连接池)
 
-12. **Redis持久化之RDB**
+### 第四版：解决库存依赖问题，LUA脚本
 
-    1.  **总体介绍**
+[lua脚本实现](###lua抢购代码)
+
+```lua
+local userid=KEYS[1]; -- 定义编译，并通过参数行取值
+local prodid=KEYS[2];
+local qtkey="sk:"..prodid..":qt"; --拼接key
+local usersKey="sk:"..prodid.":usr'; 
+local userExists=redis.call("sismember",usersKey,userid); --调用redis命令
+if tonumber(userExists)==1 then --判断是否已抢过，返回2
+  return 2;
+end
+local num= redis.call("get" ,qtkey); --执行redis，查询库存
+if tonumber(num)<=0 then -- 判断是否已抢光，返回0
+  return 0; 
+else -- 抢购成功，减少库存，增加抢购用哦胡，返回1
+  redis.call("decr",qtkey);
+  redis.call("sadd",usersKey,userid);
+end
+return 1;
+```
+
+
+
+# Redis持久化之RDB
+
+## 总体介绍
 
 官网介绍：http://www.redis.io
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps90.jpg](media/image122.jpeg){width="5.788888888888889in" height="2.270138888888889in"}
+![image-20210529195435913](Redis.assets/image-20210529195435913.png)
 
 Redis 提供了2个不同形式的持久化方式。
 
@@ -1959,117 +2505,121 @@ Redis 提供了2个不同形式的持久化方式。
 
 -   AOF（Append Of File）
 
-    1.  **RDB（Redis DataBase）**
+## RDB（Redis DataBase）
 
-        1.  **官网介绍**
+### 官网介绍
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps91.jpg](media/image123.jpeg){width="5.788888888888889in" height="3.7152777777777777in"}
+![image-20210529195604621](Redis.assets/image-20210529195604621.png)
 
-2.  **是什么**
+### 是什么
 
-在指定的时间间隔内将内存中的数据集快照写入磁盘， 也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里
+在指定的**时间间隔**内将内存中的数据集**快照**写入磁盘， 也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里
 
-3.  **备份是如何执行的**
+### 备份是如何执行的
 
-Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到 一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。 整个过程中，主进程是不进行任何IO操作的，这就确保了极高的性能 如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。**RDB的缺点是最后一次持久化后的数据可能丢失**。
+Redis会单独创建（fork）一个子进程来进行持久化，会**先**将数据写入到 一个**临时文件**中【防止备份过程中，redis挂掉，保护数据安全】，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。 整个过程中，主进程是不进行任何IO操作的，这就确保了极高的性能 如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。**RDB的缺点是最后一次持久化后的数据可能丢失**。
 
-4.  **Fork**
+### Fork
 
--   Fork的作用是复制一个与当前进程一样的进程。新进程的所有数据（变量、环境变量、程序计数器等） 数值都和原进程一致，但是是一个全新的进程，并作为原进程的子进程
+-   Fork的作用是复制一个与当前进程**一样的进程**。新进程的所有数据（变量、环境变量、程序计数器等） 数值都和原进程一致，但是是一个全新的进程，并**作为原进程的子进程**
 
 -   在Linux程序中，fork()会产生一个和父进程完全相同的子进程，但子进程在此后多会exec系统调用，出于效率考虑，Linux中引入了"**写时复制技术**"
 
--   **一般情况父进程和子进程会共用同一段物理内存**，只有进程空间的各段的内容要发生变化时，才会将父进程的内容复制一份给子进程。
+- **一般情况父进程和子进程会共用同一段物理内存**，只有进程空间的各段的内容要发生变化时，才会将父进程的内容复制一份给子进程。
 
-    1.  **RDB持久化流程**
+  ### RDB持久化流程
 
-![](media/image124.png){width="3.8402777777777777in" height="2.6680555555555556in"}
+![image-20210529200806312](Redis.assets/image-20210529200806312.png)
 
-2.  **dump.rdb文件**
+### dump.rdb文件
 
-在redis.conf中配置文件名称，默认为dump.rdb
+在`redis.conf`中配置文件名称，默认为*dump.rdb*
 
-![](media/image125.png){width="4.925694444444445in" height="0.8729166666666667in"}
+![image-20210529200815864](Redis.assets/image-20210529200815864.png)
 
-3.  **配置位置**
+### 配置位置
 
-rdb文件的保存路径，也可以修改。默认为Redis启动时命令行所在的目录下
+rdb文件的保存路径，也可以修改。默认为Redis启动时命令行所在的目录下（*./*）
 
-dir \"/myredis/\"
+`dir /myredis/`
 
-![](media/image126.png){width="5.768055555555556in" height="1.6028018372703412in"}
+![image-20210529200906331](Redis.assets/image-20210529200906331.png)
 
-4.  **如何触发RDB快照；保持策略**
+### 如何触发RDB快照；保持策略
 
-    1.  **配置文件中默认的快照配置**
+#### 配置文件中默认的快照配置
 
-![](media/image127.png){width="5.768055555555556in" height="1.8143416447944007in"}
+![image-20210529201002067](Redis.assets/image-20210529201002067.png)
 
-2.  **命令save VS bgsave**
+> `save 3600 1     `解释：3600 s有1个可以发生改变，持久化一次
 
-save ：save时只管保存，其它不管，全部阻塞。手动保存。不建议。
+#### 命令`save` VS `bgsave`
 
-**bgsave：Redis会在后台异步进行快照操作， 快照同时还可以响应客户端请求。**
+`save` ：save时只管保存，其它不管，全部阻塞。**手动保存**。不建议。
 
-可以通过lastsave 命令获取最后一次成功执行快照的时间
+**`bgsave`：Redis会在后台异步进行快照操作， 快照同时还可以响应客户端请求。**
 
-3.  **flushall命令**
+可以通过`lastsave` 命令获取最后一次成功执行快照的时间
+
+#### flushall命令
 
 执行flushall命令，也会产生dump.rdb文件，但里面是空的，无意义
 
-4.  **\#\#\#SNAPSHOTTING快照\#\#\#**
+#### \#\#\#SNAPSHOTTING快照\#\#\#
 
-5.  **Save**
+#### Save
 
 格式：save 秒钟 写操作次数
 
-RDB是整个内存的压缩过的Snapshot，RDB的数据结构，可以配置复合的快照触发条件，
+RDB是整个内存的压缩过的Snapshot，RDB的数据结构，可以配置复合的快照触发条件，**默认是1分钟内改了1万次，或5分钟内改了10次，或15分钟内改了1次。**
 
-**默认是1分钟内改了1万次，或5分钟内改了10次，或15分钟内改了1次。**
+**禁用**
 
-禁用
+**不设置save指令，或者给save传入空字符串**
 
-不设置save指令，或者给save传入空字符串
+![image-20210529203231956](Redis.assets/image-20210529203231956.png)
 
-6.  **stop-writes-on-bgsave-error**
+#### stop-writes-on-bgsave-error
 
-![](media/image128.png){width="5.768055555555556in" height="1.0660958005249344in"}
+![image-20210529201218847](Redis.assets/image-20210529201218847.png)
 
-当Redis无法写入磁盘的话，直接关掉Redis的写操作。推荐yes.
+当Redis**无法写入磁盘**的话，直接**关掉Redis的写操作**。**推荐yes.**
 
-7.  **rdbcompression 压缩文件**
+### rdbcompression 压缩文件
 
-![](media/image129.png){width="5.768055555555556in" height="1.0268241469816273in"}
+![image-20210529201228810](Redis.assets/image-20210529201228810.png)
 
-对于存储到磁盘中的快照，可以设置是否进行压缩存储。如果是的话，redis会采用LZF算法进行压缩。
+对于存储到磁盘中的快照，可以设置是否进行压缩存储。如果是的话，redis会采用**LZF算法**进行压缩。
 
-如果你不想消耗CPU来进行压缩的话，可以设置为关闭此功能。推荐yes.
+如果你不想消耗CPU来进行压缩的话，可以设置为关闭此功能。**推荐yes**.
 
-8.  **rdbchecksum 检查完整性**
+#### rdbchecksum 检查完整性
 
-![](media/image130.png){width="5.768055555555556in" height="0.8388735783027121in"}
+![image-20210529201252531](Redis.assets/image-20210529201252531.png)
 
 在存储快照后，还可以让redis使用CRC64算法来进行数据校验，
 
 但是这样做会增加大约10%的性能消耗，如果希望获取到最大的性能提升，可以关闭此功能
 
-推荐yes.
+**推荐yes.**
 
-9.  **rdb的备份**
+#### rdb的备份
 
-先通过config get dir 查询rdb文件的目录
+先通过`config get dir` 查询rdb文件的目录
+
+![image-20210529223628763](Redis.assets/image-20210529223628763.png)
 
 将\*.rdb的文件拷贝到别的地方
 
-rdb的恢复
+rdb的**恢复**
 
 -   关闭Redis
 
--   先把备份的文件拷贝到工作目录下 cp dump2.rdb dump.rdb
+-   先把备份的文件拷贝到工作目录下 `cp dump2.rdb dump.rdb`
 
 -   启动Redis, 备份数据会直接加载
 
-5.  **优势**
+### 优势
 
 -   适合大规模的数据恢复
 
@@ -2079,9 +2629,9 @@ rdb的恢复
 
 -   恢复速度快
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps98.jpg](media/image131.jpeg){width="4.989583333333333in" height="2.1041666666666665in"}
+![image-20210529201342603](Redis.assets/image-20210529201342603.png)
 
-1.  **劣势**
+### 劣势
 
 -   Fork的时候，内存中的数据被克隆了一份，大致2倍的膨胀性需要考虑
 
@@ -2089,23 +2639,23 @@ rdb的恢复
 
 -   在备份周期在一定间隔时间做一次备份，所以如果Redis意外down掉的话，就会丢失最后一次快照后的所有修改。
 
-    1.  **如何停止**
+### 如何停止
 
-动态停止RDB：redis-cli config set save \"\"\#save后给空值，表示禁用保存策略
+动态停止RDB：`redis-cli config set save ""`  #save后给空值，表示禁用保存策略
 
-2.  **小总结**
+### 小总结
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps99.jpg](media/image132.jpeg){width="5.788888888888889in" height="3.8055555555555554in"}
+<img src="Redis.assets/image-20210529201421776.png" alt="image-20210529201421776"  />
 
-13. **Redis持久化之AOF**
+# Redis持久化之AOF
 
-    1.  **AOF（Append Only File）**
+## AOF（Append Only File）
 
-        1.  **是什么**
+### 是什么
 
-以**日志**的形式来记录每个写操作（增量保存），将Redis执行过的所有写指令记录下来(**读操作不记录**)， **只许追加文件但不可以改写文件**，redis启动之初会读取该文件重新构建数据，换言之，redis 重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作
+*以**日志**的形式来记录每个**写操作**（增量保存）*，将Redis执行过的所有写指令记录下来(**读操作不记录**)， **只许追加文件但不可以改写文件**，redis启动之初会读取该文件重新构建数据，换言之，redis 重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作
 
-2.  **AOF持久化流程**
+### AOF持久化流程
 
 （1）客户端的请求写命令会被append追加到AOF缓冲区内；
 
@@ -2115,78 +2665,73 @@ rdb的恢复
 
 （4）Redis服务重启时，会重新load加载AOF文件中的写操作达到数据恢复的目的；
 
-![](media/image133.png){width="2.4291666666666667in" height="3.9875in"}
+![image-20210529233151361](Redis.assets/image-20210529233151361.png)
 
-3.  **AOF默认不开启**
+### AOF默认不开启
 
-可以在redis.conf中配置文件名称，默认为 appendonly.aof
+可以在redis.conf中配置文件名称，默认为 `appendonly.aof`
 
 AOF文件的保存路径，同RDB的路径一致。
 
-4.  **AOF和RDB同时开启，redis听谁的？**
+### AOF和RDB同时开启，redis听谁的？
 
-AOF和RDB同时开启，系统默认取AOF的数据（数据不会存在丢失）
+**AOF和RDB同时开启，系统默认取AOF的数据**（数据不会存在丢失）
 
-5.  **AOF启动/修复/恢复**
+### AOF启动/修复/恢复
 
 -   AOF的备份机制和性能虽然和RDB不同, 但是备份和恢复的操作同RDB一样，都是拷贝备份文件，需要恢复时再拷贝到Redis工作目录下，启动系统即加载。
 
 -   正常恢复
 
-```{=html}
-<!-- -->
-```
--   修改默认的appendonly no，改为yes
+    -   修改默认的`appendonly no`，改为`yes`
 
--   将有数据的aof文件复制一份保存到对应目录(查看目录：config get dir)
+    -   将有数据的aof文件复制一份保存到对应目录(查看appendonly.aof目录：`config get dir`)
 
--   恢复：重启redis然后重新加载
+    -   恢复：重启redis然后重新加载
 
-```{=html}
-<!-- -->
-```
 -   异常恢复
 
-```{=html}
-<!-- -->
-```
--   修改默认的appendonly no，改为yes
+    -   修改默认的appendonly no，改为yes
 
--   如遇到**AOF文件损坏**，通过/usr/local/bin/**redis-check-aof\--fix appendonly.aof**进行恢复
+    -   如遇到**AOF文件损坏**【aof文件被篡改错位】，通过`/usr/local/bin/redis-check-aof --fix appendonly.aof`进行恢复
 
--   备份被写坏的AOF文件
+    -   备份被写坏的AOF文件
 
--   恢复：重启redis，然后重新加载
+    -   恢复：重启redis，然后重新加载
 
-    1.  **AOF同步频率设置**
+### AOF同步频率设置
 
-appendfsync always
+`appendfsync always`
 
-始终同步，每次Redis的写入都会立刻记入日志；性能较差但数据完整性比较好
+​		*始终同步*，每次Redis的写入都会立刻记入日志；性能较差但数据完整性比较好
 
-appendfsync everysec
+`appendfsync everysec`
 
-每秒同步，每秒记入日志一次，如果宕机，本秒的数据可能丢失。
+​		*每秒同步*，每秒记入日志一次，如果宕机，本秒的数据可能丢失。
 
-appendfsync no
+`appendfsync no`
 
-redis不主动进行同步，把同步时机交给操作系统。
+​		redis不主动进行同步，把*同步时机交给操作系统*。
 
-2.  **Rewrite压缩**
+### Rewrite压缩
 
 1是什么：
 
-AOF采用文件追加方式，文件会越来越大为避免出现此种情况，新增了重写机制, 当AOF文件的大小超过所设定的阈值时，Redis就会启动AOF文件的内容压缩， 只保留可以恢复数据的最小指令集.可以使用命令bgrewriteaof
+AOF采用文件追加方式，文件会越来越大为避免出现此种情况，新增了重写机制, 当AOF文件的大小超过所设定的阈值时，Redis就会启动AOF文件的内容压缩， 只保留可以恢复数据的最小指令集.可以使用命令`bgrewriteaof`
+
+
 
 2重写原理，如何实现重写
 
-AOF文件持续增长而过大时，会fork出一条新进程来将文件重写(也是先写临时文件最后再rename)，redis4.0版本后的重写，是指上就是把rdb 的快照，以二级制的形式附在新的aof头部，作为已有的历史数据，替换掉原来的流水账操作。
+AOF文件持续增长而过大时，会fork出一条新进程来将文件重写(也是先写临时文件最后再rename)，*redis4.0版本后的重写，是指上就是把rdb 的快照，以二级制的形式附在新的aof头部，作为已有的历史数据，替换掉原来的流水账操作。*
 
-no-appendfsync-on-rewrite：
+`no-appendfsync-on-rewrite：`
 
 如果 no-appendfsync-on-rewrite=yes ,不写入aof文件只写入缓存，用户请求不会阻塞，但是在这段时间如果宕机会丢失这段时间的缓存数据。（降低数据安全性，提高性能）
 
 如果 no-appendfsync-on-rewrite=no, 还是会把数据往磁盘里刷，但是遇到重写操作，可能会发生阻塞。（数据安全，但是性能降低）
+
+
 
 触发机制，何时重写
 
@@ -2216,17 +2761,17 @@ auto-aof-rewrite-min-size：设置重写的基准值，最小文件64MB。达到
 
 （5）使用新的AOF文件覆盖旧的AOF文件，完成AOF重写。
 
-![](media/image134.png){width="4.439583333333333in" height="4.042361111111111in"}
+![image-20210529235221708](Redis.assets/image-20210529235221708.png)
 
-3.  **优势**
+### 优势
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps109.jpg](media/image135.jpeg){width="5.583333333333333in" height="1.1041666666666667in"}
+![image-20210529235230611](Redis.assets/image-20210529235230611.png)
 
 -   备份机制更稳健，丢失数据概率更低。
 
 -   可读的日志文本，通过操作AOF稳健，可以处理误操作。
 
-    1.  **劣势**
+### 劣势
 
 -   比起RDB占用更多的磁盘空间。
 
@@ -2236,13 +2781,14 @@ auto-aof-rewrite-min-size：设置重写的基准值，最小文件64MB。达到
 
 -   存在个别Bug，造成恢复不能。
 
-    1.  **小总结**
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps110.jpg](media/image136.jpeg){width="5.729166666666667in" height="3.2423611111111112in"}
+### 小总结
 
-1.  **总结(Which one)**
+![image-20210529235240252](Redis.assets/image-20210529235240252.png)
 
-    1.  **用哪个好**
+## 总结(Which one)
+
+### 用哪个好
 
 官方推荐两个都启用。
 
@@ -2252,9 +2798,9 @@ auto-aof-rewrite-min-size：设置重写的基准值，最小文件64MB。达到
 
 如果只是做纯内存缓存，可以都不用。
 
-2.  **官网建议**
+### 官网建议
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps111.jpg](media/image137.jpeg){width="5.788888888888889in" height="3.2354166666666666in"}
+![image-20210529235343953](Redis.assets/image-20210529235343953.png)
 
 -   RDB持久化方式能够在指定的时间间隔能对你的数据进行快照存储
 
@@ -2274,39 +2820,45 @@ auto-aof-rewrite-min-size：设置重写的基准值，最小文件64MB。达到
 
 -   性能建议
 
-+-------------------------------------------------------------------------------------------------------------------+
-| 因为RDB文件只用作后备用途，建议只在Slave上持久化RDB文件，而且只要15分钟备份一次就够了，只保留save 900 1这条规则。 |
-|                                                                                                                   |
-|                                                                                                                   |
-|                                                                                                                   |
-| 如果使用AOF，好处是在最恶劣情况下也只会丢失不超过两秒数据，启动脚本较简单只load自己的AOF文件就可以了。            |
-|                                                                                                                   |
-| 代价,一是带来了持续的IO，二是AOF rewrite的最后将rewrite过程中产生的新数据写到新文件造成的阻塞几乎是不可避免的。   |
-|                                                                                                                   |
-| 只要硬盘许可，应该尽量减少AOF rewrite的频率，AOF重写的基础大小默认值64M太小了，可以设到5G以上。                   |
-|                                                                                                                   |
-| 默认超过原大小100%大小时重写可以改到适当的数值。                                                                  |
-+-------------------------------------------------------------------------------------------------------------------+
+因为RDB文件只用作后备用途，建议只在Slave上持久化RDB文件，而且只要15分钟备份一次就够了，只保留save 900 1这条规则。
 
-14. **Redis\_主从复制**
+ 
 
-    1.  **是什么**
+如果使用AOF，好处是在最恶劣情况下也只会丢失不超过两秒数据，启动脚本较简单只load自己的AOF文件就可以了。
+
+代价,一是带来了持续的IO，二是AOF rewrite的最后将rewrite过程中产生的新数据写到新文件造成的阻塞几乎是不可避免的。
+
+只要硬盘许可，应该尽量减少AOF rewrite的频率，AOF重写的基础大小默认值64M太小了，可以设到5G以上。
+
+默认超过原大小100%大小时重写可以改到适当的数值。
+
+# Redis_主从复制
+
+## 是什么
 
 主机数据更新后根据配置和策略， 自动同步到备机的master/slaver机制，**Master以写为主，Slave以读为主**
 
-2.  **能干嘛**
+## 能干嘛
 
 -   读写分离，性能扩展
 
--   容灾快速恢复
+-   容灾快速恢复【一主多从】
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps113.jpg](media/image138.jpeg){width="3.375in" height="2.1458333333333335in"}
+![image-20210529235534406](Redis.assets/image-20210529235534406.png)
 
-1.  **怎么玩：主从复制**
+## 怎么玩：主从复制
 
 拷贝多个redis.conf文件include(写绝对路径)
 
-开启daemonize yes
+编辑redis.conf
+
+​	开启`daemonize yes`
+
+​	Appendonly 关掉或者换名字
+
+
+
+编辑主从的配置文件【一主多从6379、6380、6381】
 
 Pid文件名字pidfile
 
@@ -2316,212 +2868,277 @@ Log文件名字
 
 dump.rdb名字dbfilename
 
-Appendonly 关掉或者换名字
+![image-20210530003139706](Redis.assets/image-20210530003139706.png)
 
-1.  **新建redis6379.conf，填写以下内容**
+### 新建redis6379.conf，填写以下内容
 
+```
 include /myredis/redis.conf
-
-pidfile /var/run/redis\_6379.pid
-
+pidfile /var/run/redis_6379.pid
 port 6379
-
 dbfilename dump6379.rdb
+```
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps114.jpg](media/image139.jpeg){width="2.7604166666666665in" height="0.7291666666666666in"}
+![image-20210529235834059](Redis.assets/image-20210529235834059.png)
 
-2.  **新建redis6380.conf，填写以下内容**
+### 新建redis6380.conf，填写以下内容
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps115.jpg](media/image140.jpeg){width="2.84375in" height="0.7916666666666666in"}
+![image-20210530000318446](Redis.assets/image-20210530000318446.png)
 
-3.  **新建redis6381.conf，填写以下内容**
+### 新建redis6381.conf，填写以下内容
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps116.jpg](media/image141.jpeg){width="2.8125in" height="0.8229166666666666in"}
+![image-20210530000326352](Redis.assets/image-20210530000326352.png)
 
-slave-priority 10
+`slave-priority 10`
 
 设置从机的优先级，值越小，优先级越高，用于选举主机时使用。默认100
 
-4.  **启动三台redis服务器**
+### 启动三台redis服务器
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps117.jpg](media/image142.jpeg){width="4.458333333333333in" height="0.7083333333333334in"}
+![image-20210530000559846](Redis.assets/image-20210530000559846.png)
 
-5.  **查看系统进程，看看三台服务器是否启动**
+### 查看系统进程，看看三台服务器是否启动
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps118.jpg](media/image143.jpeg){width="5.788888888888889in" height="1.0048611111111112in"}
+![image-20210530000610266](Redis.assets/image-20210530000610266.png)
 
-6.  **查看三台主机运行情况**
+### 查看三台主机运行情况
 
-info replication
+
+
+`info replication`
 
 打印主从复制的相关信息
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps119.jpg](media/image144.jpeg){width="5.788888888888889in" height="1.7020833333333334in"}
+![image-20210530000623920](Redis.assets/image-20210530000623920.png)
 
-7.  **配从(库)不配主(库)**
+> `redis-cli -p 6379`
 
-slaveof \<ip\>\<port\>
+### 配从(库)不配主(库)
+
+`slaveof <ip><port>`
 
 成为某个实例的从服务器
 
-1、在6380和6381上执行: slaveof 127.0.0.1 6379
+1、在6380和6381上执行: `slaveof 127.0.0.1 6379`
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps120.jpg](media/image145.jpeg){width="5.788888888888889in" height="1.8090277777777777in"}
+![image-20210530004127146](Redis.assets/image-20210530004127146.png)
 
 2、在主机上写，在从机上可以读取数据
 
 在从机上写数据报错
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps121.jpg](media/image146.jpeg){width="5.34375in" height="0.3958333333333333in"}
+![image-20210530004145480](Redis.assets/image-20210530004145480.png)
 
 3、主机挂掉，重启就行，一切如初
 
-4、从机重启需重设：slaveof 127.0.0.1 6379
+4、从机重启需重设：`slaveof 127.0.0.1 6379`
 
 可以将配置增加到文件中。永久生效。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps122.jpg](media/image147.jpeg){width="5.716666666666667in" height="2.6354166666666665in"}
+![image-20210530004251034](Redis.assets/image-20210530004251034.png)
 
-2.  **常用3招**
+## 常用3招
 
-    1.  **一主二仆**
+### 一主二仆
 
-切入点问题？slave1、slave2是从头开始复制还是从切入点开始复制?比如从k4进来，那之前的k1,k2,k3是否也可以复制？
+切入点问题？slave1、slave2是从头开始复制还是从切入点开始复制?比如从k4进来，那之前的k1,k2,k3是否也可以复制？【可以，从机与主机数据保持一致】
 
-从机是否可以写？set可否？
+从机是否可以写？set可否？【不能】
 
-主机shutdown后情况如何？从机是上位还是原地待命？
+主机shutdown后情况如何？从机是上位还是原地待命？【原地待命，主机重启后仍是主服务器】
 
-主机又回来了后，主机新增记录，从机还能否顺利复制？
+主机又回来了后，主机新增记录，从机还能否顺利复制？【能】
 
-其中一台从机down后情况如何？依照原有它能跟上大部队吗？
+其中一台从机down后情况如何？依照原有它能跟上大部队吗？【能】
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps123.jpg](media/image148.jpeg){width="2.9583333333333335in" height="1.1354166666666667in"}
+![image-20210530004433126](Redis.assets/image-20210530004433126.png)
 
-2.  **薪火相传**
+### 薪火相传
 
 上一个Slave可以是下一个slave的Master，Slave同样可以接收其他 slaves的连接和同步请求，那么该slave作为了链条中下一个的master, 可以有效减轻master的写压力,去中心化降低风险。
 
-用 slaveof \<ip\>\<port\>
+用 `slaveof <ip><port>`
 
-中途变更转向:会清除之前的数据，重新建立拷贝最新的
+**中途变更转向:会清除之前的数据，重新建立拷贝最新的**
 
-风险是一旦某个slave宕机，后面的slave都没法备份
+**风险是一旦某个slave宕机，后面的slave都没法备份**
 
-主机挂了，从机还是从机，无法写数据了
+**主机挂了，从机还是从机，无法写数据了**
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps125.jpg](media/image149.jpeg){width="4.239583333333333in" height="0.9270833333333334in"}
+![image-20210530004454266](Redis.assets/image-20210530004454266.png)
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps126.jpg](media/image150.jpeg){width="5.788888888888889in" height="1.4166666666666667in"}
+![image-20210530004502274](Redis.assets/image-20210530004502274.png)
 
-3.  **反客为主**
+### 反客为主
 
 当一个master宕机后，后面的slave可以立刻升为master，其后面的slave不用做任何修改。
 
-用 slaveof no one 将从机变为主机。
+用 `slaveof no one` 将从机变为主机。【需要手动在从服务器下发命令】
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps127.jpg](media/image151.jpeg){width="5.788888888888889in" height="1.3625in"}
+![image-20210530004610298](Redis.assets/image-20210530004610298.png)
 
-3.  **复制原理**
+## 复制原理
 
 -   Slave启动成功连接到master后会发送一个sync命令
 
 -   Master接到命令启动后台的存盘进程，同时收集所有接收到的用于修改数据集命令， 在后台进程执行完毕之后，master将传送整个数据文件到slave,以完成一次完全同步
 
--   全量复制：而slave服务在接收到数据库文件数据后，将其存盘并加载到内存中。
+-   **全量复制**：而slave服务在接收到数据库文件数据后，将其存盘并加载到内存中。
 
--   增量复制：Master继续将新的所有收集到的修改命令依次传给slave,完成同步
+-   **增量复制**：Master继续将新的所有收集到的修改命令依次传给slave,完成同步
 
--   但是只要是重新连接master,一次完全同步（全量复制)将被自动执行
+-   但是**只要是重新连接master,一次完全同步（全量复制)将被自动执行**
 
-> ![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps124.jpg](media/image152.jpeg){width="4.135416666666667in" height="1.6354166666666667in"}
+![image-20210530005554722](Redis.assets/image-20210530005554722.png)
 
-1.  **哨兵模式(sentinel)**
+## 哨兵模式(sentinel)
 
-    1.  **是什么**
+### 是什么
 
 **反客为主的自动版**，能够后台监控主机是否故障，如果故障了根据投票数自动将从库转换为主库
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps128.jpg](media/image153.jpeg){width="3.1770833333333335in" height="2.0833333333333335in"}
+![image-20210530010844028](Redis.assets/image-20210530010844028.png)
 
-2.  **怎么玩(使用步骤)**
+### 怎么玩(使用步骤)
 
-    1.  **调整为一主二仆模式，6379带着6380、6381**
+#### 调整为一主二仆模式，6379带着6380、6381
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps129.jpg](media/image154.jpeg){width="5.788888888888889in" height="1.8069444444444445in"}
+![image-20210530010919391](Redis.assets/image-20210530010919391.png)
 
-2.  **自定义的/myredis目录下新建sentinel.conf文件，名字绝不能错**
+#### 自定义的/myredis目录下新建`sentinel.conf`文件，**名字绝不能错**
 
-3.  **配置哨兵,填写内容**
+#### 配置哨兵,填写内容
 
-sentinel monitor mymaster 127.0.0.1 6379 1
+`sentinel monitor mymaster 127.0.0.1 6379 1`
 
-其中mymaster为监控对象起的服务器名称， 1 为至少有多少个哨兵同意迁移的数量。
+> 其中mymaster为监控对象起的服务器名称， 1 为至少有多少个哨兵同意迁移的数量。
+>
 
-4.  **启动哨兵**
+#### 启动哨兵
 
-/usr/local/bin
+`cd /usr/local/bin`
 
-redis做压测可以用自带的redis-benchmark工具
+redis做压测可以用自带的*redis-benchmark*工具
 
-执行redis-sentinel /myredis/sentinel.conf
+执行`redis-sentinel /myredis/sentinel.conf`
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps130.jpg](media/image155.jpeg){width="5.788888888888889in" height="5.195833333333334in"}
+![image-20210530011103548](Redis.assets/image-20210530011103548.png)
 
-5.  **当主机挂掉，从机选举中产生新的主机**
+#### 当主机挂掉，从机选举中产生新的主机
 
 (大概10秒左右可以看到哨兵窗口日志，切换了新的主机)
 
-哪个从机会被选举为主机呢？根据优先级别：slave-priority
+哪个从机会被选举为主机呢？根据优先级别：`slave-priority`
 
-原主机重启后会变为从机。
+**原主机重启后会变为从机。**
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps131.jpg](media/image156.jpeg){width="5.770138888888889in" height="4.96875in"}
+```sh
+# 启动哨兵
+[root@localhost myredis]$ redis-sentinel /myredis/sentinel.conf
+4645:X 30 May 2021 01:20:11.605 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+4645:X 30 May 2021 01:20:11.605 # Redis version=6.2.1, bits=64, commit=00000000, modified=0, pid=4645, just started
+4645:X 30 May 2021 01:20:11.605 # Configuration loaded
+4645:X 30 May 2021 01:20:11.606 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+4645:X 30 May 2021 01:20:11.606 * monotonic clock: POSIX clock_gettime
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 6.2.1 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in sentinel mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 26379  # 哨兵的端口
+ |    `-._   `._    /     _.-'    |     PID: 4645
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
 
-6.  **复制延时**
+4645:X 30 May 2021 01:20:11.606 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+4645:X 30 May 2021 01:20:11.608 # Sentinel ID is bac44043d72bd892501072ab1d33f85d642f98f9
+
+# ------------配置6379 master  6380、6381为leave------------
+4645:X 30 May 2021 01:20:11.608 # +monitor master mymaster 127.0.0.1 6379 quorum 1
+4645:X 30 May 2021 01:20:11.608 * +slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:20:11.609 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+
+# ------------master主机宕机后，重启后变为从机leave------------
+4645:X 30 May 2021 01:21:09.049 # +sdown master mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.049 # +odown master mymaster 127.0.0.1 6379 #quorum 1/1
+4645:X 30 May 2021 01:21:09.049 # +new-epoch 1
+4645:X 30 May 2021 01:21:09.049 # +try-failover master mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.050 # +vote-for-leader bac44043d72bd892501072ab1d33f85d642f98f9 1
+4645:X 30 May 2021 01:21:09.050 # +elected-leader master mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.050 # +failover-state-select-slave master mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.118 # +selected-slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.118 * +failover-state-send-slaveof-noone slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.176 * +failover-state-wait-promotion slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.910 # +promoted-slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.910 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:09.968 * +slave-reconf-sent slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:10.961 * +slave-reconf-inprog slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:10.961 * +slave-reconf-done slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:11.051 # +failover-end master mymaster 127.0.0.1 6379
+4645:X 30 May 2021 01:21:11.051 # +switch-master mymaster 127.0.0.1 6379 127.0.0.1 6380
+4645:X 30 May 2021 01:21:11.051 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6380
+4645:X 30 May 2021 01:21:11.051 * +slave slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+4645:X 30 May 2021 01:21:41.107 # +sdown slave 127.0.0.1:6379 127.0.0.1 6379 @ mymaster 127.0.0.1 6380
+```
+
+#### 复制延时
 
 由于所有的写操作都是先在Master上操作，然后同步更新到Slave上，所以从Master同步到Slave机器有一定的延迟，当系统很繁忙的时候，延迟问题会更加严重，Slave机器数量的增加也会使这个问题更加严重。
 
-3.  **故障恢复**
+### 故障恢复
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps132.jpg](media/image157.jpeg){width="5.760416666666667in" height="3.1354166666666665in"}
+![image-20210530011154355](Redis.assets/image-20210530011154355.png)
 
-优先级在redis.conf中默认：slave-priority 100，值越小优先级越高
+优先级在redis.conf中默认：`slave-priority 100`，值**越小**优先级越**高**
 
 偏移量是指获得原主机数据最全的
 
 每个redis实例启动后都会随机生成一个40位的runid
 
-4.  **主从复制**
+> redis6.0中配置名称`replica-priority 100`
 
-----------------------------------------------------------------------------------------------
-  **private static** JedisSentinelPool *jedisSentinelPool*=**null**;\
-  \
-  **public static** Jedis getJedisFromSentinel(){\
-  **if**(*jedisSentinelPool*==**null**){\
-  Set\<String\> sentinelSet=**new** HashSet\<\>();\
-  sentinelSet.add(**\"192.168.11.103:26379\"**);\
-  \
-  JedisPoolConfig jedisPoolConfig =**new** JedisPoolConfig();\
-  jedisPoolConfig.setMaxTotal(10); *//最大可用连接数\
-  *jedisPoolConfig.setMaxIdle(5); *//最大闲置连接数\
-  *jedisPoolConfig.setMinIdle(5); *//最小闲置连接数\
-  *jedisPoolConfig.setBlockWhenExhausted(**true**); *//连接耗尽是否等待\
-  *jedisPoolConfig.setMaxWaitMillis(2000); *//等待时间\
-  *jedisPoolConfig.setTestOnBorrow(**true**); *//取连接的时候进行一下测试 ping pong\
-  \
-  jedisSentinelPool*=**new** JedisSentinelPool(**\"mymaster\"**,sentinelSet,jedisPoolConfig);\
-  **return** *jedisSentinelPool*.getResource();\
-  }**else**{\
-  **return** *jedisSentinelPool*.getResource();\
-  }\
-  }
+### 主从复制
 
-----------------------------------------------------------------------------------------------
+```java
+// 选择哨兵类型连接池
+private static JedisSentinelPool jedisSentinelPool=null;
 
-15. **Redis集群**
+public static  Jedis getJedisFromSentinel(){
+if(jedisSentinelPool==null){
+            Set<String> sentinelSet=new HashSet<>();
+            sentinelSet.add("192.168.11.103:26379");//26379是哨兵启动的默认端口
 
-    1.  **问题**
+            JedisPoolConfig jedisPoolConfig =new JedisPoolConfig();
+            jedisPoolConfig.setMaxTotal(10); //最大可用连接数
+jedisPoolConfig.setMaxIdle(5); //最大闲置连接数
+jedisPoolConfig.setMinIdle(5); //最小闲置连接数
+jedisPoolConfig.setBlockWhenExhausted(true); //连接耗尽是否等待
+jedisPoolConfig.setMaxWaitMillis(2000); //等待时间
+jedisPoolConfig.setTestOnBorrow(true); //取连接的时候进行一下测试 ping pong
+
+jedisSentinelPool=new JedisSentinelPool("mymaster",sentinelSet,jedisPoolConfig);//哨兵中配置的服务器名称
+return jedisSentinelPool.getResource();
+        }else{
+return jedisSentinelPool.getResource();
+        }
+}
+```
+
+
+
+
+
+# Redis集群
+
+## 问题
 
 容量不够，redis如何进行扩容？
 
@@ -2529,21 +3146,21 @@ redis做压测可以用自带的redis-benchmark工具
 
 另外，主从模式，薪火相传模式，主机宕机，导致ip地址发生变化，应用程序中配置需要修改对应的主机地址、端口等信息。
 
-之前通过代理主机来解决，但是redis3.0中提供了解决方案。就是无中心化集群配置。
+之前通过代理主机来解决，但是redis3.0中提供了解决方案。就**是无中心化集群**配置。
 
-2.  **什么是集群**
+## 什么是集群
 
 Redis 集群实现了对Redis的水平扩容，即启动N个redis节点，将整个数据库分布存储在这N个节点中，每个节点存储总数据的1/N。
 
 Redis 集群通过分区（partition）来提供一定程度的可用性（availability）： 即使集群中有一部分节点失效或者无法进行通讯， 集群也可以继续处理命令请求。
 
-3.  **删除持久化数据**
+## 删除持久化数据
 
 将rdb,aof文件都删除掉。
 
-4.  **制作6个实例，6379,6380,6381,6389,6390,6391**
+## 制作6个实例，6379,6380,6381,6389,6390,6391
 
-    1.  **配置基本信息**
+### 配置基本信息
 
 开启daemonize yes
 
@@ -2557,7 +3174,7 @@ Dump.rdb名字
 
 Appendonly 关掉或者换名字
 
-2.  **redis cluster配置修改**
+### redis cluster配置修改
 
 cluster-enabled yes 打开集群模式
 
@@ -2565,83 +3182,77 @@ cluster-config-file nodes-6379.conf 设定节点配置文件名
 
 cluster-node-timeout 15000 设定节点失联时间，超过该时间（毫秒），集群自动进行主从切换。
 
-+---------------------------------------------------------------+
-| include /home/bigdata/redis.conf                              |
-|                                                               |
-| port 6379                                                     |
-|                                                               |
-| pidfile \"/var/run/redis\_6379.pid\"                          |
-|                                                               |
-| dbfilename \"dump6379.rdb\"                                   |
-|                                                               |
-| dir \"/home/bigdata/redis\_cluster\"                          |
-|                                                               |
-| logfile \"/home/bigdata/redis\_cluster/redis\_err\_6379.log\" |
-|                                                               |
-| cluster-enabled yes                                           |
-|                                                               |
-| cluster-config-file nodes-6379.conf                           |
-|                                                               |
-| cluster-node-timeout 15000                                    |
-+---------------------------------------------------------------+
+```
+include /home/bigdata/redis.conf
+port 6379
+pidfile "/var/run/redis_6379.pid"
+dbfilename "dump6379.rdb"
+dir "/home/bigdata/redis_cluster"
+logfile "/home/bigdata/redis_cluster/redis_err_6379.log"
+cluster-enabled yes
+cluster-config-file nodes-6379.conf
+cluster-node-timeout 15000
+```
 
-3.  **修改好redis6379.conf文件，拷贝多个redis.conf文件**
+### 修改好redis6379.conf文件，拷贝多个redis.conf文件
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps136.jpg](media/image158.jpeg){width="1.5208333333333333in" height="1.2708333333333333in"}
+![image-20210530013955036](Redis.assets/image-20210530013955036.png)
 
-4.  **使用查找替换修改另外5个文件**
+### 使用查找替换修改另外5个文件
 
-例如：:%s/6379/6380
+例如：`:%s/6379/6380`
 
-5.  **启动6个redis服务**
+### 启动6个redis服务
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps137.jpg](media/image159.jpeg){width="5.75in" height="3.8930555555555557in"}
+![image-20210530014041064](Redis.assets/image-20210530014041064.png)
 
 5.  **将六个节点合成一个集群**
 
 组合之前，请确保所有redis实例启动后，nodes-xxxx.conf文件都生成正常。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps138.jpg](media/image160.jpeg){width="5.739583333333333in" height="3.3854166666666665in"}
+![image-20210530014129815](Redis.assets/image-20210530014129815.png)
 
 -   合体：
 
-cd /opt/redis-6.2.1/src
+`cd /opt/redis-6.2.1/src`
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  redis-cli \--cluster create \--cluster-replicas 1 192.168.11.101:6379 192.168.11.101:6380 192.168.11.101:6381 192.168.11.101:6389 192.168.11.101:6390 192.168.11.101:6391
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+```
+redis-cli --cluster create --cluster-replicas 1 192.168.11.101:6379 192.168.11.101:6380 192.168.11.101:6381 192.168.11.101:6389 192.168.11.101:6390 192.168.11.101:6391
+```
+
+
 
 此处不要用127.0.0.1， 请用真实IP地址
 
 \--replicas 1 采用最简单的方式配置集群，一台主机，一台从机，正好三组。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps139.jpg](media/image161.jpeg){width="5.788888888888889in" height="2.1625in"}
+![image-20210530014430376](Redis.assets/image-20210530014430376.png)
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps140.jpg](media/image162.jpeg){width="4.71875in" height="4.166666666666667in"}
+![image-20210530014439912](Redis.assets/image-20210530014439912.png)
 
 -   普通方式登录
 
 可能直接进入读主机，存储数据时，会出现MOVED重定向操作。所以，应该以集群方式登录。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps141.jpg](media/image163.jpeg){width="3.6666666666666665in" height="1.0in"}
+![image-20210530014449917](Redis.assets/image-20210530014449917.png)
 
-1.  **-c 采用集群策略连接，设置数据会自动切换到相应的写主机**
+## -c 采用集群策略连接，设置数据会自动切换到相应的写主机
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps142.jpg](media/image164.jpeg){width="5.677083333333333in" height="1.4166666666666667in"}
+![image-20210530014508397](Redis.assets/image-20210530014508397.png)
 
-2.  **通过 cluster nodes 命令查看集群信息**
+## 通过 cluster nodes 命令查看集群信息
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps143.jpg](media/image165.jpeg){width="5.71875in" height="0.6465277777777778in"}
+![image-20210530014525924](Redis.assets/image-20210530014525924.png)
 
-3.  **redis cluster 如何分配这六个节点?**
+## redis cluster 如何分配这六个节点?
 
-一个集群至少要有三个主节点。
+一个集群至少要有**三个主节点。**
 
 选项 \--cluster-replicas 1 表示我们希望为集群中的每个主节点创建一个从节点。
 
 分配原则尽量保证每个主数据库运行在不同的IP地址，每个从库和主库不在一个IP地址上。
 
-4.  **什么是slots**
+## 什么是slots
 
 **\[OK\] All nodes agree about slots configuration.**
 
@@ -2653,7 +3264,7 @@ cd /opt/redis-6.2.1/src
 
 一个 Redis 集群包含 16384 个插槽（hash slot）， 数据库中的每个键都属于这 16384 个插槽的其中一个，
 
-集群使用公式 CRC16(key) % 16384 来计算键 key 属于哪个槽， 其中 CRC16(key) 语句用于计算键 key 的 CRC16 校验和 。
+集群使用公式 *CRC16(key) % 16384* 来计算键 key 属于哪个槽， 其中 CRC16(key) 语句用于计算键 key 的 CRC16 校验和 。
 
 集群中的每个节点负责处理一部分插槽。 举个例子， 如果一个集群可以有主节点， 其中：
 
@@ -2663,7 +3274,7 @@ cd /opt/redis-6.2.1/src
 
 节点 C 负责处理 10923 号至 16383 号插槽。
 
-5.  **在集群中录入值**
+## 在集群中录入值
 
 在redis-cli每次录入、查询键值，redis都会计算出该key应该送往的插槽，如果不是该客户端对应服务器的插槽，redis会报错，并告知应前往的redis实例地址和端口。
 
@@ -2673,27 +3284,27 @@ redis-cli客户端提供了 --c 参数实现自动重定向。
 
 不在一个slot下的键值，是不能使用mget,mset等多键操作。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps144.jpg](media/image166.jpeg){width="4.96875in" height="0.3958333333333333in"}
+![image-20210530014647876](Redis.assets/image-20210530014647876.png)
 
 可以通过{}来定义组的概念，从而使key中{}内相同内容的键值对放到一个slot中去。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps145.jpg](media/image167.jpeg){width="4.96875in" height="0.53125in"}
+![image-20210530014655542](Redis.assets/image-20210530014655542.png)
 
-6.  **查询集群中的值**
+## 查询集群中的值
 
 CLUSTER GETKEYSINSLOT \<slot\>\<count\> 返回 count 个 slot 槽中的键。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps146.jpg](media/image168.jpeg){width="4.770833333333333in" height="1.65625in"}
+![image-20210530014708345](Redis.assets/image-20210530014708345.png)
 
-7.  **故障恢复**
+## 故障恢复
 
 如果主节点下线？从节点能否自动升为主节点？注意：**15秒超时**
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps147.jpg](media/image169.jpeg){width="5.788888888888889in" height="0.6520833333333333in"}
+![image-20210530014726967](Redis.assets/image-20210530014726967.png)
 
 主节点恢复后，主从关系会如何？主节点回来变成从机。
 
-![C:\\Users\\Administrator\\AppData\\Local\\Temp\\ksohtml17908\\wps148.jpg](media/image170.jpeg){width="5.788888888888889in" height="0.6534722222222222in"}
+![image-20210530014734651](Redis.assets/image-20210530014734651.png)
 
 如果所有某一段插槽的主从节点都宕掉，redis服务是否还能继续?
 
@@ -2703,33 +3314,27 @@ CLUSTER GETKEYSINSLOT \<slot\>\<count\> 返回 count 个 slot 槽中的键。
 
 redis.conf中的参数 cluster-require-full-coverage
 
-8.  **集群的Jedis开发**
+## 集群的Jedis开发
 
 即使连接的不是主机，集群会自动切换主机存储。主机写，从机读。
 
 无中心化主从集群。无论从哪台主机写的数据，其他主机上都能读到数据。
 
-+------------------------------------------------------+
-| public class JedisClusterTest {                      |
-|                                                      |
-| public static void main(String\[\] args) {           |
-|                                                      |
-| Set\<HostAndPort\>set =new HashSet\<HostAndPort\>(); |
-|                                                      |
-| set.add(new HostAndPort(\"192.168.31.211\",6379));   |
-|                                                      |
-| JedisCluster jedisCluster=new JedisCluster(set);     |
-|                                                      |
-| jedisCluster.set(\"k1\", \"v1\");                    |
-|                                                      |
-| System.*out.println(jedisCluster.get(\"k1\"));*      |
-|                                                      |
-| }                                                    |
-|                                                      |
-| }                                                    |
-+------------------------------------------------------+
+```java
+public class JedisClusterTest {
+  public static void main(String[] args) { 
+     Set<HostAndPort>set =new HashSet<HostAndPort>();
+     set.add(new HostAndPort("192.168.31.211",6379));
+     JedisCluster jedisCluster=new JedisCluster(set);
+     jedisCluster.set("k1", "v1");
+     System.out.println(jedisCluster.get("k1"));
+  }
+}
+```
 
-9.  **Redis 集群提供了以下好处**
+
+
+## Redis 集群提供了以下好处
 
 实现扩容
 
@@ -2737,7 +3342,7 @@ redis.conf中的参数 cluster-require-full-coverage
 
 无中心配置相对简单
 
-10. **Redis 集群的不足**
+## Redis 集群的不足
 
 多键操作是不被支持的
 
@@ -2745,17 +3350,17 @@ redis.conf中的参数 cluster-require-full-coverage
 
 由于集群方案出现较晚，很多公司已经采用了其他的集群方案，而代理或者客户端分片的方案想要迁移至redis cluster，需要整体迁移而不是逐步过渡，复杂度较大。
 
-16. **Redis应用问题解决**
+# Redis应用问题解决
 
-    1.  **缓存穿透**
+## 缓存穿透
 
-        1.  **问题描述**
+### 问题描述
 
 key对应的数据在数据源并不存在，每次针对此key的请求从缓存获取不到，请求都会压到数据源，从而可能压垮数据源。比如用一个不存在的用户id获取用户信息，不论缓存还是数据库都没有，若黑客利用此漏洞进行攻击可能压垮数据库。
 
-![](media/image171.png){width="5.768055555555556in" height="2.8027777777777776in"}
+![image-20210530014855048](Redis.assets/image-20210530014855048.png)
 
-2.  **解决方案**
+### 解决方案
 
 一个一定不存在缓存及查询不到的数据，由于缓存是不命中时被动写的，并且出于容错考虑，如果从存储层查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到存储层去查询，失去了缓存的意义。
 
@@ -2773,17 +3378,17 @@ key对应的数据在数据源并不存在，每次针对此key的请求从缓�
 >
 > 将所有可能存在的数据哈希到一个足够大的bitmaps中，一个一定不存在的数据会被 这个bitmaps拦截掉，从而避免了对底层存储系统的查询压力。
 
-4.  **进行实时监控：**当发现Redis的命中率开始急速降低，需要排查访问对象和访问的数据，和运维人员配合，可以设置黑名单限制服务
+4. **进行实时监控：**当发现Redis的命中率开始急速降低，需要排查访问对象和访问的数据，和运维人员配合，可以设置黑名单限制服务
 
-    1.  **缓存击穿**
+   ## 缓存击穿
 
-        1.  **问题描述**
+### 问题描述
 
 key对应的数据存在，但在redis中过期，此时若有大量并发请求过来，这些请求发现缓存过期一般都会从后端DB加载数据并回设到缓存，这个时候大并发的请求可能会瞬间把后端DB压垮。
 
-![](media/image172.png){width="5.768055555555556in" height="2.736111111111111in"}
+![image-20210530015004484](Redis.assets/image-20210530015004484.png)
 
-2.  **解决方案**
+2.  ### **解决方案**
 
 key可能会在某些时间点被超高并发地访问，是一种非常"热点"的数据。这个时候，需要考虑一个问题：缓存被"击穿"的问题。
 
@@ -2803,11 +3408,11 @@ key可能会在某些时间点被超高并发地访问，是一种非常"热点"
 
 4.  当操作返回失败，证明有线程在load db，当前线程睡眠一段时间再重试整个get缓存的方法。
 
-![](media/image173.png){width="4.666666666666667in" height="4.28125in"}
+![image-20210530015018342](Redis.assets/image-20210530015018342.png)
 
-1.  **缓存雪崩**
+## 缓存雪崩
 
-    1.  **问题描述**
+### 问题描述
 
 key对应的数据存在，但在redis中过期，此时若有大量并发请求过来，这些请求发现缓存过期一般都会从后端DB加载数据并回设到缓存，这个时候大并发的请求可能会瞬间把后端DB压垮。
 
@@ -2815,13 +3420,13 @@ key对应的数据存在，但在redis中过期，此时若有大量并发请求
 
 正常访问
 
-![](media/image174.png){width="5.768055555555556in" height="3.379861111111111in"}
+![image-20210530015036301](Redis.assets/image-20210530015036301.png)
 
 缓存失效瞬间
 
-![](media/image175.png){width="5.768055555555556in" height="3.3027777777777776in"}
+![image-20210530015044032](Redis.assets/image-20210530015044032.png)
 
-2.  **解决方案**
+### 解决方案
 
 缓存失效时的雪崩效应对底层系统的冲击非常可怕！
 
@@ -2841,9 +3446,9 @@ key对应的数据存在，但在redis中过期，此时若有大量并发请求
 
 > 比如我们可以在原有的失效时间基础上增加一个随机值，比如1-5分钟随机，这样每一个缓存的过期时间的重复率就会降低，就很难引发集体失效的事件。
 
-1.  **分布式锁**
+## 分布式锁
 
-    1.  **问题描述**
+### 问题描述
 
 随着业务发展的需要，原单体单机部署的系统被演化成分布式集群系统后，由于分布式系统多线程、多进程并且分布在不同机器上，这将使原单机部署情况下的并发控制锁策略失效，单纯的Java API并不能提供分布式锁的能力。为了解决这个问题就需要一种跨JVM的互斥机制来控制共享资源的访问，这就是分布式锁要解决的问题！
 
@@ -2863,7 +3468,7 @@ key对应的数据存在，但在redis中过期，此时若有大量并发请求
 
 这里，我们就基于redis实现分布式锁。
 
-2.  **解决方案：使用redis实现分布式锁**
+### 解决方案：使用redis实现分布式锁
 
 redis:命令
 
@@ -2877,7 +3482,7 @@ NX ：只在键不存在时，才对键进行设置操作。 SET key value NX �
 
 XX ：只在键已经存在时，才对键进行设置操作。
 
-![1568170959121](media/image176.png){width="5.375in" height="4.302083333333333in"}
+![image-20210530015142593](Redis.assets/image-20210530015142593.png)
 
 1\. 多个客户端同时获取锁（setnx）
 
