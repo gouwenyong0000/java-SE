@@ -6200,7 +6200,7 @@ public class InputStreamReaderTest {
 
 ## 处理流之三：标准输入、输出流
 
-![image-20210418165944863](../image-20210418165944863.png)
+![image-20210418165944863](javaSE高级.assets/image-20210418165944863.png)
 
 ```java
     /*
