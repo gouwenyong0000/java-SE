@@ -7264,6 +7264,8 @@ public class TCPTest3 {
 
 ![image-20210418235315028](javaSE高级.assets/image-20210418235315028.png)
 
+![image-20210615230217113](javaSE高级.assets/image-20210615230217113.png)
+
 ![image-20210418235325496](javaSE高级.assets/image-20210418235325496.png)
 
 ![image-20210419000022890](javaSE高级.assets/image-20210419000022890.png)
@@ -7273,56 +7275,77 @@ public class TCPTest3 {
 
 
 ```java
-package com.atguigu.java1;
-
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
 /**
- * UDPd协议的网络编程
+ * UDP协议的网络编程
  */
 public class UDPTest {
 
     //发送端
     @Test
     public void sender() throws IOException {
+        //1.创建DatagramSocket对象，准备在9998端口接收数据
+        DatagramSocket socket = new DatagramSocket(9998);
 
-        DatagramSocket socket = new DatagramSocket();
-        
+        //2，将需要发送的数据，封装到DatagramPacket对象,发送到localhost:9999
         String str = "我是UDP方式发送的导弹";
         byte[] data = str.getBytes();
-        InetAddress inet = InetAddress.getLocalHost();
-        DatagramPacket packet = new DatagramPacket(data,0,data.length,inet,9090);
+        InetAddress inet = InetAddress.getByName("127.0.0.1");
+        //说明：封装的DatagramPacket对象:  data内容字节数组，data.Length，主机（IP），端口
+        DatagramPacket packet = new DatagramPacket(data, 0, data.length, inet,9999);
 
+        //发送
         socket.send(packet);
 
+        //接收返回消息==>
+        byte[] bytes = new byte[100];
+        DatagramPacket datagramPacket = new DatagramPacket(bytes, 100);
+        socket.receive(datagramPacket);
+        System.out.println(new String(datagramPacket.getData(),0,datagramPacket.getLength()));
+
+        //关闭资源
         socket.close();
 
     }
+
     //接收端
     @Test
     public void receiver() throws IOException {
+        //1.创建一个DatagramSocket对象，准备在9090接收数据
+        DatagramSocket socket = new DatagramSocket(9999);
 
-        DatagramSocket socket = new DatagramSocket(9090);
+        //2.构建一个DatagramPacket对象，准备接收数据
+        //在前面讲解UDP协议时，老师说过一个数据包最大64k
+        byte[] buffer = new byte[1204 * 64];
+        DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length);
 
-        byte[] buffer = new byte[100];
-        DatagramPacket packet = new DatagramPacket(buffer,0,buffer.length);
-
+        //3.调用接收方法，将通过网络传输的DatagramPacket对象填充到packet对象
+        /* 提示：当有数据包发送到本机的9999端口时，就会接收到数据
+                如果没有数据包发送到本机的9999端口，就会阻塞等待 */
+        System.out.println("接收端等待接收数据...");
         socket.receive(packet);
 
-        System.out.println(new String(packet.getData(),0,packet.getLength()));
+        //4.可以把packet进行拆包，取出数据，并显示.
+        int length = packet.getLength();//实际接收到的数据字节长度
+        byte[] data = packet.getData();//接收到数据
+        System.out.println(new String(data, 0, length));
 
+        // 回复消息==>
+        byte[] bytes = "收到信息".getBytes(StandardCharsets.UTF_8);
+        DatagramPacket datagramPacket = new DatagramPacket(bytes, 0, bytes.length, InetAddress.getByName("127.0.0.1"), 9998);
+        socket.send(datagramPacket);
+
+        //关闭资源
         socket.close();
     }
 }
-
 ```
-
-
 
 ## URL编程
 
@@ -7452,6 +7475,36 @@ public class URLTest1 {
 ## 小结
 
 ![image-20210419001449995](javaSE高级.assets/image-20210419001449995.png)
+
+
+
+## 补充：`netstat`
+
+`netstat`指令
+1、`netstat -an`可以查看当前主机网络情况，包括端口监听情况和网络连接情况
+2、`netstat -an | more`可以分页显示3，要求在dos控制台下执行win+r说明：
+（1）Listening表示某个端口在监听
+（2）如果有一个外部程序（客户端）连接到该端口，就会显示一条连接信息.
+（3）可以输入ctrl +c退出指令
+
+![image-20210615224856410](javaSE高级.assets/image-20210615224856410.png)
+
+![image-20210615224957643](javaSE高级.assets/image-20210615224957643.png)
+
+
+
+> **TCP网络通讯不为人知的秘密**
+> 当客户端连接到服务端后，实际上客户端也是通过一个端口和服务端进行通讯的，这个端口是TCP/IP来分配的，是不确定的，是随机的.。
+
+# 多用户通讯系统
+
+
+
+
+
+
+
+
 
 # 反射（Java Reflection）
 
