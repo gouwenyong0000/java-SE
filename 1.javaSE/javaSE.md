@@ -4684,6 +4684,81 @@ public class RecursionTest {
 }
 ```
 
+#### **八皇后**
+
+```java
+/**
+ * <pre>
+ *在8×8格的国际象棋上摆放八个皇后，使其不能互相攻击，即任意两个皇后都不能处于同一行、同一列或同一斜线上，问有多少种摆法
+ * 思路：
+ * 第一个皇后先放第一行第一列，
+ * 然后第二个皇后放在第二行第一列、然后判断是否OK，
+ * 然后第二列、第三列、依次把所有列都放完，找到一个合适，
+ * 继续第三个皇后，还是第一列、第二列……直到第8个皇后也能放在一个不冲突的位置，
+ * 算是找到了一个正确解。然后回头继续第一个皇后放第二列，后面继续循环
+ * </pre>
+ */
+public class EightQueen {
+
+    //一维数组表示棋盘，下标表示行数，每个位置对应的值表示列数
+    static int[] pos = new int[8];
+    static int count = 0;
+
+    public static void queen(int row) {
+        //如果row==8.表示递归终止
+        if (row == 8) {
+            print();//打印展示
+            count++;
+        } else {
+            //每一行有8个位置
+            for (int col = 0; col < 8; col++) {
+                //模拟当前行的的当前列
+                pos[row] = col;
+
+                //校验之前行  P  row col
+                int oldRow = 0;
+                for (; oldRow < row; oldRow++) {
+                    //校验不在同一列，斜线校验：两点横坐标差等于纵坐标差及在一条斜线上
+                    if (pos[row] == pos[oldRow] || Math.abs(row - oldRow) == Math.abs(pos[row] - pos[oldRow])) {
+                        break;
+                    }
+                }
+                //如果不是break退出，即row=oldRow,在row的col列校验通过
+                if (row == oldRow) {
+
+                    queen(row + 1);
+                }
+                //进行下一个col校验
+            }
+        }
+    }
+
+    private static void print() {
+        String[][] strings = new String[8][8];
+        for (int i = 0; i < strings.length; i++) {
+            for (int j = 0; j < strings[i].length; j++) {
+               if ( pos[i]==j){
+                   strings[i][j]="1";
+               }else {
+                   strings[i][j]=" ";
+               }
+            }
+            System.out.println(Arrays.toString(strings[i]));
+        }
+        System.out.println(Arrays.toString(pos));
+        System.out.println("====================================================================");
+    }
+
+
+    public static void main(String[] args) {
+        queen(0);
+    }
+
+}
+```
+
+
+
 ## 7.5. 面向对象特征一：封装
 
 ### 7.5.1. 概念
