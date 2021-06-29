@@ -925,19 +925,8 @@ public ThreadPoolExecutor(int corePoolSize,
 ![](JUC 学习笔记【周阳】.assets/20200713162653977.png)  
 ![](https://img-blog.csdnimg.cn/20200713163241916.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
 ![](https://img-blog.csdnimg.cn/20200713162710862.png)  
-![](https://img-blog.csdnimg.cn/20200713163308363.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
-![](https://img-blog.csdnimg.cn/20200713163533994.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
-![](https://img-blog.csdnimg.cn/20200713163742524.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)
-
-19.Stream 流式计算
---------------
-
-![image-20210629210350587](JUC 学习笔记【周阳】.assets/image-20210629210350587.png)
-
-
 
 ```java
-
 //R apply(T t);函数型接口，一个参数，一个返回值
 Function<String,Integer> function = t ->{return t.length();};
 System.out.println(function.apply("abcd"));
@@ -955,8 +944,10 @@ consumer.accept("javaXXXX");
 //T get(); 供给型接口，无参数，有返回值
 Supplier<String> supplier =()->{return UUID.randomUUID().toString();};
 System.out.println(supplier.get());
- 
 ```
+
+19.Stream 流式计算 
+--------------
 
 ![image-20210629210649554](JUC 学习笔记【周阳】.assets/image-20210629210649554.png)
 
@@ -967,59 +958,72 @@ System.out.println(supplier.get());
 20.ForkJoinDemo
 ---------------
 
-![](https://img-blog.csdnimg.cn/20200715151928617.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)
+![](JUC 学习笔记【周阳】.assets/20200715151928617.png)
+
+![image-20210629224517556](JUC 学习笔记【周阳】.assets/image-20210629224517556.png)
 
 ```java
-package com.atguigu.juc2;
-
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
-class MyTask extends RecursiveTask<Integer> {
+/**
+ * 分支合并框架
+ * <p>
+ * 实现功能：将1-100拆分成 小任务
+ * 分割到开始和结束小于10就停止分割，进行计算
+ */
+public class ForkjoinDemo {
+    public static void main(String[] args) throws Exception {
 
-    private static final Integer ADJUST_VALUE = 10;
+        MyTask myTask = new MyTask(0, 1000000000);//创建递归任务
+        ForkJoinPool forkJoinPool = new ForkJoinPool();//创建线程池
+        ForkJoinTask<Integer> task = forkJoinPool.submit(myTask);//提交任务
+        System.out.println(task.get());//获取返回值
+
+        forkJoinPool.shutdown();//关闭池资源
+
+    }
+
+}
+
+/**
+ * RecursiveTask 递归任务
+ */
+class MyTask extends RecursiveTask<Integer> {
     private int begin;
     private int end;
-    private int result;
+    private final int stop = 10;
+    int result;
 
     public MyTask(int begin, int end) {
         this.begin = begin;
         this.end = end;
     }
 
+    /**
+     * 此任务执行的主要计算
+     *
+     * @return
+     */
     @Override
     protected Integer compute() {
-        if ((end - begin) <= ADJUST_VALUE) {
+
+
+        if ((end - begin) <= stop) {
             for (int i = begin; i <= end; i++) {
-                result = result + i;
+                result += i;
             }
         } else {
-            int middle = (end + begin) / 2;
-            MyTask task01 = new MyTask(begin, middle);
-            MyTask task02 = new MyTask(middle + 1, end);
-            task01.fork();
-            task02.fork();
-            result = task01.join() + task02.join();
+            int mid = (begin + end) / 2;//先乘除法，后加减法，此处括号必须有
+            MyTask myTask1 = new MyTask(begin, mid);
+            MyTask myTask2 = new MyTask(mid + 1, end);
+            myTask1.fork();
+            myTask2.fork();
+            result = myTask1.join() + myTask2.join();
         }
-        return result;
-    }
-}
 
-/**
- * 分支合并框架
- * ForkJoinPool
- * ForkJoinTask
- * RecursiveTask
- */
-public class ForkJoinDemo15 {
-    public static void main(String[] args) throws Exception {
-        MyTask myTask = new MyTask(0, 100);
-        ForkJoinPool threadPool = new ForkJoinPool();
-        ForkJoinTask<Integer> forkJoinTask = threadPool.submit(myTask);
-        System.out.println(forkJoinTask.get());
-        threadPool.shutdown();
+        return result;
     }
 }
 ```
@@ -1031,6 +1035,66 @@ public class ForkJoinDemo15 {
 
 ![](https://img-blog.csdnimg.cn/20200716143338563.png)  
 ![](https://img-blog.csdnimg.cn/20200716150852720.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
-![](https://img-blog.csdnimg.cn/20200716150622985.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
-![](https://img-blog.csdnimg.cn/20200716150646204.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)
 
+```java
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class CompletableFutureDemo {
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
+            System.out.println(Thread.currentThread().getName() + "没有返回值，update mysql ok");
+        });
+        completableFuture.get();
+
+
+        //异步回调
+        CompletableFuture<Integer> supplyAsync = CompletableFuture.supplyAsync(() -> {
+            System.out.println(Thread.currentThread().getName() + "有返回值，update mysql ok");
+            return 1024;
+        });
+        supplyAsync.whenComplete((u, t) -> {// 正常执行完毕时处理 BiConsumer<? super T, ? super Throwable> action)  ,第一个泛型是返回值，第二个泛型是异常
+            System.out.println("u = " + u);
+            System.out.println("u = " + u.getClass());
+            System.out.println("t = " + t);
+            System.out.println("t = " + t.getMessage());
+        }).exceptionally(e -> {//发生异常时处理Function<Throwable, ? extends T> fn
+            System.out.println("exception = " + e.getMessage());
+            return 444;//
+        });
+
+        System.out.println("最终结果：" + supplyAsync.get());
+    }
+}
+```
+
+![image-20210629235931694](JUC 学习笔记【周阳】.assets/image-20210629235931694.png)
+
+
+
+```java
+public class CompletableFutureDemo {
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+                //异步回调
+        CompletableFuture<Integer> supplyAsync = CompletableFuture.supplyAsync(() -> {
+            System.out.println(Thread.currentThread().getName() + "有返回值，update mysql ok");
+
+            int age = 10/0;//制造异常
+            return 1024;
+        });
+        Integer integer = supplyAsync.whenComplete((r, e) -> {// 正常执行完毕时处理 BiConsumer<? super T, ? super Throwable> action)  ,第一个泛型是返回值，第二个泛型是异常
+            System.out.println("***返回值 = " + r);//如果正常结束，返回数值，发生异常返回null
+            System.out.println("***异常 = " + e);//发生异常，返回异常，正常结束，返回null
+        }).exceptionally(e -> {//发生异常时处理Function<Throwable, ? extends T> fn
+            System.out.println("exception = " + e.getMessage());
+            return 444;
+        }).get();
+
+        System.out.println("最终结果：" + integer);
+    }
+}
+```
+
+![image-20210630000923403](JUC 学习笔记【周阳】.assets/image-20210630000923403.png)
