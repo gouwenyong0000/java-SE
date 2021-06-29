@@ -932,8 +932,35 @@ public ThreadPoolExecutor(int corePoolSize,
 19.Stream 流式计算
 --------------
 
-![](https://img-blog.csdnimg.cn/2020071414350274.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
-![](https://img-blog.csdnimg.cn/20200714143828357.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
+![image-20210629210350587](JUC 学习笔记【周阳】.assets/image-20210629210350587.png)
+
+
+
+```java
+
+//R apply(T t);函数型接口，一个参数，一个返回值
+Function<String,Integer> function = t ->{return t.length();};
+System.out.println(function.apply("abcd"));
+
+//boolean test(T t);断定型接口，一个参数，返回boolean
+Predicate<String> predicate = t->{return t.startsWith("a");};
+System.out.println(predicate.test("a"));
+
+// void accept(T t);消费型接口，一个参数，没有返回值
+Consumer<String> consumer = t->{
+    System.out.println(t);
+};
+consumer.accept("javaXXXX");
+
+//T get(); 供给型接口，无参数，有返回值
+Supplier<String> supplier =()->{return UUID.randomUUID().toString();};
+System.out.println(supplier.get());
+ 
+```
+
+![image-20210629210649554](JUC 学习笔记【周阳】.assets/image-20210629210649554.png)
+
+
 ![](https://img-blog.csdnimg.cn/2020071415135572.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
 ![](https://img-blog.csdnimg.cn/20200714151411438.png)
 
