@@ -4757,6 +4757,28 @@ public class EightQueen {
 }
 ```
 
+#### 汉诺塔
+
+```java
+public class HNT {
+    public static void main(String[] args) {
+        int nDisks = 3;
+        doTowers(nDisks, 'A', 'B', 'C');
+    }
+
+    public static void doTowers(int topN, char from, char inter, char to) {
+        if (topN == 1) {
+            System.out.println("Disk 1 from " + from + " to " + to);
+        } else {
+            doTowers(topN - 1, from, to, inter);//将from上n-1个移动到过渡位置，
+            System.out.println("Disk " + topN + " from " + from + " to " + to);//将from移动到to
+            doTowers(topN - 1, inter, from, to);//将过渡位置的移动到to位置，from为新的过渡位置
+        }
+    }
+
+}
+```
+
 
 
 ## 7.5. 面向对象特征一：封装
