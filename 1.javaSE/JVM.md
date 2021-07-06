@@ -679,3 +679,77 @@ CodeSort.clas被加载是会执行静态代码块的内容，然后再从main方
 */
 ```
 
+# jvm四大引用
+
+## **1.** **强引用**
+
+默认的`Object object=new Object()`的形式中,object即是对象new Object()的强引用，只有在object这个引用被释放后，对象才会被释放掉。这也是我们最常用的编码方式。
+
+如果一个引用是强引用，**即使内存不足，GC也绝对不会回收它**，而是宁可抛出OutOfMemoryError错误。
+
+## **2.** **软引用**
+
+如果一个对象仅有软引用，**那么当内存充足时，GC不会回收它，当内存不足时，GC会对其回收**。此时，需要通过sf.get()方法可以取到这个对象，当然，当这个对象被标记为需要回收的对象时，则返回null；
+
+软引用**主要用户实现类似缓存的功能**，在内存足够的情况下直接通过软引用取值，无需从繁忙的真实来源查询数据，提升速度；当内存不足时，自动删除这部分缓存数据，从真正的来源查询这些数据。
+
+通常情况下，软引用可以和一个引用队列共同使用。即当软引用的对象被GC回收后，JVM把这个软引用加入与之关联的队列中。
+
+软引用实例如下：
+
+```java
+ReferenceQueue referenceQueue=new ReferenceQueue();
+SoftReference<Integer> softReference=new SoftReference<Integer>(new Integer(3),referenceQueue);
+System.out.println("softReference.get(): "+softReference.get());//通过此方法获取软引用对象，可能会失败
+System.out.println("softReference.isEnqueued(): "+softReference.isEnqueued());//返回是否被标记为即将回收的垃圾
+```
+
+运行结果如下
+
+```
+softReference.get(): 3
+softReference.isEnqueued(): false
+```
+
+## **3.** **弱引用**
+
+弱引用相较于软引用有更短的生命周期，**一旦GC发现只具有弱引用的对象，无论当前内存是否不足，都会对其进行回收**。GC是一个优先级（优先级的内容可以参考[Java多线程：生命周期，实现与调度](http://www.cnblogs.com/cielosun/p/6655679.html)中3.4节：线程的优先级）很低的线程，不一定很快发现只具有弱引用的对象。弱引用的使用方法和软引用类似：
+
+```java
+WeakReference<Integer> weakReference=new WeakReference<Integer>(new Integer(4),referenceQueue);
+
+System.out.println("weakReference.get(): "+weakReference.get());//通过此方法获取软引用对象，可能会失败
+
+System.out.println("weakReference.isEnqueued(): "+weakReference.isEnqueued());//返回是否被标记为即将回收的垃圾
+```
+
+运行结果如下，可以看出，GC并不会立即执行。
+
+```
+weakReference.get(): 4
+
+weakReference.isEnqueued(): false
+```
+
+弱引用主要用于监控对象是否被标记为即将被回收的垃圾。与软引用类似，弱引用也可以和引用队列共同使用。
+
+## **4.** **虚引用**
+
+虚引用又称幽灵引用，不会决定对象的生命周期。如果一个对象仅存在一个虚引用，那么就和没有引用相同，任何时候都可能被GC回收。虚引用主要用于跟踪GC的活动。虚引用必须和引用队列联合使用，GC回收一个对象时如果发现有其虚引用就会先把虚引用置于引用队列中。此外，**与弱引用的区别是，无法通过虚引用获取对象实例。**
+
+```java
+PhantomReference phantomReference = new PhantomReference (new Integer(5), referenceQueue);
+
+System.out.println("phantomReference.get(): "+phantomReference.get());//通过此方法获取软引用对象，可能会失败
+
+System.out.println("phantomReference.isEnqueued(): "+phantomReference.isEnqueued());//返回是否被标记为即将回收的垃圾
+```
+
+运行结果如下，可见，虚引用会立刻被GC回收，相当于没有引用。
+
+```
+phantomReference.get(): null
+
+phantomReference.isEnqueued(): false
+```
+
