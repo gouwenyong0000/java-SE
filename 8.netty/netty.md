@@ -2310,7 +2310,7 @@ ChannelPipeline 是一个重点：
 
 ## ChannelHandlerContext
 
-1) 保存 Channel 相关的所有上下文信息，同时关联一个 ChannelHandler 对象
+1) 保存 Channel 相关的所有上下文信息，同时**关联一个 ChannelHandler 对象**
 
 2) 即ChannelHandlerContext 中 包 含 一 个 具 体 的 事 件 处 理 器 ChannelHandler ，同 时ChannelHandlerContext 中也绑定了对应的 pipeline 和 Channel 的信息，方便对 ChannelHandler进行调用.
 
@@ -2330,7 +2330,7 @@ ChannelPipeline 是一个重点：
 
 ## EventLoopGroup 和其实现类 NioEventLoopGroup
 
-1) EventLoopGroup 是一组 EventLoop 的抽象，Netty 为了更好的利用多核 CPU 资源，一般会有多个 EventLoop 同时工作，每个 EventLoop 维护着一个 Selector 实例。
+1) EventLoopGroup 是一组 EventLoop 的抽象，Netty 为了更好的利用多核 CPU 资源，一般会有多个 EventLoop 同时工作，**每个 EventLoop 维护着一个 Selector 实例**。
 2) EventLoopGroup 提供 next 接口，可以从组里面按照一定规则获取其中一个EventLoop来处理任务。在 Netty 服务器端编程中，我们一般都需要提供两个
 EventLoopGroup，例如：BossEventLoopGroup 和 WorkerEventLoopGroup。
 
@@ -2357,6 +2357,78 @@ public static ByteBuf copiedBuffer(CharSequence string, Charset charset)
 
 ![image-20210708233321977](netty.assets/image-20210708233321977.png)
 
+```java
+package com.g.netty.buf;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
+public class NettyByteBuffer01 {
+
+    public static void main(String[] args) {
+        //创建一个ByteBuf
+        /*
+        说明：
+        1.创建对象，该对象包含一个数组arr，是一个byte[10]
+        2.netty的buffer中，不需要使用flip进行反转
+            底层维护了一个readerIndex和writerIndex
+            buffer.getByte(i)不会造成readerIndex变化
+            buffer.readByte()会造成readerIndex变化
+        3.通过readerIndex和writerIndex和capacity将buffer分成三个区域
+            0 - readerIndex             已经读取区域
+            readerIndex - writerIndex   可读区域
+            writerIndex - capacity      可写区域
+         */
+        ByteBuf buffer = Unpooled.buffer(10);
+        for (int i = 0; i < 10; i++) {
+            buffer.writeByte(i);
+        }
+        //输出
+        System.out.println("buffer.capacity() = " + buffer.capacity());//10，初始化的容量
+        for (int i = 0; i < buffer.capacity(); i++) {
+            //System.out.println("buffer.getByte(i) = " + buffer.getByte(i));
+            System.out.println("buffer.readByte() = " + buffer.readByte());
+            System.out.println(buffer.readerIndex());
+        }
+    }
+}
+
+```
+
+```java
+package com.g.netty.buf;
+
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
+import java.nio.charset.StandardCharsets;
+
+public class NettyByteBuffer02 {
+
+    public static void main(String[] args) {
+        //创建byteBuffer
+        ByteBuf byteBuf = Unpooled.copiedBuffer("hello world", StandardCharsets.UTF_8);
+
+        //使用相关的方法
+        if (byteBuf.hasArray()) {
+            byte[] content = byteBuf.array();
+            String msg = new String(content);
+            System.out.println(msg);//hello world
+            System.out.println(byteBuf.arrayOffset());//0
+            System.out.println(byteBuf.readerIndex());// 0
+            System.out.println(byteBuf.writerIndex());//11
+            System.out.println("可读取字节" + byteBuf.readableBytes());// 可读取字节 = 11
+
+            System.out.println(byteBuf.getCharSequence(0, 4, StandardCharsets.UTF_8));// hell
+        }
+
+
+    }
+}
+
+```
+
 ## Netty应用实例-群聊系统
 
 实例要求:
@@ -2367,6 +2439,252 @@ public static ByteBuf copiedBuffer(CharSequence string, Charset charset)
 户发送的消息(有服务器转发得到)
 5) 目的：进一步理解Netty非阻塞网络编程机制
 
+![image-20210711235040780](netty.assets/image-20210711235040780.png)
+
+```java
+package com.g.netty.groupchat;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+
+public class GroupChatServer {
+
+    private int port;//监听端口
+
+    GroupChatServer(int port) {
+        this.port = port;
+    }
+
+    //编写run方法，处理客户端的请求
+    public void run() throws InterruptedException {
+        //创建两个线程组
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            //获取pipeline
+                            ChannelPipeline pipeline = ch.pipeline();
+                            //向pipeline加入解码器
+                            pipeline.addLast("decoder", new StringDecoder());
+                            //向pipeline加入编码器
+                            pipeline.addLast("encoder", new StringEncoder());
+                            //加入自己的业务处理handler
+                            pipeline.addLast(new GroupChatServerHandler());
+                        }
+                    });
+            System.out.println("netty 服务器启动");
+            ChannelFuture sync = serverBootstrap.bind(port).sync();
+            //监听关闭事件
+            sync.channel().closeFuture().sync();
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+
+    }
+
+    public static void main(String[] args) {
+        try {
+            new GroupChatServer(9001).run();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+```java
+package com.g.netty.groupchat;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
+
+import java.text.SimpleDateFormat;
+
+public class GroupChatServerHandler extends SimpleChannelInboundHandler<String> {
+  /*  定义一个channle组，管理所有的channel
+    GlobalEventExecutor.INSTANCE是一个全局的事件执行器，是一个单例*/
+    private static ChannelGroup channelGroup=new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    SimpleDateFormat sdf=  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    //handlerAdded 表示链接建立，一旦连接上，第一个被执行
+    //将当前channel加入到channelGroup
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        Channel channel = ctx.channel();
+
+        /*
+        将该客户加入聊天的信息推送给其他的客户端
+            该方法会将channelGroup 中所有的channel遍历，并发送消息，
+            我们不需要自己遍历
+         */
+        channelGroup.writeAndFlush("客户端" + channel.remoteAddress() + "加入聊天\n");
+        channelGroup.add(channel);
+    }
+
+    //表示channel处于活动状态，提示xx上
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println(ctx.channel().remoteAddress() + "上线了\n");
+    }
+    //表示channel处于不活动状态，提示xx下线了
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println(ctx.channel().remoteAddress() + "离线了\n");
+    }
+    //断开连接 将xx客户离开信息推送给当前在线的客户
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        Channel channel = ctx.channel();
+        channelGroup.writeAndFlush("客户端" + channel.remoteAddress() + "离开聊天\n");
+       // channelGroup会自动去掉该channel
+        System.out.println(channelGroup.size());
+    }
+    //读取数据
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        //获取到当前channel
+        Channel channel = ctx.channel();
+
+        //遍历channelGroup 根据不同的情况会送不同的消息
+        channelGroup.forEach(ch -> {
+            if (ch != channel){//不是当前的channel，转发消息
+                ch.writeAndFlush("[客户 " + channel.remoteAddress()+" ] -->" + msg);
+            }else {
+                ch.writeAndFlush("[我 " +" ] <--" + msg);
+            }
+        });
+    }
+    //发生异常
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.close();
+    }
+}
+
+```
+
+```java
+package com.g.netty.groupchat;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+
+import java.util.Scanner;
+
+public class GroupChatClient {
+    private final String host ;
+    private final int port;
+
+    public GroupChatClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    public void run() throws InterruptedException {
+        NioEventLoopGroup group = new NioEventLoopGroup();
+
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ChannelPipeline pipeline = ch.pipeline();
+                            //加入相关的handler
+                            //向pipeline加入解码器
+                            pipeline.addLast("decoder", new StringDecoder());
+                            //向pipeline加入编码器
+                            pipeline.addLast("encoder", new StringEncoder());
+
+                            //加入自定义handler
+                            pipeline.addLast(new GroupChatClientHandler());
+                        }
+                    });
+
+            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+
+            //得到channel
+            Channel channel = channelFuture.channel();
+            System.out.println("-----" + channel.localAddress() + "-----" );
+
+            //客户端需要输入信息，创建一个扫描器
+            Scanner scanner = new Scanner(System.in);
+
+            while (scanner.hasNextLine()){
+                String msg = scanner.nextLine();
+                channel.writeAndFlush(msg +"\r\n");
+            }
+
+        } finally {
+            group.shutdownGracefully();
+        }
+
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        new GroupChatClient("127.0.0.1",9001).run();
+    }
+}
+
+```
+
+```java
+package com.g.netty.groupchat;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+public class GroupChatClientHandler extends SimpleChannelInboundHandler<String> {
+
+
+    //直接显示服务器消息
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        System.out.println(msg.trim());
+    }
+
+}
+```
+
+### 私聊思路：
+
+使用HashMap替代ChannelGroup进行管理channel
+
+![image-20210711204438554](netty.assets/image-20210711204438554.png)
+
+
+
 ## Netty心跳检测机制案例
 
 实例要求:
@@ -2374,12 +2692,310 @@ public static ByteBuf copiedBuffer(CharSequence string, Charset charset)
 2) 当服务器超过5秒没有写操作时，就提示写空闲
 3) 实现当服务器超过7秒没有读或者写操作时，就提示读写空闲
 
-Netty 通过WebSocket编程实现服务器和客户端长连接
+
+
+```java
+package com.g.netty.heartbeat;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
+
+public class MyServer {
+
+    public static void main(String[] args) throws InterruptedException {
+
+
+        //创建两个线程组
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup,workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .handler(new LoggingHandler(LogLevel.INFO))//在bossGroup增加一个日志处理器
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ChannelPipeline pipeline = ch.pipeline();
+
+
+                            /*加入一个netty提供的IdleStateHandler
+                            1. IdlestateHandler是netty提供的处理空闲状态的处理器
+                            2. long readerIdleTime：表示多长时间没有读，就会发送一个心跳检测包检测是否连接
+                            3. long writerIdleTime：表示多长时间没有写，就会发送一个心跳检测包检测是否连接
+                            4. long allIdleTime：表示多长时间没有读写，就会发送一个心跳检测包检测是否连接
+                            5.当Channel有一段时间没有执行读、写或两者操作时触发IdleStateEvent 。
+支持的空闲状态
+                            6.当 IdleStateEvent触发后，就会传递给管道的下一个Handler去处理
+                            通过调用（触发）下一个handler的userEvenTriggered，在该方法中去处理IdlestateEvent（读空闲，写空闲，读写空闲）
+                             */
+                            pipeline.addLast(new IdleStateHandler(3,5,7,TimeUnit.SECONDS));
+
+                            //加入一个对空闲检测进一步处理的自定义handler
+                            pipeline.addLast(new MyServerHandler());
+                        }
+                    });
+            //启动服务器
+            ChannelFuture channelFuture = serverBootstrap.bind(7000).sync();
+            //关闭服务器
+            channelFuture.channel().closeFuture().sync();
+
+
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+
+    }
+}
+```
+
+```java
+package com.g.netty.heartbeat;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleStateEvent;
+
+public class MyServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            //将evt向下转型IdlestateEvent
+            IdleStateEvent stateEvent = (IdleStateEvent) evt;
+            String eventType = null;
+            switch (stateEvent.state()) {
+                case READER_IDLE:
+                    eventType = "读空闲";
+                    break;
+                case WRITER_IDLE:
+                    eventType = "写空闲";
+                    break;
+                case ALL_IDLE:
+                    eventType = "读写空闲";
+                    break;
+            }
+            System.out.println(ctx.channel().remoteAddress() + " 超时事件 " + eventType);
+            System.out.println("服务器做相应处理");
+            //ctx.channel().close();//关闭通道
+
+        }
+
+    }
+}
+```
+
+
+
+
+
+## Netty 通过WebSocket编程实现服务器和客户端长连接
+
 实例要求:
 1) Http协议是无状态的, 浏览器和服务器间的请求响应一次，下一次会重新创建连接.
 2) 要求：实现基于webSocket的长连接的全双工的交互
 
 3) 改变Http协议多次请求的约束，实现长连接了， 服务器可以发送消息给浏览器
 4) 客户端浏览器和服务器端会相互感知，比如服务器关闭了，浏览器会感知，同样浏览器关闭了，服务器会感知
+
+![image-20210711235105055](netty.assets/image-20210711235105055.png)
+
+```java
+package com.g.netty.websocket;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
+
+
+public class MyServer {
+
+    public static void main(String[] args) throws InterruptedException {
+
+        //创建两个线程组
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup,workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .handler(new LoggingHandler(LogLevel.INFO))//在bossGroup增加一个日志处理器
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ChannelPipeline pipeline = ch.pipeline();
+
+                            //因为基于http协议，使用http的编码和解码器
+                            pipeline.addLast(new HttpServerCodec());
+                            //是以块方式写，添加Chunkedwrite处理器
+                            pipeline.addLast(new ChunkedWriteHandler());
+                           /*
+                            说明:
+                             1. 因为http的数据在传输过程中是分段的，HttpObjectAggregator就是可以将多个段聚合起来
+                             2.这就就是为什么，当浏览器发送大量数据时，就会发出多次http请求
+                           */
+                            pipeline.addLast(new HttpObjectAggregator(8192));
+                            /*
+                            说明：
+                            1.对于websocket，它的数据是以帧(frame)形式传递
+                            2.可以看到WebSocketFrame下面有六个子类
+                            3．浏览器请求时ws://lLocalhost:7000/hello表示请求的uri
+                            4.WebSocketServerProtocolHandler核心功能是将http协议升级为ws协议，保持长连接
+                             */
+                            pipeline.addLast(new WebSocketServerProtocolHandler("/hello"));
+
+                            //自定义的handler  处理业务逻辑
+                            pipeline.addLast(new MyWebSocketFrameHandler());
+
+
+                        }
+                    });
+            //启动服务器
+            ChannelFuture channelFuture = serverBootstrap.bind(7000).sync();
+            //关闭服务器
+            channelFuture.channel().closeFuture().sync();
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+
+    }
+}
+```
+
+```java
+package com.g.netty.websocket;
+
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+
+import java.time.LocalDateTime;
+
+// 这里TextWebSocketFrame 表示一个文件帧（frame）
+public class MyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+    //当web客户端连接后，触发方法
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        //id表示唯一的值，LongText是唯一的shortText不是唯一
+        System.out.println("" +ctx.channel().id().asLongText());
+        System.out.println("" +ctx.channel().id().asShortText());
+
+        System.out.println(ctx.channel().remoteAddress() + "连接了");
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("handlerRemoved 被调用" + ctx.channel().id().asLongText());
+    }
+    //出现异常处理，打印栈信息，关闭连接
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
+        System.out.println("服务器收到消息" + msg.text());
+
+        //回复消息
+        ctx.channel().writeAndFlush(new TextWebSocketFrame("服务器时间" + LocalDateTime.now()+ " "+msg.text()));
+    }
+}
+```
+
+```html	
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    var socket;
+
+    //判断当前浏览器是否支持websocket
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://localhost:7000/hello");
+
+        //相当于channelReado，ev收到服务器端回送的消息
+        socket.onmessage = function (ev) {
+            let rt = document.getElementById("responseText");
+            rt.value = rt.value + "\n" + ev.data;
+        }
+
+        //相当于连接开启（感知到连接开启）
+        socket.onopen = function (ev) {
+            let rt = document.getElementById("responseText");
+            rt.value = "连接开启了";
+        }
+        //相当于连接关闭（感知到连接关闭
+        socket.onclose = function (ev) {
+            let rt = document.getElementById("responseText");
+            rt.value = rt.value + "\n " + "连接关闭了";
+        }
+
+    } else {
+        alert("当前浏览器不支持WebSocket")
+    }
+
+    //发送消息到服务器
+    function send(message) {
+        if (!window.socket) {//先判断socket是否创建好
+            return;
+        }
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.send(message);
+        } else {
+            alert("连接还未开启")
+        }
+    }
+
+</script>
+
+<form onsubmit="return false">
+    <textarea name="message" style="height: 300px;width: 300px"> </textarea>
+    <input type="button" value="发送消息" onclick="send(this.form.message.value)">
+
+    <textarea id="responseText" style="height: 300px;width: 300px"></textarea>
+    <input type="button" value="清空内容" onclick="document.getElementById('responseText').value=''">
+
+</form>
+
+</body>
+</html>
+```
+
+
+
+
+
+
 
 # Google Protobuf
