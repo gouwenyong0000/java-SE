@@ -8620,6 +8620,47 @@ public class ReflectionTest {
 
 ![image-20210420012705987](javaSE高级.assets/image-20210420012705987.png)
 
+```java
+/**
+JDK动态代理模板代码
+
+*/
+
+interface II {
+    String hello(String msg);
+}
+
+public class Test {
+
+    public static void main(String[] args) {
+        II ii = (II) getBean();
+        System.out.println("ii.hello(\"你好\") = " + ii.hello("你好"));
+    }
+
+    public static Object getBean() {
+        return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader()
+                , new Class[]{II.class},
+                (proxy, method, args) -> {
+                    for (int i = 0; i < args.length; i++) {
+                        System.out.println("args[i] = " + args[i]);
+
+                    }
+                    System.out.println("args = " + args);
+                    System.out.println("method = " + method);
+//                    System.out.println("proxy = " + proxy);
+                    
+                    return LocalDateTime.now().toString();
+                }
+        );
+    }
+}
+
+```
+
+
+
+
+
 ### 9.7.2. 动态代理与AOP（Aspect Orient Programming）
 
 ![image-20210420012727728](javaSE高级.assets/image-20210420012727728.png)
