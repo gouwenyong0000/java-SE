@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div id="app">
+           <a href="http:\\www.baidu.com" v-bind:title="msg">v-bind</a>
+           <!-- 支持表达式 -->
+           <a href="http:\\www.baidu.com" :title="msg + '！！！'">v-bind简写</a>
+        </div>
+        <!-- 1. 导入开发版本的Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script>
+        
+            var App = new Vue({
+                el: "#app",
+                data: {
+                    msg:"进入百度"
+                },
+                methods: {
+                    
+                },
+            });
+        </script>
+    </body>
+</html>

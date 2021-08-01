@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        <div style="margin: auto;">
+            <div>
+                <!-- 将值绑定到city，添加回车事件 -->
+                <input type="text" v-model="city" @keyup.enter="serachWeather">
+                <button @click="serachWeather">查询</button>
+            </div>
+            <div>
+                <a href="javascript:void(0);" @click="changeCity('北京')">北京</a>
+                <a href="javascript:void(0);" @click="changeCity('上海')">上海</a>
+                <a href="javascript:void(0);" @click="changeCity('深圳')">深圳</a>
+                <a href="javascript:void(0);" @click="changeCity('成都')">成都</a>
+            </div>
+        </div>
+        <ul>
+            <!-- 展示查询到的数据 -->
+            <div v-for="item in weatherList"
+                style="display: inline-block;width: 200px;border: 1px solid #F00;text-align:center;">
+                <p>{{item.date}}</p>
+                <h2>{{item.type}}</h2>
+                <p>{{item.fengxiang}}</p>
+                <p>{{item.high}}</p>
+                <p>{{item.low}}</p>
+
+            </div>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+    <script>
+
+        /*
+        请求地址：http://wthrcdn.etouch.cn/weather_mini
+        请求方法：get请求参数：city（城市名）
+        响应内容：天气信息
+        1，点击回车2，查询数据3，渲染数据
+        */
+        new Vue({
+            el: "#app",
+            data: {
+                city: "",
+                weatherList: []
+            },
+            methods: {
+                serachWeather: function () {
+                    var that = this;
+                    var url = "http://wthrcdn.etouch.cn/weather_mini?city="
+
+                    axios.get(url + this.city).then(
+                        function (respone) {
+                            console.log(respone.data.data.forecast);
+                            that.weatherList = respone.data.data.forecast;
+                        },
+                        function (err) {
+                            console.log(err);
+                        })
+                },
+                changeCity: function (city) {//改变数据框的值，调用查询天气接口
+                    this.city = city;
+                    this.serachWeather();//调用vue自身的函数
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

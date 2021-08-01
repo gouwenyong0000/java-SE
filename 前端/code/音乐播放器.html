@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放器</title>
+</head>
+<style>
+    .list {
+        display: inline-block;
+        width: 200px;
+        height: 400px;
+        border: 1px solid #F00;
+        overflow-y: auto;
+    }
+
+    .displayer {
+        display: inline-block;
+        margin-left: 10px;
+        margin-right: 10px;
+        width: 400px;
+        height: 400px;
+        border: 1px solid #F00;
+    }
+</style>
+
+<body style="margin: auto;">
+
+    <div id="app">
+
+        <!-- 搜索音乐  双向绑定到keyWord 添加回车事件-->
+        <div>
+            <input type="text" v-model="keyWord" @keyup.enter="serachMusic" placeholder="输入搜索的内容,回车搜索">
+        </div>
+        <div>
+
+            <div class="list">
+                <!-- 展示搜索列表 -->
+                <ul>
+                    <li v-for="item in musicList">
+                        <b @click="playMusic(item.id)">{{item.name}}</b>
+                        <span><a href="Javascript:;" @click="playMv(item.mvid)" v-if="item.mvid!=0">MV</a></span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 展示歌曲封面  如果playFlag 为true 表示开启旋转动画-->
+            <div style="display: inline-block;" v-bind:class="{playing:playFlag}">
+                <img v-bind:src="imgSrc" alt="" width="400px" height="400px">
+            </div>
+
+
+            <!-- 评论展示 -->
+            <div class="list">
+                <div v-for="item in contentArr" style=" border: 1px solid #F00;margin-bottom: 3px;">
+                    <img :src="item.user.avatarUrl" alt="" width="20px" height="20px">
+                    <span>{{item.user.nickname}}</span>
+                    <br>
+                    <span>{{item.content}}</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div>
+            <!-- 音乐播放标签 v-bind 修改src地址-->
+            <audio controls v-bind:src="musicUrl" @play="play" @pause="pause">
+                Your browser does not support the
+                <code>audio</code> element.
+            </audio>
+
+        </div>
+
+        <div>
+            <video controls width="250">
+
+                <source :src="mvUrl" type="video/mp4">
+
+                Sorry, your browser doesn't support embedded videos.
+            </video>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                keyWord: "",//查询关键字
+                musicList: [],//音乐列表
+                musicUrl: "",//音乐url
+                imgSrc: "hh.jpg",//图片url
+                contentArr: [],//评论列表
+                playFlag: false,//图片是否开始动画
+                mvUrl: ""//视频播放地址
+            },
+            methods: {
+                serachMusic: function () {//搜索音乐
+                    var that = this;
+                    axios.get("https://autumnfish.cn/search?keywords=" + this.keyWord).then(
+                        function (respone) {
+                            console.log(respone.data.result.songs);
+                            that.musicList = respone.data.result.songs;
+                        },
+                        function (err) {
+
+                        })
+
+                },
+                playMusic: function (musicId) {//点击列表播放音乐，显示评论，显示图片
+                    var that = this;
+                    //获取歌曲播放url
+                    axios.get("https://autumnfish.cn/song/url?id=" + musicId).then(
+                        function (respone) {
+                            console.log(respone)
+                            that.musicUrl = respone.data.data[0].url;
+                        },
+                        function (err) {
+
+                        })
+
+                    //获取歌曲播放详情
+                    axios.get("https://autumnfish.cn/song/detail?ids=" + musicId).then(
+                        function (respone) {
+                            console.log(respone)
+                            that.imgSrc = respone.data.songs[0].al.picUrl;
+                        },
+                        function (err) {
+
+                        })
+
+                    //歌曲评论
+                    axios.get("https://autumnfish.cn/comment/hot?type=0&id=" + musicId).then(
+                        function (respone) {
+                            console.log("=======")
+                            console.log(respone.data.hotComments)
+
+                            that.contentArr = respone.data.hotComments;
+
+                        },
+                        function (err) {
+
+                        })
+                },
+                play: function () {//音乐开始播放，图片修改样式开始旋转
+                    this.playFlag = true;
+                },
+                pause: function () {//音乐暂停播放，图片修改样式停止旋转
+                    this.playFlag = false;
+                },
+                playMv: function (mvID) {
+                    var that = this;
+                    //通过mvid去请求视频地址  使用video标签播放
+                    axios.get("https://autumnfish.cn/mv/url?id=" + mvID).then(
+                        function (respone) {
+                            that.mvUrl = respone.data.data.url;
+
+                        },
+                        function (err) {
+
+                        })
+
+                }
+            }
+
+        })
+
+    </script>
+</body>
+
+</html>

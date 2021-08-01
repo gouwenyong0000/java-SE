@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- 主体区域 -->
+    <section id="todoapp" >
+        <!-- 输入框 -->
+        <header class="header">
+            <h1>NoteBook</h1>
+            <!-- 数据绑定到inputvalue，添加回车事件，将数据添加到数组中，并清空input框内容 -->
+            <input v-model="inputvalue" @keyup.enter="add" type="text" autofocus="autofocus" autocomplete="off"
+                placeholder="请输入任务" />
+        </header>
+        <!-- 列表区域  数组长度大于0 时显示-->
+        <section class="main" v-show="notes.length > 0">
+            <table>
+                <ul>
+                    <!-- v-for展示列表 -->
+                    <li v-for="(item,index) in notes">
+                        <!-- 在v-for循环中可以获取索引 -->
+                        <span>{{index+1}}</span>
+                        <label>{{item}}</label>
+                        <button @click="remove(index)">x</button>
+                    </li>
+                </ul>
+            </table>
+        </section>
+
+        <!-- 统计和清空   数组长度大于0 时显示-->
+        <footer class="footer" v-if="notes.length > 0">
+            <!-- 统计列表数量 -->
+            <span>
+                <strong>{{notes.length}}</strong>items left
+            </span>
+            <!-- 清空数组的内容 a标签点击不调整 -->
+            <a href="javascript:void(0)" @click="clearAll"> clearAll</a>
+
+        </footer>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="info"></footer>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: "#todoapp",
+            data: {
+                notes: ["吃饭饭", "打豆豆", "123"],//记事本内容
+                inputvalue: "",//数据双向绑定到input框
+            },
+            methods: {
+                add: function () {//添加
+                    this.notes.push(this.inputvalue);
+                    this.inputvalue = "";//清空input框里面输入的内容 
+                },
+                remove: function (index) {//移除
+                    this.notes.splice(index, 1);//删除数组中指定元素
+                },
+                clearAll: function () {
+                    this.notes = [];
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试axios</title>
+</head>
+
+<body>
+    <input type="button" value="get请求" class="get">
+    <input type="button" value="post请求" class="post">
+    <script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+    <script>
+        /*
+        按口1：随机笑话
+        请求地址：https://autumnfish.cn/api/joke/list
+        请求方法：get
+        请求参数：num（笑话条数，数字）
+        响应内容：随机笑话
+        */
+        //给class=“get” 元素绑定点击事件
+        document.querySelector(".get").onclick = function () {
+            axios.get("https://autumnfish.cn/api/joke/list?num=6")
+                .then(function (respone) {
+                    console.log(respone)
+                },
+                    function (err) {
+                        console.log(err);
+                        alert("错误" + err.state)
+                    }
+                )
+        }
+
+        /*
+        按口2：用户注册
+        请求地址：https://autumnfish.cn/api/user/reg
+        请求方法：post
+        请求参数：username（用户名，字符串）
+        响应内容：注册成功或失败
+         */
+        document.querySelector("post").onclick = function () {
+            axios.post("https://autumnfish.cn/api/user/reg", { nsername: "jjack" })
+                .then(function (respone) {
+                    console.log(respone)
+                },
+                    function (err) {
+                        console.log(err)
+                    }
+                )
+        }
+
+    </script>
+</body>
+
+</html>
