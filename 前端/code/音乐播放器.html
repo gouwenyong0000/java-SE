@@ -10,7 +10,7 @@
 <style>
     .list {
         display: inline-block;
-        width: 200px;
+        width: 400px;
         height: 400px;
         border: 1px solid #F00;
         overflow-y: auto;
@@ -65,9 +65,9 @@
 
         </div>
 
-        <div>
+        <div >
             <!-- 音乐播放标签 v-bind 修改src地址-->
-            <audio controls v-bind:src="musicUrl" @play="play" @pause="pause">
+            <audio controls v-bind:src="musicUrl" @play="play" @pause="pause" style="width: 1200px;">
                 Your browser does not support the
                 <code>audio</code> element.
             </audio>

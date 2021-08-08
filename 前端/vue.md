@@ -334,6 +334,21 @@
 </html>
 ```
 
+`v-if/v-else`
+
+```html
+<div v-if="Math.random() > 0.5">
+  Now you see me
+</div>
+<div v-else>
+  Now you don't
+</div>
+```
+
+
+
+
+
 ## `v-bind`
 
 设置元素的属性（比如：src，title，class）
@@ -545,6 +560,62 @@
 </html>
 ```
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <div>
+        <!--绑定单选框-->
+        <input type="radio" name="sex" value="man" v-model="sex">男
+        <input type="radio" name="sex" value="women" v-model="sex">女
+        {{sex}}
+    </div>
+
+    <div>
+        <!-- 复选框绑定-->
+        <input type="checkbox" name="hobbys" value="yumanqiu" v-model="hobby"> 羽毛球
+        <input type="checkbox" name="hobbys" value="pingang" v-model="hobby"> 乒乓球
+        <input type="checkbox" name="hobbys" value="football" v-model="hobby"> 足球
+        {{hobby}}
+    </div>
+
+
+    <div>
+        <!-- 绑定下拉框-->
+        <select name="" v-model="selects">
+            <option value="" disabled>请选择</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+        </select>
+        {{selects}}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            sex: "",
+            selects: "",
+            hobby: []
+        }
+    })
+</script>
+</body>
+</html>
+```
+
+
+
+![image-20210803215222784](vue.assets/image-20210803215222784.png)
+
 ## 记事本
 
 ![image-20210801214143791](vue.assets/image-20210801214143791.png)
@@ -627,6 +698,8 @@
 
 </html>
 ```
+
+
 
 # 网络应用
 
@@ -1060,4 +1133,182 @@
 
 </html>
 ```
+
+# 计算属性与监听器
+
+## 计算属性
+
+```html
+<div id="example">
+  <p>Original message: "{{ message }}"</p>
+  <p>Computed reversed message: "{{ reversedMessage }}"</p>
+</div>
+
+ <script>
+var vm = new Vue({
+  el: '#example',
+  data: {
+    message: 'Hello'
+  },
+  computed: {
+    // 计算属性的 getter
+    reversedMessage: function () {
+      // `this` 指向 vm 实例
+      return this.message.split('').reverse().join('')
+    }
+  }
+})
+</script>
+
+```
+
+## 监听器
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="watch-example">
+        <p>
+            Ask a yes/no question:
+            <input v-model="question">
+        </p>
+        <p>{{ answer }}</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- 因为 AJAX 库和通用工具的生态已经相当丰富，Vue 核心代码没有重复 -->
+    <!-- 提供这些功能以保持精简。这也可以让你自由选择自己更熟悉的工具。 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script>
+        var watchExampleVM = new Vue({
+            el: '#watch-example',
+            data: {
+                question: '',
+                answer: 'I cannot give you an answer until you ask a question!'
+            },
+            watch: {
+                // 如果 `question` 发生改变，这个函数就会运行
+                question: function (newQuestion, oldQuestion) {
+                    this.answer = 'Waiting for you to stop typing...'
+                    this.debouncedGetAnswer()
+                }
+            },
+            created: function () {
+                // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+                // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+                // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+                // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+                // 请参考：https://lodash.com/docs#debounce
+                this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+            },
+            methods: {
+                getAnswer: function () {
+                    if (this.question.indexOf('?') === -1) {
+                        this.answer = 'Questions usually contain a question mark. ;-)'
+                        return
+                    }
+                    this.answer = 'Thinking...'
+                    var vm = this
+                    axios.get('https://yesno.wtf/api')
+                        .then(function (response) {
+                            vm.answer = _.capitalize(response.data.answer)
+                        })
+                        .catch(function (error) {
+                            vm.answer = 'Error! Could not reach the API. ' + error
+                        })
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
+```
+
+# 自定义组件
+
+#### **（1）第一个Vue组件**
+
+注意：在实际开发中，我们并不会用以下方式开发组件，而是采用`vue-cli`创建，`vue`模板文件的方式开发，以下方法只是为了让大家理解什么是组件。
+  **使用`Vue.component()`方法注册组件，格式如下：**
+
+```html
+<div id="app">
+  <pan></pan>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
+<script type="text/javascript">
+    //先注册组件
+    Vue.component("pan",{
+        
+        template:'<li>Hello</li>'
+
+    });
+    //再实例化Vue
+    var vm = new Vue({
+        el:"#app",
+    });
+</script>
+```
+
+说明：
+
+- `Vue.component()`：注册组件
+- `pan`：自定义组件的名字
+- `template`：组件的模板
+
+#### **（2）使用`props`属性传递参数**
+
+像上面那样用组件没有任何意义，所以我们是需要传递参数到组件的，此时就需要使用`props`属性了！
+  **注意：默认规则下props属性里的值不能为大写；**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+    <!--组件：传递给组件中的值：props-->
+  <pan v-for="item in items" v-bind:panh="item"></pan>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
+<script type="text/javascript">
+    //定义组件
+    Vue.component("pan",{
+        props:['panh'],
+        template:'<li>{{panh}}</li>'
+
+    });
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            items:["java","Linux","前端"]
+        }
+    });
+</script>
+</body>
+</html>
+```
+
+**说明**：
+
+- `v-for="item in items"`：遍历`Vue`实例中定义的名为`items`的数组，并创建同等数量的组件
+- `v-bind:panh="item"`：将遍历的`item`项绑定到组件中`props`定义名为`item`属性上；= 号左边的`panh`为`props`定义的属性名，右边的为`item in items` 中遍历的item项的值
 
