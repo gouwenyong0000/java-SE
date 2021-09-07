@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../script/jquery-1.7.2.js"></script>
+    <script type="text/javascript">
+        /**
+         文档处理
+         内部插入
+
+         appendTo(content)       a.appendTo(b);  把a加到b里面                  添加到最后面
+         prependTo(content)       a.prependTo(b); 把a添加到b里面                  添加到最前面
+
+         外部插入
+         insertAfter(content)    a.insertAfter(b);  把a插入到b的后面
+         insertBefore(content)    a.insertBefore(b); 把a插入到b的前面
+
+
+         替换
+         replaceWith(content|fn) a.replaceWith(b)  把a用b替换
+         replaceAll(selector)    a.replaceAll(b)      用a替换所有的b
+
+         删除
+         empty()                a.empty()   把a掏空，把a里面的所有元素都删除
+         remove([expr])            a.remove(b)  所有的a，是b的话就会删除    a.remove()删除a
+
+
+
+         */
+        $(function () {
+            //attr
+            // alert( $(":checkbox:first").attr("name") ); // 获取
+            // $(":checkbox:first").attr("name","abc") ; // 设置
+
+            // $(":checkbox").prop("checked",false );// 官方觉得返回undefined是一个错误
+
+            // $(":checkbox:first").attr("abc","abcValue");
+            // alert( $(":checkbox:first").attr("abc") );
+
+            // $("<h1>标题</h1>").prependTo( $("div") );
+            // $("<h1>标题</h1>").insertAfter("div");
+
+            // $("<h1>标题</h1>").insertBefore( $("div") );
+
+            // $("<h1>标题</h1>").replaceWith("div");
+
+            // $("div").replaceWith( $("<h1>标题</h1>") );
+
+            // $("<h1>标题</h1>").replaceAll( "div" );
+
+
+            $("div").empty();
+
+        });
+
+
+    </script>
+</head>
+<body>
+<body>
+    <br/>
+    多选：
+    <input name="checkbox" type="checkbox" checked="checked" value="checkbox1" />checkbox1
+    <input name="checkbox" type="checkbox" value="checkbox2" />checkbox2
+    <br/><br/>
+    <div>1234</div>
+    <div>1234</div>
+</body>
+</body>
+</html>
