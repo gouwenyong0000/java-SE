@@ -3804,7 +3804,7 @@ yum install firefox
 [root@hadoop1 opt]$ tar -zxvf jdk-7u79-linux-x64.gz 
 ```
 
-解压后文件目录
+解压后文件目录  【最好修改文件夹名称】
 
 ![image-20210510234711429](linux.assets/image-20210510234711429.png)
 
