@@ -1,0 +1,20 @@
+<script>
+    //1、数组解构
+    // 传统
+    let a = 1, b = 2, c = 3
+    console.log(a, b, c)
+    // ES6
+    let [x, y, z] = [1, 2, 3]
+    console.log(x, y, z)
+
+    //2、对象解构
+    let user = { name: 'Helen', age: 18 }
+    // 传统
+    let name1 = user.name
+    let age1 = user.age
+    console.log(name1, age1)
+    // ES6
+    let { name, age } = user//注意：结构的变量必须是user中的属性
+    console.log(name, age)
+
+</script>

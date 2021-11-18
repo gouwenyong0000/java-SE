@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.eduservice.mapper.EduSubjectMapper">
+    <resultMap type="com.atguigu.eduservice.entity.vo.SubjectTree" id="subjectTree">
+        <!-- 一级菜单映射 -->
+        <id property="id" column="pid"/>
+        <!--属性映射 -->
+        <result property="label" column="ptitle"/>
+
+        <!-- 二级菜单映射 -->
+        <collection property="children" ofType="com.atguigu.eduservice.entity.vo.SubjectTree">
+            <!-- ofType每一个元素的类型 -->
+            <id property="id" column="id"/>
+            <result property="label" column="title"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getTreeList" resultMap="subjectTree">
+        SELECT p.id AS pid, s.id id, s.parent_id, p.title AS ptitle, s.title AS title
+        FROM edu_subject p
+                 INNER JOIN edu_subject s ON p.id = s.parent_id AND p.parent_id = 0
+
+    </select>
+</mapper>
