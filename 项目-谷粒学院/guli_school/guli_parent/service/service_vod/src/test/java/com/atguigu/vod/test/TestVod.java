@@ -22,7 +22,7 @@ public class TestVod {
 
     //根据视频的id获取视频的地址
     public static void testGetPlayInfo() throws ClientException {
-        String accessKeyId = "LTAI5t7suNEo18FBRNQgSBq6";
+        String accessKeyId = "aliyunKey";
         String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1HIPaMnD";
         String id = "f99835b5d88640ce810d6e05a46d062b";
 
@@ -53,7 +53,7 @@ public class TestVod {
      * @throws ClientException
      */
     public static void testGetVideoPlayAuth() throws ClientException {
-        String accessKeyId = "LTAI5t7suNEo18FBRNQgSBq6";
+        String accessKeyId = "aliyunKey";
         String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1HIPaMnD";
         String id =    "6b4543819dbb4f5b9d7871ae0fba9cc9";
 
@@ -81,7 +81,7 @@ public class TestVod {
      * 视频上传
      */
     public static void testUploadVideo() {
-        String accessKeyId = "LTAI5t7suNEo18FBRNQgSBq6";
+        String accessKeyId = "aliyunKey";
         String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1HIPaMnD";
         String id = "f99835b5d88640ce810d6e05a46d062b";
 
