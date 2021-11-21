@@ -2317,6 +2317,10 @@ public class SwitchCaseTest2 {
 
 ![image-20210310000104532](javaSE.assets/image-20210310000104532.png)
 
+
+
+>  迭代部分每次循环结束都会执行  ，注意continue  时while  和for循环不的不同
+
 ```java
 /*
 for循环结构的使用
@@ -2730,6 +2734,7 @@ public class Test_2020_4_9 {
 + break、continue之后不能有其他的语句，因为程序永远不会执行其后的语句。
 + 标号语句必须紧接在循环的头部。标号语句不能用在非循环语句的前面。
 + 很多语言都有goto语句，goto语句可以随意将控制转移到程序中的任意一条语句上，然后执行它。但使程序容易出错。Java中的break和continue是不同于goto的。
++ continue 后for循环的第三部分仍然执行
 
 
 
@@ -2780,6 +2785,44 @@ public class BreakeContinueTest {
 
 }
 ```
+
+```java
+/**
+ * 验证continue后for循环的第三部分仍然执行   与while 和 do-while不同
+ */
+public class For {
+
+    public static void main(String[] args) {
+        whileTest();
+    }
+
+    private static void forTest() {
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                continue;
+            }
+            System.out.print(i + "\t");//1	3	5	7	9
+        }
+
+    }
+
+    private static void whileTest() {
+        int i = 0;
+        while (i < 10) {
+            if (i % 2 == 0) {
+                continue;
+            }
+            System.out.print(i + "\t");//程序会卡主  因为 0%2==0  ，之后的i++未执行  i的值没有刷新
+            i++;
+        }
+
+    }
+}
+```
+
+
+
+
 
 质数改版：
 
