@@ -1,45 +1,45 @@
 /*
-ÈçºÎ´Ó¼üÅÌ»ñÈ¡²»Í¬ÀàĞÍµÄ±äÁ¿£ºĞèÒªÊ¹ÓÃScannerÀà
+å¦‚ä½•ä»é”®ç›˜è·å–ä¸åŒç±»å‹çš„å˜é‡ï¼šéœ€è¦ä½¿ç”¨Scannerç±»
 
-¾ßÌåÊµÏÖ²½Öè£º
-1.µ¼°ü£ºimport java.util.Scanner;
-2.ScannerµÄÊµÀı»¯:Scanner scan = new Scanner(System.in);
-3.µ÷ÓÃScannerÀàµÄÏà¹Ø·½·¨£¨next() / nextXxx()£©£¬À´»ñÈ¡Ö¸¶¨ÀàĞÍµÄ±äÁ¿
+å…·ä½“å®ç°æ­¥éª¤ï¼š
+1.å¯¼åŒ…ï¼šimport java.util.Scanner;
+2.Scannerçš„å®ä¾‹åŒ–:Scanner scan = new Scanner(System.in);
+3.è°ƒç”¨Scannerç±»çš„ç›¸å…³æ–¹æ³•ï¼ˆnext() / nextXxx()ï¼‰ï¼Œæ¥è·å–æŒ‡å®šç±»å‹çš„å˜é‡
 
-×¢Òâ£º
-ĞèÒª¸ù¾İÏàÓ¦µÄ·½·¨£¬À´ÊäÈëÖ¸¶¨ÀàĞÍµÄÖµ¡£Èç¹ûÊäÈëµÄÊı¾İÀàĞÍÓëÒªÇóµÄÀàĞÍ²»Æ¥ÅäÊ±£¬»á±¨Òì³££ºInputMisMatchException
-µ¼ÖÂ³ÌĞòÖÕÖ¹¡£
+æ³¨æ„ï¼š
+éœ€è¦æ ¹æ®ç›¸åº”çš„æ–¹æ³•ï¼Œæ¥è¾“å…¥æŒ‡å®šç±»å‹çš„å€¼ã€‚å¦‚æœè¾“å…¥çš„æ•°æ®ç±»å‹ä¸è¦æ±‚çš„ç±»å‹ä¸åŒ¹é…æ—¶ï¼Œä¼šæŠ¥å¼‚å¸¸ï¼šInputMisMatchException
+å¯¼è‡´ç¨‹åºç»ˆæ­¢ã€‚
 */
-//1.µ¼°ü£ºimport java.util.Scanner;
+//1.å¯¼åŒ…ï¼šimport java.util.Scanner;
 import java.util.Scanner;
 
 class ScannerTest{
 	
 	public static void main(String[] args){
-		//2.ScannerµÄÊµÀı»¯
+		//2.Scannerçš„å®ä¾‹åŒ–
 		Scanner scan = new Scanner(System.in);
 		
-		//3.µ÷ÓÃScannerÀàµÄÏà¹Ø·½·¨
-		System.out.println("ÇëÊäÈëÄãµÄĞÕÃû£º");
+		//3.è°ƒç”¨Scannerç±»çš„ç›¸å…³æ–¹æ³•
+		System.out.println("è¯·è¾“å…¥ä½ çš„å§“åï¼š");
 		String name = scan.next();
 		System.out.println(name);
 
-		System.out.println("ÇëÊäÈëÄãµÄ·¼Áä£º");
+		System.out.println("è¯·è¾“å…¥ä½ çš„èŠ³é¾„ï¼š");
 		int age = scan.nextInt();
 		System.out.println(age);
 
-		System.out.println("ÇëÊäÈëÄãµÄÌåÖØ£º");
+		System.out.println("è¯·è¾“å…¥ä½ çš„ä½“é‡ï¼š");
 		double weight = scan.nextDouble();
 		System.out.println(weight);
 
-		System.out.println("ÄãÊÇ·ñÏàÖĞÎÒÁËÄØ£¿(true/false)");
+		System.out.println("ä½ æ˜¯å¦ç›¸ä¸­æˆ‘äº†å‘¢ï¼Ÿ(true/false)");
 		boolean isLove = scan.nextBoolean();
 		System.out.println(isLove);
 
-		//¶ÔÓÚcharĞÍµÄ»ñÈ¡£¬ScannerÃ»ÓĞÌá¹©Ïà¹ØµÄ·½·¨¡£Ö»ÄÜ»ñÈ¡Ò»¸ö×Ö·û´®
-		System.out.println("ÇëÊäÈëÄãµÄĞÔ±ğ£º(ÄĞ/Å®)");
-		String gender = scan.next();//"ÄĞ"
-		char genderChar = gender.charAt(0);//»ñÈ¡Ë÷ÒıÎª0Î»ÖÃÉÏµÄ×Ö·û
+		//å¯¹äºcharå‹çš„è·å–ï¼ŒScanneræ²¡æœ‰æä¾›ç›¸å…³çš„æ–¹æ³•ã€‚åªèƒ½è·å–ä¸€ä¸ªå­—ç¬¦ä¸²
+		System.out.println("è¯·è¾“å…¥ä½ çš„æ€§åˆ«ï¼š(ç”·/å¥³)");
+		String gender = scan.next();//"ç”·"
+		char genderChar = gender.charAt(0);//è·å–ç´¢å¼•ä¸º0ä½ç½®ä¸Šçš„å­—ç¬¦
 		System.out.println(genderChar);
 		
 

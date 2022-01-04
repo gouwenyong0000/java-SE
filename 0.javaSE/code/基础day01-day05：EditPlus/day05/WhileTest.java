@@ -1,36 +1,36 @@
 /*
-While Ñ­»·µÄÊ¹ÓÃ
+While å¾ªçŽ¯çš„ä½¿ç”¨
 
-Ò»¡¢Ñ­»·½á¹¹µÄ4¸öÒªËØ
-¢Ù ³õÊ¼»¯Ìõ¼þ
-¢Ú Ñ­»·Ìõ¼þ  --->ÊÇbooleanÀàÐÍ
-¢Û Ñ­»·Ìå
-¢Ü µü´úÌõ¼þ
+ä¸€ã€å¾ªçŽ¯ç»“æž„çš„4ä¸ªè¦ç´ 
+â‘  åˆå§‹åŒ–æ¡ä»¶
+â‘¡ å¾ªçŽ¯æ¡ä»¶  --->æ˜¯booleanç±»åž‹
+â‘¢ å¾ªçŽ¯ä½“
+â‘£ è¿­ä»£æ¡ä»¶
 
-¶þ¡¢whileÑ­»·µÄ½á¹¹
+äºŒã€whileå¾ªçŽ¯çš„ç»“æž„
 
-¢Ù
-while(¢Ú){
-	¢Û;
-	¢Ü;
+â‘ 
+while(â‘¡){
+	â‘¢;
+	â‘£;
 }
 
-Ö´ÐÐ¹ý³Ì£º¢Ù - ¢Ú - ¢Û - ¢Ü - ¢Ú - ¢Û - ¢Ü - ... - ¢Ú
+æ‰§è¡Œè¿‡ç¨‹ï¼šâ‘  - â‘¡ - â‘¢ - â‘£ - â‘¡ - â‘¢ - â‘£ - ... - â‘¡
 
-ËµÃ÷£º
-1.Ð´whileÑ­»·Ç§ÍòÐ¡ÐÄ²»Òª¶ªÁËµü´úÌõ¼þ¡£Ò»µ©¶ªÁË£¬¾Í¿ÉÄÜµ¼ÖÂËÀÑ­»·£¡
-2.ÎÒÃÇÐ´³ÌÐò£¬Òª±ÜÃâ³öÏÖËÀÑ­»·¡£
-3.forÑ­»·ºÍwhileÑ­»·ÊÇ¿ÉÒÔÏà»¥×ª»»µÄ£¡ 
-  Çø±ð£ºforÑ­»·ºÍwhileÑ­»·µÄ³õÊ¼»¯Ìõ¼þ²¿·ÖµÄ×÷ÓÃ·¶Î§²»Í¬¡£
+è¯´æ˜Žï¼š
+1.å†™whileå¾ªçŽ¯åƒä¸‡å°å¿ƒä¸è¦ä¸¢äº†è¿­ä»£æ¡ä»¶ã€‚ä¸€æ—¦ä¸¢äº†ï¼Œå°±å¯èƒ½å¯¼è‡´æ­»å¾ªçŽ¯ï¼
+2.æˆ‘ä»¬å†™ç¨‹åºï¼Œè¦é¿å…å‡ºçŽ°æ­»å¾ªçŽ¯ã€‚
+3.forå¾ªçŽ¯å’Œwhileå¾ªçŽ¯æ˜¯å¯ä»¥ç›¸äº’è½¬æ¢çš„ï¼ 
+  åŒºåˆ«ï¼šforå¾ªçŽ¯å’Œwhileå¾ªçŽ¯çš„åˆå§‹åŒ–æ¡ä»¶éƒ¨åˆ†çš„ä½œç”¨èŒƒå›´ä¸åŒã€‚
 
 
-Ëã·¨£ºÓÐÏÞÐÔ¡£
+ç®—æ³•ï¼šæœ‰é™æ€§ã€‚
 
 */
 class  WhileTest{
 	public static void main(String[] args) {
 		
-		//±éÀú100ÒÔÄÚµÄËùÓÐÅ¼Êý
+		//éåŽ†100ä»¥å†…çš„æ‰€æœ‰å¶æ•°
 		int i = 1;
 		while(i <= 100){
 			
@@ -40,7 +40,7 @@ class  WhileTest{
 			
 			i++;
 		}
-		//³öÁËwhileÑ­»·ÒÔºó£¬ÈÔ¿ÉÒÔµ÷ÓÃ¡£
+		//å‡ºäº†whileå¾ªçŽ¯ä»¥åŽï¼Œä»å¯ä»¥è°ƒç”¨ã€‚
 		System.out.println(i);//101
 
 	}

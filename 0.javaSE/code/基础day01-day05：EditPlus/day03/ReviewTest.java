@@ -2,7 +2,7 @@ class ReviewTest{
 
 	public static void main(String[] args){
 		char c1 = 'a';
-		char c2 = 97;//开发中非常少见
+		char c2 = 97;//寮�鍙戜腑闈炲父灏戣
 
 		System.out.println(c2);
 

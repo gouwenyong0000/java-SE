@@ -6,23 +6,23 @@ class IfExer {
 			if (y > 2) 
                 System.out.println(x + y);
 				//System.out.println("atguigu");
-			else //¾Í½üÔ­Ôò
+			else //å°±è¿‘åŸåˆ™
 				System.out.println("x is " + x);
 		
 
-		//¿ÎºóÁ·Ï°3£º²âËã¹·µÄÄêÁä
+		//è¯¾åç»ƒä¹ 3ï¼šæµ‹ç®—ç‹—çš„å¹´é¾„
 		int dogAge = 6;
 		if(dogAge >= 0 && dogAge <= 2){
-			System.out.println("Ïàµ±ÓÚÈËµÄÄêÁä£º" + dogAge * 10.5);
+			System.out.println("ç›¸å½“äºäººçš„å¹´é¾„ï¼š" + dogAge * 10.5);
 		}else if( dogAge > 2){
-			System.out.println("Ïàµ±ÓÚÈËµÄÄêÁä£º" + (2 * 10.5 + (dogAge - 2) * 4));
+			System.out.println("ç›¸å½“äºäººçš„å¹´é¾„ï¼š" + (2 * 10.5 + (dogAge - 2) * 4));
 		}else{
-			System.out.println("¹·¹·»¹Ã»³öÉúÄØ£¡");
+			System.out.println("ç‹—ç‹—è¿˜æ²¡å‡ºç”Ÿå‘¢ï¼");
 		}
 
-		//¿ÎºóÁ·Ï°4£ºÈçºÎ»ñÈ¡Ò»¸öËæ»úÊı£º10 - 99
+		//è¯¾åç»ƒä¹ 4ï¼šå¦‚ä½•è·å–ä¸€ä¸ªéšæœºæ•°ï¼š10 - 99
 		int value = (int)(Math.random() * 90 + 10);// [0.0,1.0) --> [0.0,90.0) --->[10.0, 100.0) -->[10,99]
 		System.out.println(value);
-		//¹«Ê½£º[a,b]  :  (int)(Math.random() * (b - a + 1) )+ a
+		//å…¬å¼ï¼š[a,b]  :  (int)(Math.random() * (b - a + 1) )+ a
 	}
 }

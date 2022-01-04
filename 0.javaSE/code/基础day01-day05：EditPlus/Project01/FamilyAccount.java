@@ -4,68 +4,68 @@ class FamilyAccount{
 	public static void main(String[] args){
 	
 		boolean isFlag = true;
-		//ÓÃÓÚ¼ÇÂ¼ÓÃ»§µÄÊÕÈëºÍÖ§³öµÄÏêÇé
-		String details = "ÊÕÖ§\tÕË»§½ğ¶î\tÊÕÖ§½ğ¶î\tËµ    Ã÷\n";
-		//³õÊ¼½ğ¶î
+		//ç”¨äºè®°å½•ç”¨æˆ·çš„æ”¶å…¥å’Œæ”¯å‡ºçš„è¯¦æƒ…
+		String details = "æ”¶æ”¯\tè´¦æˆ·é‡‘é¢\tæ”¶æ”¯é‡‘é¢\tè¯´    æ˜\n";
+		//åˆå§‹é‡‘é¢
 		int balance = 10000;
 
 		while(isFlag){
 
-			System.out.println("-----------------¼ÒÍ¥ÊÕÖ§¼ÇÕËÈí¼ş-----------------\n");
-			System.out.println("                    1 ÊÕÖ§Ã÷Ï¸");
-			System.out.println("                    2 µÇ¼ÇÊÕÈë");
-			System.out.println("                    3 µÇ¼ÇÖ§³ö");
-			System.out.println("                    4 ÍË    ³ö\n");
-			System.out.print("                    ÇëÑ¡Ôñ(1-4)£º");
-			//»ñÈ¡ÓÃ»§µÄÑ¡Ôñ£º1-4
+			System.out.println("-----------------å®¶åº­æ”¶æ”¯è®°è´¦è½¯ä»¶-----------------\n");
+			System.out.println("                    1 æ”¶æ”¯æ˜ç»†");
+			System.out.println("                    2 ç™»è®°æ”¶å…¥");
+			System.out.println("                    3 ç™»è®°æ”¯å‡º");
+			System.out.println("                    4 é€€    å‡º\n");
+			System.out.print("                    è¯·é€‰æ‹©(1-4)ï¼š");
+			//è·å–ç”¨æˆ·çš„é€‰æ‹©ï¼š1-4
 			char selection = Utility.readMenuSelection();
 			switch(selection){
 			
 			case '1':
-				//System.out.println("1.ÊÕÖ§Ã÷Ï¸");
-				System.out.println("-----------------µ±Ç°ÊÕÖ§Ã÷Ï¸¼ÇÂ¼-----------------");
+				//System.out.println("1.æ”¶æ”¯æ˜ç»†");
+				System.out.println("-----------------å½“å‰æ”¶æ”¯æ˜ç»†è®°å½•-----------------");
 				System.out.println(details);
 				System.out.println("--------------------------------------------------");
 				break;
 			case '2':
-				//System.out.println("2.µÇ¼ÇÊÕÈë");
-				System.out.print("±¾´ÎÊÕÈë½ğ¶î£º");
+				//System.out.println("2.ç™»è®°æ”¶å…¥");
+				System.out.print("æœ¬æ¬¡æ”¶å…¥é‡‘é¢ï¼š");
 				int addMoney = Utility.readNumber();
-				System.out.print("±¾´ÎÊÕÈëËµÃ÷£º");
+				System.out.print("æœ¬æ¬¡æ”¶å…¥è¯´æ˜ï¼š");
 				String addInfo = Utility.readString();
 				
-				//´¦Àíbalance
+				//å¤„ç†balance
 				balance += addMoney;
 
-				//´¦Àídetails
-				details += ("ÊÕÈë\t" + balance + "\t\t" + addMoney + "\t\t" + addInfo + "\n");
+				//å¤„ç†details
+				details += ("æ”¶å…¥\t" + balance + "\t\t" + addMoney + "\t\t" + addInfo + "\n");
 
 
-				System.out.println("---------------------µÇ¼ÇÍê³É---------------------\n");
+				System.out.println("---------------------ç™»è®°å®Œæˆ---------------------\n");
 				break;
 			case '3':
-				//System.out.println("3.µÇ¼ÇÖ§³ö");
+				//System.out.println("3.ç™»è®°æ”¯å‡º");
 				
-				System.out.print("±¾´ÎÖ§³ö½ğ¶î£º");
+				System.out.print("æœ¬æ¬¡æ”¯å‡ºé‡‘é¢ï¼š");
 				int minusMoney = Utility.readNumber();
-				System.out.print("±¾´ÎÖ§³öËµÃ÷£º");
+				System.out.print("æœ¬æ¬¡æ”¯å‡ºè¯´æ˜ï¼š");
 				String minusInfo = Utility.readString();
 				
-				//´¦Àíbalance
+				//å¤„ç†balance
 				if(balance >= minusMoney){
 					balance -= minusMoney;
 					
-					//´¦Àídetails
-					details += ("Ö§³ö\t" + balance + "\t\t" + minusMoney + "\t\t" + minusInfo + "\n");
+					//å¤„ç†details
+					details += ("æ”¯å‡º\t" + balance + "\t\t" + minusMoney + "\t\t" + minusInfo + "\n");
 				}else{
-					System.out.println("Ö§³ö³¬³öÕË»§¶î¶È£¬Ö§¸¶Ê§°Ü");
+					System.out.println("æ”¯å‡ºè¶…å‡ºè´¦æˆ·é¢åº¦ï¼Œæ”¯ä»˜å¤±è´¥");
 				}
 			
-				System.out.println("---------------------µÇ¼ÇÍê³É---------------------\n");
+				System.out.println("---------------------ç™»è®°å®Œæˆ---------------------\n");
 				break;
 			case '4':
-				//System.out.println("4.ÍË  ³ö");
-				System.out.print("È·ÈÏÊÇ·ñÍË³ö(Y/N)£º");
+				//System.out.println("4.é€€  å‡º");
+				System.out.print("ç¡®è®¤æ˜¯å¦é€€å‡º(Y/N)ï¼š");
 				char isExit = Utility.readConfirmSelection();
 				if(isExit == 'Y'){
 					isFlag = false;

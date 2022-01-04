@@ -1,9 +1,9 @@
 /*
-´ó¼Ò¶¼ÖªµÀ£¬ÄĞ´óµ±»é£¬Å®´óµ±¼Ş¡£ÄÇÃ´Å®·½¼Ò³¤Òª¼ŞÅ®¶ù£¬µ±È»ÒªÌá³öÒ»¶¨µÄÌõ¼ş£º
-¸ß£º180cmÒÔÉÏ£»¸»£º²Æ¸»1Ç§ÍòÒÔÉÏ£»Ë§£ºÊÇ¡£
-Èç¹ûÕâÈı¸öÌõ¼şÍ¬Ê±Âú×ã£¬Ôò£º¡°ÎÒÒ»¶¨Òª¼Ş¸øËû!!!¡±
-Èç¹ûÈı¸öÌõ¼şÓĞÎªÕæµÄÇé¿ö£¬Ôò£º¡°¼Ş°É£¬±ÈÉÏ²»×ã£¬±ÈÏÂÓĞÓà¡£¡±
-Èç¹ûÈı¸öÌõ¼ş¶¼²»Âú×ã£¬Ôò£º¡°²»¼Ş£¡¡±
+å¤§å®¶éƒ½çŸ¥é“ï¼Œç”·å¤§å½“å©šï¼Œå¥³å¤§å½“å«ã€‚é‚£ä¹ˆå¥³æ–¹å®¶é•¿è¦å«å¥³å„¿ï¼Œå½“ç„¶è¦æå‡ºä¸€å®šçš„æ¡ä»¶ï¼š
+é«˜ï¼š180cmä»¥ä¸Šï¼›å¯Œï¼šè´¢å¯Œ1åƒä¸‡ä»¥ä¸Šï¼›å¸…ï¼šæ˜¯ã€‚
+å¦‚æœè¿™ä¸‰ä¸ªæ¡ä»¶åŒæ—¶æ»¡è¶³ï¼Œåˆ™ï¼šâ€œæˆ‘ä¸€å®šè¦å«ç»™ä»–!!!â€
+å¦‚æœä¸‰ä¸ªæ¡ä»¶æœ‰ä¸ºçœŸçš„æƒ…å†µï¼Œåˆ™ï¼šâ€œå«å§ï¼Œæ¯”ä¸Šä¸è¶³ï¼Œæ¯”ä¸‹æœ‰ä½™ã€‚â€
+å¦‚æœä¸‰ä¸ªæ¡ä»¶éƒ½ä¸æ»¡è¶³ï¼Œåˆ™ï¼šâ€œä¸å«ï¼â€
 
 */
 
@@ -14,36 +14,36 @@ class IfExer1 {
 		
 		Scanner scan = new Scanner(System.in);
 		
-		System.out.println("ÇëÊäÈëÄãµÄÉí¸ß£º(cm)");
+		System.out.println("è¯·è¾“å…¥ä½ çš„èº«é«˜ï¼š(cm)");
 		int height = scan.nextInt();
-		System.out.println("ÇëÊäÈëÄãµÄ²Æ¸»£º(Ç§Íò)");
+		System.out.println("è¯·è¾“å…¥ä½ çš„è´¢å¯Œï¼š(åƒä¸‡)");
 		double wealth = scan.nextDouble();
 
 		/*
-		·½Ê½Ò»£º
-		System.out.println("ÇëÊäÈëÄãÊÇ·ñË§£º(true/false)");
+		æ–¹å¼ä¸€ï¼š
+		System.out.println("è¯·è¾“å…¥ä½ æ˜¯å¦å¸…ï¼š(true/false)");
 		boolean isHandsome = scan.nextBoolean();
 
 		if(height >= 180 && wealth >= 1 && isHandsome){
-			System.out.println("ÎÒÒ»¶¨Òª¼Ş¸øËû!!!");
+			System.out.println("æˆ‘ä¸€å®šè¦å«ç»™ä»–!!!");
 		}else if(height >= 180 || wealth >= 1 || isHandsome){
-			System.out.println("¼Ş°É£¬±ÈÉÏ²»×ã£¬±ÈÏÂÓĞÓà¡£");
+			System.out.println("å«å§ï¼Œæ¯”ä¸Šä¸è¶³ï¼Œæ¯”ä¸‹æœ‰ä½™ã€‚");
 		}else{
-			System.out.println("²»¼Ş£¡");
+			System.out.println("ä¸å«ï¼");
 		}
 		*/
 
-		//·½Ê½¶ş£º
-		System.out.println("ÇëÊäÈëÄãÊÇ·ñË§£º(ÊÇ/·ñ)");
+		//æ–¹å¼äºŒï¼š
+		System.out.println("è¯·è¾“å…¥ä½ æ˜¯å¦å¸…ï¼š(æ˜¯/å¦)");
 		String isHandsome = scan.next();
 
 		
-		if(height >= 180 && wealth >= 1 && isHandsome.equals("ÊÇ")){
-			System.out.println("ÎÒÒ»¶¨Òª¼Ş¸øËû!!!");
-		}else if(height >= 180 || wealth >= 1 || isHandsome.equals("ÊÇ")){
-			System.out.println("¼Ş°É£¬±ÈÉÏ²»×ã£¬±ÈÏÂÓĞÓà¡£");
+		if(height >= 180 && wealth >= 1 && isHandsome.equals("æ˜¯")){
+			System.out.println("æˆ‘ä¸€å®šè¦å«ç»™ä»–!!!");
+		}else if(height >= 180 || wealth >= 1 || isHandsome.equals("æ˜¯")){
+			System.out.println("å«å§ï¼Œæ¯”ä¸Šä¸è¶³ï¼Œæ¯”ä¸‹æœ‰ä½™ã€‚");
 		}else{
-			System.out.println("²»¼Ş£¡");
+			System.out.println("ä¸å«ï¼");
 		}
 	}
 }

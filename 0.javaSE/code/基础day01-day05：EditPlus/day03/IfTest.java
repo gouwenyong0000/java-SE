@@ -1,32 +1,32 @@
 /*
-·ÖÖ§½á¹¹ÖĞµÄif-else£¨Ìõ¼şÅĞ¶Ï½á¹¹£©
+åˆ†æ”¯ç»“æ„ä¸­çš„if-elseï¼ˆæ¡ä»¶åˆ¤æ–­ç»“æ„ï¼‰
 
 
-Ò»¡¢ÈıÖÖ½á¹¹
+ä¸€ã€ä¸‰ç§ç»“æ„
 
-µÚÒ»ÖÖ£º
-if(Ìõ¼ş±í´ïÊ½){
-	Ö´ĞĞ±í´ïÊ½
+ç¬¬ä¸€ç§ï¼š
+if(æ¡ä»¶è¡¨è¾¾å¼){
+	æ‰§è¡Œè¡¨è¾¾å¼
 }
 
-µÚ¶şÖÖ£º¶şÑ¡Ò»
-if(Ìõ¼ş±í´ïÊ½){
-	Ö´ĞĞ±í´ïÊ½1
+ç¬¬äºŒç§ï¼šäºŒé€‰ä¸€
+if(æ¡ä»¶è¡¨è¾¾å¼){
+	æ‰§è¡Œè¡¨è¾¾å¼1
 }else{
-	Ö´ĞĞ±í´ïÊ½2
+	æ‰§è¡Œè¡¨è¾¾å¼2
 }
 
-µÚÈıÖÖ£ºnÑ¡Ò»
-if(Ìõ¼ş±í´ïÊ½){
-	Ö´ĞĞ±í´ïÊ½1
-}else if(Ìõ¼ş±í´ïÊ½){
-	Ö´ĞĞ±í´ïÊ½2
-}else if(Ìõ¼ş±í´ïÊ½){
-	Ö´ĞĞ±í´ïÊ½3
+ç¬¬ä¸‰ç§ï¼šné€‰ä¸€
+if(æ¡ä»¶è¡¨è¾¾å¼){
+	æ‰§è¡Œè¡¨è¾¾å¼1
+}else if(æ¡ä»¶è¡¨è¾¾å¼){
+	æ‰§è¡Œè¡¨è¾¾å¼2
+}else if(æ¡ä»¶è¡¨è¾¾å¼){
+	æ‰§è¡Œè¡¨è¾¾å¼3
 }
 ...
 else{
-	Ö´ĞĞ±í´ïÊ½n
+	æ‰§è¡Œè¡¨è¾¾å¼n
 }
 
 
@@ -35,35 +35,35 @@ else{
 class IfTest {
 	public static void main(String[] args) {
 		
-		//¾ÙÀı1
+		//ä¸¾ä¾‹1
 		int heartBeats = 79;
 		if(heartBeats < 60 || heartBeats > 100){
-			System.out.println("ĞèÒª×ö½øÒ»²½¼ì²é");
+			System.out.println("éœ€è¦åšè¿›ä¸€æ­¥æ£€æŸ¥");
 		}
 
-		System.out.println("¼ì²é½áÊø");
+		System.out.println("æ£€æŸ¥ç»“æŸ");
 		
-		//¾ÙÀı2
+		//ä¸¾ä¾‹2
 		int age = 23;
 		if(age < 18){
-			System.out.println("Äã»¹¿ÉÒÔ¿´¶¯»­Æ¬");
+			System.out.println("ä½ è¿˜å¯ä»¥çœ‹åŠ¨ç”»ç‰‡");
 		}else{
-			System.out.println("Äã¿ÉÒÔ¿´³ÉÈËµçÓ°ÁË");
+			System.out.println("ä½ å¯ä»¥çœ‹æˆäººç”µå½±äº†");
 		}
 
-		//¾ÙÀı3
+		//ä¸¾ä¾‹3
 		if(age < 0){
-			System.out.println("ÄúÊäÈëµÄÊı¾İ·Ç·¨");
+			System.out.println("æ‚¨è¾“å…¥çš„æ•°æ®éæ³•");
 		}else if(age < 18){
-			System.out.println("ÇàÉÙÄêÊ±ÆÚ");
+			System.out.println("é’å°‘å¹´æ—¶æœŸ");
 		}else if(age < 35){
-			System.out.println("Çà×³ÄêÊ±ÆÚ");
+			System.out.println("é’å£®å¹´æ—¶æœŸ");
 		}else if(age < 60){
-			System.out.println("ÖĞÄêÊ±ÆÚ");
+			System.out.println("ä¸­å¹´æ—¶æœŸ");
 		}else if(age < 120){
-			System.out.println("ÀÏÄêÊ±ÆÚ");
+			System.out.println("è€å¹´æ—¶æœŸ");
 		}else{
-			System.out.println("ÄãÊÇÒª³ÉÏÉ°¡~~");
+			System.out.println("ä½ æ˜¯è¦æˆä»™å•Š~~");
 		}
 	}
 }

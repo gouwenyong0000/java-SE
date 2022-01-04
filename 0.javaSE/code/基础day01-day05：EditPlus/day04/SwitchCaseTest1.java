@@ -1,7 +1,7 @@
 /*
-ÀıÌâ£º¶ÔÑ§Éú³É¼¨´óÓÚ60·ÖµÄ£¬Êä³ö¡°ºÏ¸ñ¡±¡£µÍÓÚ60·ÖµÄ£¬Êä³ö¡°²»ºÏ¸ñ¡±¡£
+ä¾‹é¢˜ï¼šå¯¹å­¦ç”Ÿæˆç»©å¤§äº60åˆ†çš„ï¼Œè¾“å‡ºâ€œåˆæ ¼â€ã€‚ä½äº60åˆ†çš„ï¼Œè¾“å‡ºâ€œä¸åˆæ ¼â€ã€‚
 
-ËµÃ÷£ºÈç¹ûswitch-case½á¹¹ÖĞµÄ¶à¸öcaseµÄÖ´ĞĞÓï¾äÏàÍ¬£¬Ôò¿ÉÒÔ¿¼ÂÇ½øĞĞºÏ²¢¡£
+è¯´æ˜ï¼šå¦‚æœswitch-caseç»“æ„ä¸­çš„å¤šä¸ªcaseçš„æ‰§è¡Œè¯­å¥ç›¸åŒï¼Œåˆ™å¯ä»¥è€ƒè™‘è¿›è¡Œåˆå¹¶ã€‚
 */
 class SwitchCaseTest1 {
 	public static void main(String[] args) {
@@ -38,25 +38,25 @@ class SwitchCaseTest1 {
 		case 3:
 		case 4:
 		case 5:
-			System.out.println("²»¼°¸ñ");
+			System.out.println("ä¸åŠæ ¼");
 			break;
 		case 6:
 		case 7:
 		case 8:
 		case 9:
 		case 10:
-			System.out.println("¼°¸ñ");
+			System.out.println("åŠæ ¼");
 			break;
 
 		}
 		
-		//¸üÓÅµÄ½â¾ö·½°¸£º
+		//æ›´ä¼˜çš„è§£å†³æ–¹æ¡ˆï¼š
 		switch(score / 60){
 		case 0:
-			System.out.println("²»¼°¸ñ");
+			System.out.println("ä¸åŠæ ¼");
 			break;
 		case 1:
-			System.out.println("¼°¸ñ");
+			System.out.println("åŠæ ¼");
 			break;
 		}
 	

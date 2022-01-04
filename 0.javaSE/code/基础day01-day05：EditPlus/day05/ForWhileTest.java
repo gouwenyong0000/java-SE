@@ -1,12 +1,12 @@
 /*
-ÌâÄ¿£º
-´Ó¼üÅÌ¶ÁÈë¸öÊý²»È·¶¨µÄÕûÊý£¬²¢ÅÐ¶Ï¶ÁÈëµÄÕýÊýºÍ¸ºÊýµÄ¸öÊý£¬ÊäÈëÎª0Ê±½áÊø³ÌÐò¡£
+é¢˜ç›®ï¼š
+ä»Žé”®ç›˜è¯»å…¥ä¸ªæ•°ä¸ç¡®å®šçš„æ•´æ•°ï¼Œå¹¶åˆ¤æ–­è¯»å…¥çš„æ­£æ•°å’Œè´Ÿæ•°çš„ä¸ªæ•°ï¼Œè¾“å…¥ä¸º0æ—¶ç»“æŸç¨‹åºã€‚
 
-ËµÃ÷£º
-1. ²»ÔÚÑ­»·Ìõ¼þ²¿·ÖÏÞÖÆ´ÎÊýµÄ½á¹¹£ºfor(;;) »ò while(true)
-2. ½áÊøÑ­»·ÓÐ¼¸ÖÖ·½Ê½£¿
-     ·½Ê½Ò»£ºÑ­»·Ìõ¼þ²¿·Ö·µ»Øfalse
-	 ·½Ê½¶þ£ºÔÚÑ­»·ÌåÖÐ£¬Ö´ÐÐbreak
+è¯´æ˜Žï¼š
+1. ä¸åœ¨å¾ªçŽ¯æ¡ä»¶éƒ¨åˆ†é™åˆ¶æ¬¡æ•°çš„ç»“æž„ï¼šfor(;;) æˆ– while(true)
+2. ç»“æŸå¾ªçŽ¯æœ‰å‡ ç§æ–¹å¼ï¼Ÿ
+     æ–¹å¼ä¸€ï¼šå¾ªçŽ¯æ¡ä»¶éƒ¨åˆ†è¿”å›žfalse
+	 æ–¹å¼äºŒï¼šåœ¨å¾ªçŽ¯ä½“ä¸­ï¼Œæ‰§è¡Œbreak
 */
 
 import java.util.Scanner;
@@ -16,27 +16,27 @@ class ForWhileTest {
 		
 		Scanner scan = new Scanner(System.in);
 		
-		int positiveNumber = 0;//¼ÇÂ¼ÕýÊýµÄ¸öÊý
-		int negativeNumber = 0;//¼ÇÂ¼¸ºÊýµÄ¸öÊý
+		int positiveNumber = 0;//è®°å½•æ­£æ•°çš„ä¸ªæ•°
+		int negativeNumber = 0;//è®°å½•è´Ÿæ•°çš„ä¸ªæ•°
 
 		for(;;){//while(true){
 			
 			int number = scan.nextInt();
 
-			//ÅÐ¶ÏnumberµÄÕý¸ºÇé¿ö
+			//åˆ¤æ–­numberçš„æ­£è´Ÿæƒ…å†µ
 			if(number > 0){
 				positiveNumber++;
 			}else if(number < 0){
 				negativeNumber++;
 			}else{
-				//Ò»µ©Ö´ÐÐbreak£¬Ìø³öÑ­»·
+				//ä¸€æ—¦æ‰§è¡Œbreakï¼Œè·³å‡ºå¾ªçŽ¯
 				break;
 			}
 
 		}
 
-		System.out.println("ÊäÈëµÄÕýÊý¸öÊýÎª£º" + positiveNumber);
-		System.out.println("ÊäÈëµÄ¸ºÊý¸öÊýÎª£º" + negativeNumber);
+		System.out.println("è¾“å…¥çš„æ­£æ•°ä¸ªæ•°ä¸ºï¼š" + positiveNumber);
+		System.out.println("è¾“å…¥çš„è´Ÿæ•°ä¸ªæ•°ä¸ºï¼š" + negativeNumber);
 		
 
 	}

@@ -1,18 +1,18 @@
 /*
-ForÑ­»·½á¹¹µÄÊ¹ÓÃ
-Ò»¡¢Ñ­»·½á¹¹µÄ4¸öÒªËØ
-¢Ù ³õÊ¼»¯Ìõ¼þ
-¢Ú Ñ­»·Ìõ¼þ  --->ÊÇbooleanÀàÐÍ
-¢Û Ñ­»·Ìå
-¢Ü µü´úÌõ¼þ
+Forå¾ªçŽ¯ç»“æž„çš„ä½¿ç”¨
+ä¸€ã€å¾ªçŽ¯ç»“æž„çš„4ä¸ªè¦ç´ 
+â‘  åˆå§‹åŒ–æ¡ä»¶
+â‘¡ å¾ªçŽ¯æ¡ä»¶  --->æ˜¯booleanç±»åž‹
+â‘¢ å¾ªçŽ¯ä½“
+â‘£ è¿­ä»£æ¡ä»¶
 
-¶þ¡¢forÑ­»·µÄ½á¹¹
+äºŒã€forå¾ªçŽ¯çš„ç»“æž„
 
-for(¢Ù;¢Ú;¢Ü){
-	¢Û
+for(â‘ ;â‘¡;â‘£){
+	â‘¢
 }
 
-Ö´ÐÐ¹ý³Ì£º¢Ù - ¢Ú - ¢Û - ¢Ü - ¢Ú - ¢Û - ¢Ü - ... - ¢Ú
+æ‰§è¡Œè¿‡ç¨‹ï¼šâ‘  - â‘¡ - â‘¢ - â‘£ - â‘¡ - â‘¢ - â‘£ - ... - â‘¡
 
 */
 class ForTest {
@@ -29,21 +29,21 @@ class ForTest {
 		for(int i = 1;i <= 5;i++){//i:1,2,3,4,5
 			System.out.println("Hello World!");
 		}
-		//i:ÔÚforÑ­»·ÄÚÓÐÐ§¡£³öÁËforÑ­»·¾ÍÊ§Ð§ÁË¡£
+		//i:åœ¨forå¾ªçŽ¯å†…æœ‰æ•ˆã€‚å‡ºäº†forå¾ªçŽ¯å°±å¤±æ•ˆäº†ã€‚
 		//System.out.println(i);
 		
-		//Á·Ï°£º
+		//ç»ƒä¹ ï¼š
 		int num = 1;
 		for(System.out.print('a');num <= 3;System.out.print('c'),num++){
 			System.out.print('b');
 		}
-		//Êä³ö½á¹û£ºabcbcbc
+		//è¾“å‡ºç»“æžœï¼šabcbcbc
 
 		System.out.println();
 
-		//ÀýÌâ£º±éÀú100ÒÔÄÚµÄÅ¼Êý,Êä³öËùÓÐÅ¼ÊýµÄºÍ,Êä³öÅ¼ÊýµÄ¸öÊý
-		int sum = 0;//¼ÇÂ¼ËùÓÐÅ¼ÊýµÄºÍ
-		int count = 0;//¼ÇÂ¼Å¼ÊýµÄ¸öÊý
+		//ä¾‹é¢˜ï¼šéåŽ†100ä»¥å†…çš„å¶æ•°,è¾“å‡ºæ‰€æœ‰å¶æ•°çš„å’Œ,è¾“å‡ºå¶æ•°çš„ä¸ªæ•°
+		int sum = 0;//è®°å½•æ‰€æœ‰å¶æ•°çš„å’Œ
+		int count = 0;//è®°å½•å¶æ•°çš„ä¸ªæ•°
 		for(int i = 1;i <= 100;i++){
 			
 			if(i % 2 == 0){
@@ -51,11 +51,11 @@ class ForTest {
 				sum += i;
 				count++;
 			}
-			//System.out.println("×ÜºÍÎª£º" + sum);
+			//System.out.println("æ€»å’Œä¸ºï¼š" + sum);
 		}
 
-		System.out.println("×ÜºÍÎª£º" + sum);
-		System.out.println("¸öÊýÎª£º" + count);
+		System.out.println("æ€»å’Œä¸ºï¼š" + sum);
+		System.out.println("ä¸ªæ•°ä¸ºï¼š" + count);
 
 	}
 }

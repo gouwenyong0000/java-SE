@@ -1,40 +1,40 @@
 /*
-·ÖÖ§½á¹¹Ö®¶ş£ºswitch-case
+åˆ†æ”¯ç»“æ„ä¹‹äºŒï¼šswitch-case
 
-1.¸ñÊ½
-switch(±í´ïÊ½){
-case ³£Á¿1:
-	Ö´ĞĞÓï¾ä1;
+1.æ ¼å¼
+switch(è¡¨è¾¾å¼){
+case å¸¸é‡1:
+	æ‰§è¡Œè¯­å¥1;
 	//break;
 
-case ³£Á¿2:
-	Ö´ĞĞÓï¾ä2;
+case å¸¸é‡2:
+	æ‰§è¡Œè¯­å¥2;
 	//break;
 
 ...
 
 default:
-	Ö´ĞĞÓï¾än;
+	æ‰§è¡Œè¯­å¥n;
 	//break;
 
 }
 
-2.ËµÃ÷£º
-¢Ù ¸ù¾İswitch±í´ïÊ½ÖĞµÄÖµ£¬ÒÀ´ÎÆ¥Åä¸÷¸öcaseÖĞµÄ³£Á¿¡£Ò»µ©Æ¥Åä³É¹¦£¬Ôò½øÈëÏàÓ¦case½á¹¹ÖĞ£¬µ÷ÓÃÆäÖ´ĞĞÓï¾ä¡£
-  µ±µ÷ÓÃÍêÖ´ĞĞÓï¾äÒÔºó£¬ÔòÈÔÈ»¼ÌĞøÏòÏÂÖ´ĞĞÆäËûcase½á¹¹ÖĞµÄÖ´ĞĞÓï¾ä£¬Ö±µ½Óöµ½break¹Ø¼ü×Ö»ò´Ëswitch-case½á¹¹
-  Ä©Î²½áÊøÎªÖ¹¡£
+2.è¯´æ˜ï¼š
+â‘  æ ¹æ®switchè¡¨è¾¾å¼ä¸­çš„å€¼ï¼Œä¾æ¬¡åŒ¹é…å„ä¸ªcaseä¸­çš„å¸¸é‡ã€‚ä¸€æ—¦åŒ¹é…æˆåŠŸï¼Œåˆ™è¿›å…¥ç›¸åº”caseç»“æ„ä¸­ï¼Œè°ƒç”¨å…¶æ‰§è¡Œè¯­å¥ã€‚
+  å½“è°ƒç”¨å®Œæ‰§è¡Œè¯­å¥ä»¥åï¼Œåˆ™ä»ç„¶ç»§ç»­å‘ä¸‹æ‰§è¡Œå…¶ä»–caseç»“æ„ä¸­çš„æ‰§è¡Œè¯­å¥ï¼Œç›´åˆ°é‡åˆ°breakå…³é”®å­—æˆ–æ­¤switch-caseç»“æ„
+  æœ«å°¾ç»“æŸä¸ºæ­¢ã€‚
 
-¢Ú break,¿ÉÒÔÊ¹ÓÃÔÚswitch-case½á¹¹ÖĞ£¬±íÊ¾Ò»µ©Ö´ĞĞµ½´Ë¹Ø¼ü×Ö£¬¾ÍÌø³öswitch-case½á¹¹
+â‘¡ break,å¯ä»¥ä½¿ç”¨åœ¨switch-caseç»“æ„ä¸­ï¼Œè¡¨ç¤ºä¸€æ—¦æ‰§è¡Œåˆ°æ­¤å…³é”®å­—ï¼Œå°±è·³å‡ºswitch-caseç»“æ„
 
-¢Û switch½á¹¹ÖĞµÄ±í´ïÊ½£¬Ö»ÄÜÊÇÈçÏÂµÄ6ÖÖÊı¾İÀàĞÍÖ®Ò»£º
-   byte ¡¢short¡¢char¡¢int¡¢Ã¶¾ÙÀàĞÍ(JDK5.0ĞÂÔö)¡¢StringÀàĞÍ(JDK7.0ĞÂÔö)
+â‘¢ switchç»“æ„ä¸­çš„è¡¨è¾¾å¼ï¼Œåªèƒ½æ˜¯å¦‚ä¸‹çš„6ç§æ•°æ®ç±»å‹ä¹‹ä¸€ï¼š
+   byte ã€shortã€charã€intã€æšä¸¾ç±»å‹(JDK5.0æ–°å¢)ã€Stringç±»å‹(JDK7.0æ–°å¢)
 
-¢Ü case Ö®ºóÖ»ÄÜÉùÃ÷³£Á¿¡£²»ÄÜÉùÃ÷·¶Î§¡£
+â‘£ case ä¹‹ååªèƒ½å£°æ˜å¸¸é‡ã€‚ä¸èƒ½å£°æ˜èŒƒå›´ã€‚
 
-¢İ break¹Ø¼ü×ÖÊÇ¿ÉÑ¡µÄ¡£
+â‘¤ breakå…³é”®å­—æ˜¯å¯é€‰çš„ã€‚
 
-¢Ş default:Ïàµ±ÓÚif-else½á¹¹ÖĞµÄelse.  
-  default½á¹¹ÊÇ¿ÉÑ¡µÄ£¬¶øÇÒÎ»ÖÃÊÇÁé»îµÄ¡£
+â‘¥ default:ç›¸å½“äºif-elseç»“æ„ä¸­çš„else.  
+  defaultç»“æ„æ˜¯å¯é€‰çš„ï¼Œè€Œä¸”ä½ç½®æ˜¯çµæ´»çš„ã€‚
 */
 
 class SwitchCaseTest {
@@ -64,49 +64,49 @@ class SwitchCaseTest {
 		String season = "summer";
 		switch (season) {
 		case "spring":
-			System.out.println("´ºÅ¯»¨¿ª");
+			System.out.println("æ˜¥æš–èŠ±å¼€");
 			break;
 		case "summer":
-			System.out.println("ÏÄÈÕÑ×Ñ×");
+			System.out.println("å¤æ—¥ç‚ç‚");
 			break;
 		case "autumn":
-			System.out.println("Çï¸ßÆøË¬");
+			System.out.println("ç§‹é«˜æ°”çˆ½");
 			break;
 		case "winter":
-			System.out.println("¶¬Ñ©°¨°¨");
+			System.out.println("å†¬é›ªçš‘çš‘");
 			break;
 		default:
-			System.out.println("¼¾½ÚÊäÈëÓĞÎó");
+			System.out.println("å­£èŠ‚è¾“å…¥æœ‰è¯¯");
 			break;
 		}
 
 
 
-		//**************ÈçÏÂµÄÁ½ÖÖÇé¿ö¶¼±àÒë²»Í¨¹ı*********************
-		//Çé¿öÒ»
+		//**************å¦‚ä¸‹çš„ä¸¤ç§æƒ…å†µéƒ½ç¼–è¯‘ä¸é€šè¿‡*********************
+		//æƒ…å†µä¸€
 		/*
 		boolean isHandsome = true;
 		switch(isHandsome){
 		
 		case true:
-			System.out.println("ÎÒºÃË§°¡~~~");
+			System.out.println("æˆ‘å¥½å¸…å•Š~~~");
 			break;
 		case false:
-			System.out.println("ÎÒºÃ³ó°¡~~~");
+			System.out.println("æˆ‘å¥½ä¸‘å•Š~~~");
 			break;
 		default:
-			System.out.println("ÊäÈëÓĞÎó~~~");
+			System.out.println("è¾“å…¥æœ‰è¯¯~~~");
 		}
 		*/
-		//Çé¿ö¶ş
+		//æƒ…å†µäºŒ
 		/*
 		int age = 10;
 		switch(age){
 		case age > 18:
-			System.out.println("³ÉÄêÁË");
+			System.out.println("æˆå¹´äº†");
 			break;
 		default:
-			System.out.println("Î´³ÉÄê");
+			System.out.println("æœªæˆå¹´");
 		}
 		*/
 	}

@@ -1,9 +1,9 @@
 /*
-StringÀàĞÍ±äÁ¿µÄÊ¹ÓÃ
-1. StringÊôÓÚÒıÓÃÊı¾İÀàĞÍ,·­ÒëÎª£º×Ö·û´®
-2. ÉùÃ÷StringÀàĞÍ±äÁ¿Ê±£¬Ê¹ÓÃÒ»¶Ô""
-3. String¿ÉÒÔºÍ8ÖÖ»ù±¾Êı¾İÀàĞÍ±äÁ¿×öÔËËã£¬ÇÒÔËËãÖ»ÄÜÊÇÁ¬½ÓÔËËã£º+
-4. ÔËËãµÄ½á¹ûÈÔÈ»ÊÇStringÀàĞÍ
+Stringç±»å‹å˜é‡çš„ä½¿ç”¨
+1. Stringå±äºå¼•ç”¨æ•°æ®ç±»å‹,ç¿»è¯‘ä¸ºï¼šå­—ç¬¦ä¸²
+2. å£°æ˜Stringç±»å‹å˜é‡æ—¶ï¼Œä½¿ç”¨ä¸€å¯¹""
+3. Stringå¯ä»¥å’Œ8ç§åŸºæœ¬æ•°æ®ç±»å‹å˜é‡åšè¿ç®—ï¼Œä¸”è¿ç®—åªèƒ½æ˜¯è¿æ¥è¿ç®—ï¼š+
+4. è¿ç®—çš„ç»“æœä»ç„¶æ˜¯Stringç±»å‹
 
 */
 class StringTest {
@@ -16,18 +16,18 @@ class StringTest {
 		String s2 = "a";
 		String s3 = "";
 
-		//char c = '';//±àÒë²»Í¨¹ı
+		//char c = '';//ç¼–è¯‘ä¸é€šè¿‡
 
 		//***********************
 		int number = 1001;
-		String numberStr = "Ñ§ºÅ£º";
-		String info = numberStr + number;// +£ºÁ¬½ÓÔËËã
+		String numberStr = "å­¦å·ï¼š";
+		String info = numberStr + number;// +ï¼šè¿æ¥è¿ç®—
 		boolean b1 = true;
-		String info1 = info + b1;// +£ºÁ¬½ÓÔËËã
+		String info1 = info + b1;// +ï¼šè¿æ¥è¿ç®—
 		System.out.println(info1);
 
 		//***********************
-		//Á·Ï°1
+		//ç»ƒä¹ 1
 		char c = 'a';//97   A:65
 		int num = 10;
 		String str = "hello";
@@ -37,7 +37,7 @@ class StringTest {
 		System.out.println((c + num) + str);//107hello
 		System.out.println(str + num + c);//hello10a
 
-		//Á·Ï°2
+		//ç»ƒä¹ 2
 		//*	*
 		System.out.println("*	*");
 		System.out.println('*' + '\t' + '*');
@@ -48,7 +48,7 @@ class StringTest {
 
 		//***********************
 
-		//String str1 = 123;//±àÒë²»Í¨¹ı
+		//String str1 = 123;//ç¼–è¯‘ä¸é€šè¿‡
 		String str1 = 123 + "";
 		System.out.println(str1);//"123"
 		

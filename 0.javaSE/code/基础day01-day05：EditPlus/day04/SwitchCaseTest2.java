@@ -1,5 +1,5 @@
 /*
-±àĞ´³ÌĞò£º´Ó¼üÅÌÉÏÊäÈë2019ÄêµÄ¡°month¡±ºÍ¡°day¡±£¬ÒªÇóÍ¨¹ı³ÌĞòÊä³öÊäÈëµÄÈÕÆÚÎª2019ÄêµÄµÚ¼¸Ìì¡£
+ç¼–å†™ç¨‹åºï¼šä»é”®ç›˜ä¸Šè¾“å…¥2019å¹´çš„â€œmonthâ€å’Œâ€œdayâ€ï¼Œè¦æ±‚é€šè¿‡ç¨‹åºè¾“å‡ºè¾“å…¥çš„æ—¥æœŸä¸º2019å¹´çš„ç¬¬å‡ å¤©ã€‚
 
 2  15:  31 + 15
 
@@ -7,23 +7,23 @@
 
 ....
 
-ËµÃ÷:breakÔÚswitch-caseÖĞÊÇ¿ÉÑ¡µÄ
+è¯´æ˜:breakåœ¨switch-caseä¸­æ˜¯å¯é€‰çš„
 */
 import java.util.Scanner;
 class SwitchCaseTest2 {
 	public static void main(String[] args) {
 		
 		Scanner scan = new Scanner(System.in);
-		System.out.println("ÇëÊäÈë2019ÄêµÄmonth£º");
+		System.out.println("è¯·è¾“å…¥2019å¹´çš„monthï¼š");
 		int month = scan.nextInt();
-		System.out.println("ÇëÊäÈë2019ÄêµÄday£º");
+		System.out.println("è¯·è¾“å…¥2019å¹´çš„dayï¼š");
 		int day = scan.nextInt();
 
 
-		//¶¨ÒåÒ»¸ö±äÁ¿À´±£´æ×ÜÌìÊı
+		//å®šä¹‰ä¸€ä¸ªå˜é‡æ¥ä¿å­˜æ€»å¤©æ•°
 		int sumDays = 0;
 
-		//·½Ê½Ò»£ºÈßÓà
+		//æ–¹å¼ä¸€ï¼šå†—ä½™
 		/*
 		
 		if(month == 1){
@@ -42,7 +42,7 @@ class SwitchCaseTest2 {
 
 		*/
 
-		//·½Ê½¶ş£ºÈßÓà
+		//æ–¹å¼äºŒï¼šå†—ä½™
 		/*
 		switch(month){
 		case 1:
@@ -85,6 +85,6 @@ class SwitchCaseTest2 {
 			sumDays += day;
 		}
 
-		System.out.println("2019Äê" + month + "ÔÂ" + day + "ÈÕÊÇµ±ÄêµÄµÚ" + sumDays + "Ìì");
+		System.out.println("2019å¹´" + month + "æœˆ" + day + "æ—¥æ˜¯å½“å¹´çš„ç¬¬" + sumDays + "å¤©");
 	}
 }

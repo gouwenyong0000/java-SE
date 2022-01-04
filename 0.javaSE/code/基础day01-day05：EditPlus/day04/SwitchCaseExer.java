@@ -1,16 +1,16 @@
 /*
-´Ó¼üÅÌ·Ö±ğÊäÈëÄê¡¢ÔÂ¡¢ÈÕ£¬ÅĞ¶ÏÕâÒ»ÌìÊÇµ±ÄêµÄµÚ¼¸Ìì
+ä»é”®ç›˜åˆ†åˆ«è¾“å…¥å¹´ã€æœˆã€æ—¥ï¼Œåˆ¤æ–­è¿™ä¸€å¤©æ˜¯å½“å¹´çš„ç¬¬å‡ å¤©
  
-   ×¢£ºÅĞ¶ÏÒ»ÄêÊÇ·ñÊÇÈòÄêµÄ±ê×¼£º
-       1£©¿ÉÒÔ±»4Õû³ı£¬µ«²»¿É±»100Õû³ı
-	»ò
-       2£©¿ÉÒÔ±»400Õû³ı
+   æ³¨ï¼šåˆ¤æ–­ä¸€å¹´æ˜¯å¦æ˜¯é—°å¹´çš„æ ‡å‡†ï¼š
+       1ï¼‰å¯ä»¥è¢«4æ•´é™¤ï¼Œä½†ä¸å¯è¢«100æ•´é™¤
+	æˆ–
+       2ï¼‰å¯ä»¥è¢«400æ•´é™¤
 
 
-ËµÃ÷£º
-1. ·²ÊÇ¿ÉÒÔÊ¹ÓÃswitch-caseµÄ½á¹¹£¬¶¼¿ÉÒÔ×ª»»Îªif-else¡£·´Ö®£¬²»³ÉÁ¢¡£
-2. ÎÒÃÇĞ´·ÖÖ§½á¹¹Ê±£¬µ±·¢ÏÖ¼È¿ÉÒÔÊ¹ÓÃswitch-case,£¨Í¬Ê±£¬switchÖĞ±í´ïÊ½µÄÈ¡ÖµÇé¿ö²»Ì«¶à£©£¬
-  ÓÖ¿ÉÒÔÊ¹ÓÃif-elseÊ±£¬ÎÒÃÇÓÅÏÈÑ¡ÔñÊ¹ÓÃswitch-case¡£Ô­Òò£ºswitch-caseÖ´ĞĞĞ§ÂÊÉÔ¸ß¡£
+è¯´æ˜ï¼š
+1. å‡¡æ˜¯å¯ä»¥ä½¿ç”¨switch-caseçš„ç»“æ„ï¼Œéƒ½å¯ä»¥è½¬æ¢ä¸ºif-elseã€‚åä¹‹ï¼Œä¸æˆç«‹ã€‚
+2. æˆ‘ä»¬å†™åˆ†æ”¯ç»“æ„æ—¶ï¼Œå½“å‘ç°æ—¢å¯ä»¥ä½¿ç”¨switch-case,ï¼ˆåŒæ—¶ï¼Œswitchä¸­è¡¨è¾¾å¼çš„å–å€¼æƒ…å†µä¸å¤ªå¤šï¼‰ï¼Œ
+  åˆå¯ä»¥ä½¿ç”¨if-elseæ—¶ï¼Œæˆ‘ä»¬ä¼˜å…ˆé€‰æ‹©ä½¿ç”¨switch-caseã€‚åŸå› ï¼šswitch-caseæ‰§è¡Œæ•ˆç‡ç¨é«˜ã€‚
 
 */
 import java.util.Scanner;
@@ -18,15 +18,15 @@ class SwitchCaseExer {
 	public static void main(String[] args) {
 		
 		Scanner scan = new Scanner(System.in);
-		System.out.println("ÇëÊäÈëyear£º");
+		System.out.println("è¯·è¾“å…¥yearï¼š");
 		int year = scan.nextInt();
-		System.out.println("ÇëÊäÈëmonth£º");
+		System.out.println("è¯·è¾“å…¥monthï¼š");
 		int month = scan.nextInt();
-		System.out.println("ÇëÊäÈëday£º");
+		System.out.println("è¯·è¾“å…¥dayï¼š");
 		int day = scan.nextInt();
 
 
-		//¶¨ÒåÒ»¸ö±äÁ¿À´±£´æ×ÜÌìÊı
+		//å®šä¹‰ä¸€ä¸ªå˜é‡æ¥ä¿å­˜æ€»å¤©æ•°
 		int sumDays = 0;
 
 		switch(month){
@@ -50,7 +50,7 @@ class SwitchCaseExer {
 			sumDays += 31;
 		case 3:
 			//sumDays += 28;
-			//ÅĞ¶ÏyearÊÇ·ñÊÇÈòÄê
+			//åˆ¤æ–­yearæ˜¯å¦æ˜¯é—°å¹´
 			if((year % 4 == 0 && year % 100 != 0 ) || year % 400 == 0){
 				sumDays += 29;
 			}else{
@@ -63,6 +63,6 @@ class SwitchCaseExer {
 			sumDays += day;
 		}
 
-		System.out.println(year + "Äê" + month + "ÔÂ" + day + "ÈÕÊÇµ±ÄêµÄµÚ" + sumDays + "Ìì");
+		System.out.println(year + "å¹´" + month + "æœˆ" + day + "æ—¥æ˜¯å½“å¹´çš„ç¬¬" + sumDays + "å¤©");
 	}
 }
