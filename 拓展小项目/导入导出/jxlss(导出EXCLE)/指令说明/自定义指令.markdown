@@ -1,0 +1,43 @@
+`jxls` 可以添加自定义指令，增加方法：
+
+- 继承`AbstractCommand`创建自定义指令
+``` java
+public class MyCommand extends AbstractCommand {
+    private attr1;
+    private attr2;
+    @Override
+    public String getName() {
+        return "my";
+    }
+
+    @Override
+    public Size applyAt(CellRef cellRef, Context context) {
+        // TODO something
+        
+        // 如果属性值是个表达式则用下面方法解析出值来
+        Object attr1Obj = getTransformationConfig().getExpressionEvaluator().evaluate(attr1, context.toMap());
+        /*
+         * 返回新的区域大小
+         * Size对象指是当前指令处理的单元格区域大小
+         * 如果指令执行完之后单元格区域大小有改变则需要返回新的大小，不然生成的excel样式就会有错乱
+         */
+        return new Size();
+    }
+
+    // getter/setter ...
+}
+```
+
+- 注册自定义指令
+
+直接使用`XlsCommentAreaBuilder`注册
+``` java
+XlsCommentAreaBuilder.addCommandMapping("my", MyCommand.class);
+```
+
+- 使用指令
+
+在单元格批注添加该指令使用
+```
+jx:my(attr1="expression" attr2="value" lastCell="H10")
+```
