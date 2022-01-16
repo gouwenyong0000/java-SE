@@ -518,6 +518,10 @@ windows，android，车载系统1inux等。
 
 
 
+## 虚拟机克隆步骤
+
+https://blog.csdn.net/qq_35024768/article/details/121196596
+
 # 基础篇  Linux目录结构
 
 ## 基本介绍:
@@ -2931,6 +2935,8 @@ tree
 
 ![image-20210512012623349](linux.assets/image-20210512012623349.png)
 
+
+
 缺点: linux 启动后会自动获取 IP,缺点是每次自动获取的 ip 地址可能不一样。这个不适用于做服务器，因为我们的服务器的 ip 需要时固定的。
 
 ### 第二种方法(指定固定的ip)
@@ -3086,6 +3092,10 @@ systemctl restart network
 **主机名解析机制分析（Hosts，DNS）**
 
 ![image-20210512014846476](linux.assets/image-20210512014846476.png)
+
+## 虚拟机网络问题排查
+
+https://blog.csdn.net/qq_35024768/article/details/121196596
 
 # 实操篇 进程管理(重点)
 
@@ -3819,7 +3829,7 @@ yum install firefox
 
 ```sh
 JAVA_HOME=/opt/jdk1.7.0_79     
-PATH=/opt/jdk1.7.0_79/bin:$PATH    # 或者PATH=$JAVA_HOME/bin:$PATH
+PATH=$JAVA_HOME/bin:$PATH    # 或者PATH=/opt/jdk1.7.0_79/bin:$PATH
 export JAVA_HOME PATH    # 输出变量，让环境变量剩下
 ```
 
