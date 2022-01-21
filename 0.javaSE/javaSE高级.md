@@ -2491,6 +2491,10 @@ public class JDK8DateTimeTest {
         LocalDateTime localDateTime1=localDateTime.of(2020,4,3,13,23,43);
         System.out.println(localDateTime1);//2020-04-03T13:23:43
 
+        LocalDateTime time = LocalDateTime.parse("2002--01--02 11:21",DateTimeFormatter.ofPattern("yyyy--MM--dd HH:mm"));
+		System.out.println("字符串反解析后的时间为：" + time);
+// 输出：		字符串反解析后的时间为：2002-01-02T11:21
+        
         //getXxx
         System.out.println(localDateTime1.getDayOfMonth());//3
         System.out.println(localDateTime1.getDayOfWeek());//FRIDAY
@@ -2517,11 +2521,13 @@ public class JDK8DateTimeTest {
         LocalDateTime localDateTime5 = localDateTime1.minusDays(6);
         System.out.println(localDateTime1);
         System.out.println(localDateTime5);
+        
+        
+        localDateTime4 = localDateTime4.withYear( 2008);// 直接修改年份到2008年
+    	localDateTime4 = localDateTime4.withHour( 13 );   // 直接修改小时到13时
+        
+        //解析时间
     }
-
-
-
-  
 
 }
 ```
@@ -2558,7 +2564,7 @@ public class JDK8DateTimeTest {
     }
 ```
 
-格式化与解析日期或时间
+**格式化与解析日期或时间**
 
 ![image-20210411210402567](javaSE高级.assets/image-20210411210402567.png)
 
