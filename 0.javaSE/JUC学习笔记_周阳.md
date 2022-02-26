@@ -1,9 +1,9 @@
 > 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [blog.csdn.net](https://blog.csdn.net/lizongxiao/article/details/106668806?utm_source=app&app_version=4.8.0&code=app_1562916241&uLinkId=usr1mkqgl919blen)
 
 [笔记地址](https://github.com/LZX842056112/Thread)  
-![](JUC 学习笔记【周阳】.assets/20200624155932327.png)  
-![](JUC 学习笔记【周阳】.assets/20200624180724769.png)  
-![](JUC 学习笔记【周阳】.assets/20200624181450689.png)
+![](JUC学习笔记_周阳.assets/20200624155932327.png)  
+![](JUC学习笔记_周阳.assets/20200624180724769.png)  
+![](JUC学习笔记_周阳.assets/20200624181450689.png)
 
 ## 1.卖票复习
 
@@ -61,7 +61,7 @@ public class SaleTicket {
 }
 ```
 
-![](JUC 学习笔记【周阳】.assets/20200610160622726.png)  
+![](JUC学习笔记_周阳.assets/20200610160622726.png)  
 新版写法，效果一样
 
 ```java
@@ -105,28 +105,28 @@ public class SaleTicketDemo1 {
 ```
 
 SaleTicket 拆分  
-![](JUC 学习笔记【周阳】.assets/2020061215073418.png)  
+![](JUC学习笔记_周阳.assets/2020061215073418.png)  
 ![](https://img-blog.csdnimg.cn/20200612151342141.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)
 
 2.LambdaExpress
 ---------------
 
-![](JUC 学习笔记【周阳】.assets/20200611192215542.png)  
+![](JUC学习笔记_周阳.assets/20200611192215542.png)  
 1  
-![](JUC 学习笔记【周阳】.assets/20200611185522906.png)  
+![](JUC学习笔记_周阳.assets/20200611185522906.png)  
 2  
-![](JUC 学习笔记【周阳】.assets/2020061118571712.png)  
+![](JUC学习笔记_周阳.assets/2020061118571712.png)  
 3  
-![](JUC 学习笔记【周阳】.assets/20200611190012152.png)  
+![](JUC学习笔记_周阳.assets/20200611190012152.png)  
 4  
-![](JUC 学习笔记【周阳】.assets/20200611191532863.png)  
-![](JUC 学习笔记【周阳】.assets/20200611191553245.png)
+![](JUC学习笔记_周阳.assets/20200611191532863.png)  
+![](JUC学习笔记_周阳.assets/20200611191553245.png)
 
-![](JUC 学习笔记【周阳】.assets/20200611191605225.png)  
+![](JUC学习笔记_周阳.assets/20200611191605225.png)  
 5  
-![](JUC 学习笔记【周阳】.assets/20200611191837180.png)  
-![](JUC 学习笔记【周阳】.assets/20200611192052105.png)  
-![](JUC 学习笔记【周阳】.assets/20200611192114255.png)
+![](JUC学习笔记_周阳.assets/20200611191837180.png)  
+![](JUC学习笔记_周阳.assets/20200611192052105.png)  
+![](JUC学习笔记_周阳.assets/20200611192114255.png)
 
 ## 3.生产者消费者
 
@@ -321,7 +321,7 @@ public class ProdConsumerDemo4 {
 }
 ```
 
-![](JUC 学习笔记【周阳】.assets/20200618204314531.png)
+![](JUC学习笔记_周阳.assets/20200618204314531.png)
 
 ## 4.精确通知顺序访问
 
@@ -434,7 +434,7 @@ public class ConditionDemo {
 }
 ```
 
-![](JUC 学习笔记【周阳】.assets/20200622202158640.png)
+![](JUC学习笔记_周阳.assets/20200622202158640.png)
 
 ## 5.八锁理论
 
@@ -527,16 +527,16 @@ public class LockBDemo05 {
 
 ---------
 
-![](JUC 学习笔记【周阳】.assets/20200612155134349.png)  
-![](JUC 学习笔记【周阳】.assets/2020061215515575.png)  
+![](JUC学习笔记_周阳.assets/20200612155134349.png)  
+![](JUC学习笔记_周阳.assets/2020061215515575.png)  
 1.new Vector<>();  
-![](JUC 学习笔记【周阳】.assets/20200612155238281.png)  
+![](JUC学习笔记_周阳.assets/20200612155238281.png)  
 2.Collections.synchronizedList(new ArrayList());  
-![](JUC 学习笔记【周阳】.assets/20200612155646968.png)  
+![](JUC学习笔记_周阳.assets/20200612155646968.png)  
 3.new CopyOnWriteArrayList(); // 写时复制  
-![](JUC 学习笔记【周阳】.assets/20200612160122961.png)  
-![](JUC 学习笔记【周阳】.assets/20200612160419709.png)  
-![](JUC 学习笔记【周阳】.assets/20200615195242998.png)
+![](JUC学习笔记_周阳.assets/20200612160122961.png)  
+![](JUC学习笔记_周阳.assets/20200612160419709.png)  
+![](JUC学习笔记_周阳.assets/20200615195242998.png)
 
 ```java
 public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, java.io.Serializable {
@@ -553,8 +553,8 @@ public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, jav
 }
 ```
 
-![](JUC 学习笔记【周阳】.assets/20200615201935579.png)  
-![](JUC 学习笔记【周阳】.assets/20200615202344712.png)
+![](JUC学习笔记_周阳.assets/20200615201935579.png)  
+![](JUC学习笔记_周阳.assets/20200615202344712.png)
 
 ```java
 /**
@@ -613,9 +613,9 @@ public class NotSafeDemo3 {
 7.Callable
 ----------
 
-![](JUC 学习笔记【周阳】.assets/20200623182127652.png)  
-![](JUC 学习笔记【周阳】.assets/20200623182139170.png)  
-![](JUC 学习笔记【周阳】.assets/20200623194826417.png)
+![](JUC学习笔记_周阳.assets/20200623182127652.png)  
+![](JUC学习笔记_周阳.assets/20200623182139170.png)  
+![](JUC学习笔记_周阳.assets/20200623194826417.png)
 
 ```java
 class MyThread implements Runnable{
@@ -649,12 +649,12 @@ public class CallableDemo7 {
 }
 ```
 
-![](JUC 学习笔记【周阳】.assets/20200623200610745.png)
+![](JUC学习笔记_周阳.assets/20200623200610745.png)
 
 8.CountDownLatchDemo
 --------------------
 
-![](JUC 学习笔记【周阳】.assets/2020063019493373.png)
+![](JUC学习笔记_周阳.assets/2020063019493373.png)
 
 ```java
 /**
@@ -688,13 +688,13 @@ public class CountDownLatchDemo8 {
 9.CyclicBarrierDemo
 -------------------
 
-![](JUC 学习笔记【周阳】.assets/20200701152731571.png)
+![](JUC学习笔记_周阳.assets/20200701152731571.png)
 
 10.SemaphoreDemo
 ----------------
 
-![](JUC 学习笔记【周阳】.assets/20200701160521224.png)  
-![](JUC 学习笔记【周阳】.assets/20200701160549354.png)
+![](JUC学习笔记_周阳.assets/20200701160521224.png)  
+![](JUC学习笔记_周阳.assets/20200701160549354.png)
 
 11.ReadWriteLockDemo
 --------------------
@@ -768,8 +768,8 @@ public class ReadWriteLockDemo11 {
 12.BlockingQueue 种类
 -------------------
 
-![](JUC 学习笔记【周阳】.assets/20200702211141754.png)  
-![](JUC 学习笔记【周阳】.assets/20200702211229753.png)  
+![](JUC学习笔记_周阳.assets/20200702211141754.png)  
+![](JUC学习笔记_周阳.assets/20200702211229753.png)  
 ![](https://img-blog.csdnimg.cn/20200702211714115.png)
 
 **阻塞队列的用处：**
@@ -781,20 +781,20 @@ public class ReadWriteLockDemo11 {
 
 在concurrent包发布以前，在多线程环境下，我们每个程序员都必须去自己控制这些细节，尤其还要兼顾效率和线程安全，而这会给我们的程序带来不小的复杂度。  
 
-![](JUC 学习笔记【周阳】.assets/20200702212932216.png)  
-![](JUC 学习笔记【周阳】.assets/20200702213012839.png)  
-![](JUC 学习笔记【周阳】.assets/20200703110900155.png)  
-![](JUC 学习笔记【周阳】.assets/20200703113405603.png)  
-![](JUC 学习笔记【周阳】.assets/2020070311344864.png)  
-![](JUC 学习笔记【周阳】.assets/202007031136274.png)  
-![](JUC 学习笔记【周阳】.assets/20200703113816634.png)  
-![](JUC 学习笔记【周阳】.assets/2020070311394464.png)  
+![](JUC学习笔记_周阳.assets/20200702212932216.png)  
+![](JUC学习笔记_周阳.assets/20200702213012839.png)  
+![](JUC学习笔记_周阳.assets/20200703110900155.png)  
+![](JUC学习笔记_周阳.assets/20200703113405603.png)  
+![](JUC学习笔记_周阳.assets/2020070311344864.png)  
+![](JUC学习笔记_周阳.assets/202007031136274.png)  
+![](JUC学习笔记_周阳.assets/20200703113816634.png)  
+![](JUC学习笔记_周阳.assets/2020070311394464.png)  
 ![](https://img-blog.csdnimg.cn/20200703114235861.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)
 
 13.TestTransferValue
 --------------------
 
-![](JUC 学习笔记【周阳】.assets/20200705122044298.png)
+![](JUC学习笔记_周阳.assets/20200705122044298.png)
 
 ```java
 public class TestTransferValue {
@@ -825,39 +825,39 @@ public class TestTransferValue {
 }
 ```
 
-![](JUC 学习笔记【周阳】.assets/2020070512212653.png)
+![](JUC学习笔记_周阳.assets/2020070512212653.png)
 
 **对第三个解析**：java参数传递属于值拷贝副本传递，调用tets.changeValues(str)时，方法形参str=“abc”指向的地址，由于字符串属于不可变类，再次赋值时，重新开辟新的变量，方法中str指向新的地址，main方法中仍然指向“abc”中
 
-![image-20210628232707705](JUC 学习笔记【周阳】.assets/image-20210628232707705-1624894425854.png)
+![image-20210628232707705](JUC学习笔记_周阳.assets/image-20210628232707705-1624894425854.png)
 
 ## 14.线程池
 
-![](JUC 学习笔记【周阳】.assets/20200706114548466.png)  
-![](JUC 学习笔记【周阳】.assets/20200707143131109.png)  
+![](JUC学习笔记_周阳.assets/20200706114548466.png)  
+![](JUC学习笔记_周阳.assets/20200707143131109.png)  
 第一种  
-![](JUC 学习笔记【周阳】.assets/20200707145729765.png)  
-![](JUC 学习笔记【周阳】.assets/2020070714462575.png)  
-![](JUC 学习笔记【周阳】.assets/20200707144635572.png)  
+![](JUC学习笔记_周阳.assets/20200707145729765.png)  
+![](JUC学习笔记_周阳.assets/2020070714462575.png)  
+![](JUC学习笔记_周阳.assets/20200707144635572.png)  
 第二种  
-![](JUC 学习笔记【周阳】.assets/20200707145333162.png)  
-![](JUC 学习笔记【周阳】.assets/20200707145003415.png)  
+![](JUC学习笔记_周阳.assets/20200707145333162.png)  
+![](JUC学习笔记_周阳.assets/20200707145003415.png)  
 第三种  
-![](JUC 学习笔记【周阳】.assets/20200707145631874.png)  
-![](JUC 学习笔记【周阳】.assets/20200707145447926.png)
+![](JUC学习笔记_周阳.assets/20200707145631874.png)  
+![](JUC学习笔记_周阳.assets/20200707145447926.png)
 
 15.ThreadPoolExecutor 底层原理
 --------------------------
 
-![](JUC 学习笔记【周阳】.assets/20200708112457871.png)
+![](JUC学习笔记_周阳.assets/20200708112457871.png)
 
 ## 16.线程池里 7 大参数
 
 --------------
 
-![](JUC 学习笔记【周阳】.assets/20200708134005327.png)  
-![](JUC 学习笔记【周阳】.assets/20200708134020674.png)  
-![](JUC 学习笔记【周阳】.assets/20200708134153675.png)
+![](JUC学习笔记_周阳.assets/20200708134005327.png)  
+![](JUC学习笔记_周阳.assets/20200708134020674.png)  
+![](JUC学习笔记_周阳.assets/20200708134153675.png)
 
 ```java
 public ThreadPoolExecutor(int corePoolSize,
@@ -885,26 +885,26 @@ public ThreadPoolExecutor(int corePoolSize,
 
 ## 17.线程池底层工作原理
 
-![image-20210629013800778](JUC 学习笔记【周阳】.assets/image-20210629013800778.png)
+![image-20210629013800778](JUC学习笔记_周阳.assets/image-20210629013800778.png)
 
 -------------
 
-![](JUC 学习笔记【周阳】.assets/20200709121721658.png)  
-![](JUC 学习笔记【周阳】.assets/20200709144349666.png)  
-![](JUC 学习笔记【周阳】.assets/20200709144823678.png)  
-![](JUC 学习笔记【周阳】.assets/20200710191810974.png)  
+![](JUC学习笔记_周阳.assets/20200709121721658.png)  
+![](JUC学习笔记_周阳.assets/20200709144349666.png)  
+![](JUC学习笔记_周阳.assets/20200709144823678.png)  
+![](JUC学习笔记_周阳.assets/20200710191810974.png)  
 ![](https://img-blog.csdnimg.cn/20200710191831191.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
-![](JUC 学习笔记【周阳】.assets/20200709145210674.png)  
-![](JUC 学习笔记【周阳】.assets/20200709145729530.png)  
-![](JUC 学习笔记【周阳】.assets/20200710191545314.png)  
-![](JUC 学习笔记【周阳】.assets/20200710193007405.png)  
-![](JUC 学习笔记【周阳】.assets/20200710192811556.png)  
-![](JUC 学习笔记【周阳】.assets/20200710192936458.png)  
-![](JUC 学习笔记【周阳】.assets/20200710192945180.png)  
-![](JUC 学习笔记【周阳】.assets/20200710193055510.png)  
-![](JUC 学习笔记【周阳】.assets/20200710193119659.png)  
-![](JUC 学习笔记【周阳】.assets/20200710194801205.png)  
-![](JUC 学习笔记【周阳】.assets/20200710194825358.png)
+![](JUC学习笔记_周阳.assets/20200709145210674.png)  
+![](JUC学习笔记_周阳.assets/20200709145729530.png)  
+![](JUC学习笔记_周阳.assets/20200710191545314.png)  
+![](JUC学习笔记_周阳.assets/20200710193007405.png)  
+![](JUC学习笔记_周阳.assets/20200710192811556.png)  
+![](JUC学习笔记_周阳.assets/20200710192936458.png)  
+![](JUC学习笔记_周阳.assets/20200710192945180.png)  
+![](JUC学习笔记_周阳.assets/20200710193055510.png)  
+![](JUC学习笔记_周阳.assets/20200710193119659.png)  
+![](JUC学习笔记_周阳.assets/20200710194801205.png)  
+![](JUC学习笔记_周阳.assets/20200710194825358.png)
 
 
 
@@ -916,13 +916,13 @@ public ThreadPoolExecutor(int corePoolSize,
 
 **IO****密集型：****corePoolSize = CPU****核数** *** 2**
 
-![image-20210629013434222](JUC 学习笔记【周阳】.assets/image-20210629013434222.png)
+![image-20210629013434222](JUC学习笔记_周阳.assets/image-20210629013434222.png)
 
 ## 18.四大函数式接口
 
 -----------
 
-![](JUC 学习笔记【周阳】.assets/20200713162653977.png)  
+![](JUC学习笔记_周阳.assets/20200713162653977.png)  
 ![](https://img-blog.csdnimg.cn/20200713163241916.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
 ![](https://img-blog.csdnimg.cn/20200713162710862.png)  
 
@@ -949,7 +949,7 @@ System.out.println(supplier.get());
 19.Stream 流式计算 
 --------------
 
-![image-20210629210649554](JUC 学习笔记【周阳】.assets/image-20210629210649554.png)
+![image-20210629210649554](JUC学习笔记_周阳.assets/image-20210629210649554.png)
 
 
 ![](https://img-blog.csdnimg.cn/2020071415135572.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpem9uZ3hpYW8=,size_16,color_FFFFFF,t_70)  
@@ -958,9 +958,9 @@ System.out.println(supplier.get());
 20.ForkJoinDemo
 ---------------
 
-![](JUC 学习笔记【周阳】.assets/20200715151928617.png)
+![](JUC学习笔记_周阳.assets/20200715151928617.png)
 
-![image-20210629224517556](JUC 学习笔记【周阳】.assets/image-20210629224517556.png)
+![image-20210629224517556](JUC学习笔记_周阳.assets/image-20210629224517556.png)
 
 ```java
 import java.util.concurrent.ForkJoinPool;
@@ -1069,7 +1069,7 @@ public class CompletableFutureDemo {
 }
 ```
 
-![image-20210629235931694](JUC 学习笔记【周阳】.assets/image-20210629235931694.png)
+![image-20210629235931694](JUC学习笔记_周阳.assets/image-20210629235931694.png)
 
 
 
@@ -1097,4 +1097,4 @@ public class CompletableFutureDemo {
 }
 ```
 
-![image-20210630000923403](JUC 学习笔记【周阳】.assets/image-20210630000923403.png)
+![image-20210630000923403](JUC学习笔记_周阳.assets/image-20210630000923403.png)
