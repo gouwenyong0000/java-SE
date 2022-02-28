@@ -23,7 +23,7 @@ public class TestVod {
     //根据视频的id获取视频的地址
     public static void testGetPlayInfo() throws ClientException {
         String accessKeyId = "aliyunKey";
-        String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1HIPaMnD";
+        String accessKeySecret = "mUPcsCp9iUUsCcgZU4";
         String id = "f99835b5d88640ce810d6e05a46d062b";
 
         //初始化调用对象
@@ -54,7 +54,7 @@ public class TestVod {
      */
     public static void testGetVideoPlayAuth() throws ClientException {
         String accessKeyId = "aliyunKey";
-        String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1HIPaMnD";
+        String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1D";
         String id =    "6b4543819dbb4f5b9d7871ae0fba9cc9";
 
         //初始化客户端、请求对象和相应对象
@@ -82,7 +82,7 @@ public class TestVod {
      */
     public static void testUploadVideo() {
         String accessKeyId = "aliyunKey";
-        String accessKeySecret = "mUPcsCp9iUUsCcgZU44NjM1HIPaMnD";
+        String accessKeySecret = "mUPcsCp9iUUsCcgZU4aMnD";
         String id = "f99835b5d88640ce810d6e05a46d062b";
 
         //1.音视频上传-本地文件上传
