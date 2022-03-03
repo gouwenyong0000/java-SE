@@ -228,7 +228,7 @@
 
 ## 2.2. 常用dos命令
 
-```
+```shell
 dir : 列出当前目录下的文件以及文件夹
 md : 创建目录
 cd : 进入指定目录
@@ -5986,6 +5986,80 @@ class F{
 ![image-20210328011615266](javaSE.assets/image-20210328011615266.png)
 
 ![image-20210328011704577](javaSE.assets/image-20210328011704577.png)
+
+> 测试：验证java的动态绑定
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        Father son =  new Son();
+    }
+}
+
+class Father {
+
+    Father() {     
+        super();//2、调用父类Object的构造器
+        this.toString();//3、调用成员方法，运行时动态绑定，去找运行时指向new Son()这个对象的成员方法，发现找到了，则执行。找不到，根据class类对象的文件元数据信息，则向上找超类的方法    
+    }
+
+    @Override
+    public String toString() {
+        return "Father";
+    }
+}
+
+class Son extends Father {
+    String name;
+
+    Son() {
+        super();//1、调用父类构造器
+        name = "Son";
+    }
+
+    @Override
+    public String toString() {
+        return name.toUpperCase();//4、调用name.toUpperCase()的方法，但是name此时还是默认初始化，值为null，所以报空指针异常
+    }
+}
+```
+
+错误结果：
+
++ 输出FATHER
++ 输出SON
++ 不能编译
+
+**答案：**name.toUpperCase();执行时name为null，此时运行报错NullPointerException
+
+**解析：******成员方法在运行时进行动态绑定**，会现在本类找，找不到一层一层到父类去找，所以会**出现name为null**
+
+
+
+> 总结：
+>
+> 1. 在java中，`成员方法默认动态绑定`【除了**`static`、`final`、`private`修饰的方法`不是动态绑定`**】；不像c++的动态绑定需要添加额外关键字来实现多态
+> 2. 当JVM执行对象的成员方法时，会将方法和当前对象的实际内存进行绑定。找不到，就根据class类文件的元数据信息，去寻找找到父类的成员方法。
+> 3. **动态绑定机制和属性没有关系**
+> 4. 构造方法，默认回调用super()
+>
+> ---
+>
+> 1. 子类初始化的时候子类和父类初始化顺序
+>
+>    + 父类【静态成员】和【静态代码块】，按在代码中出现的顺序依次执行
+>
+>    + 子类【静态成员】和【静态代码块】，按在代码中出现的顺序依次执行
+>
+>    + 父类的【普通成员变量被普通成员方法赋值】和【普通代码块】，按在代码中出现的顺序依次执行
+>
+>    + 执行父类的构造方法
+>
+>    + 子类的【普通成员变量被普通成员方法赋值】和【普通代码块】，按在代码中出现的顺序依次执行
+>
+>    + 执行子类的构造方法
+
+
 
 ### 7.8.5. 小结
 
