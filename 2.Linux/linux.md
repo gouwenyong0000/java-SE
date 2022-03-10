@@ -1,4 +1,5 @@
-[TOC]
+[toc]
+
 - [Linux开山篇](#linux开山篇)
   - [本套Linux课程内容](#本套linux课程内容)
   - [Linux学习方向](#linux学习方向)
@@ -43,7 +44,7 @@
   - [快捷键的使用案例](#快捷键的使用案例)
   - [vim和vi的快捷键键盘一览图](#vim和vi的快捷键键盘一览图)
 - [实操篇 开机、重启和用户登录注销](#实操篇-开机重启和用户登录注销)
-  - [关机&重启命令](#关机重启命令)
+  - [关机&amp;重启命令](#关机重启命令)
   - [用户登录和注销](#用户登录和注销)
 - [实操篇 用户管理](#实操篇-用户管理)
   - [基本介绍](#基本介绍-1)
@@ -82,7 +83,7 @@
     - [echo 指令](#echo-指令)
     - [head 指令](#head-指令)
     - [tail 指令](#tail-指令)
-    - ['>'  指令和'>>' 指令](#--指令和-指令)
+    - [&#39;&gt;&#39;  指令和&#39;&gt;&gt;&#39; 指令](#--指令和-指令)
     - [ln 指令](#ln-指令)
     - [history 指令](#history-指令)
   - [时间日期类](#时间日期类)
@@ -155,7 +156,7 @@
     - [修改ip 地址(修改虚拟网络的ip)](#修改ip-地址修改虚拟网络的ip)
     - [查看网关](#查看网关)
     - [查看windows环境的中VMnet8网络配置(`ipconfig`指令)](#查看windows环境的中vmnet8网络配置ipconfig指令)
-    - [linux 中ip查看`ifconfig`](#linux-中ip查看ifconfig)
+    - [linux 中ip查看 `ifconfig`](#linux-中ip查看ifconfig)
   - [ping 测试主机之间网络连通性](#ping-测试主机之间网络连通性)
   - [linux网络环境配置](#linux网络环境配置)
     - [第一种方法(自动获取)：](#第一种方法自动获取)
@@ -261,7 +262,7 @@
 - [高级篇 日志管理](#高级篇-日志管理)
   - [基本介绍](#基本介绍-7)
   - [系统常用的日志](#系统常用的日志)
-  - [日志管理服务`rsyslogd`](#日志管理服务rsyslogd)
+  - [日志管理服务 `rsyslogd`](#日志管理服务rsyslogd)
     - [日志配置文件](#日志配置文件)
     - [应用实例](#应用实例-7)
   - [日志轮替](#日志轮替)
@@ -271,16 +272,16 @@
     - [把自己的日志加入日志轮替](#把自己的日志加入日志轮替)
     - [应用实例](#应用实例-8)
     - [日志轮替机制原理](#日志轮替机制原理)
-  - [查看内存日志`journalctl`](#查看内存日志journalctl)
+  - [查看内存日志 `journalctl`](#查看内存日志journalctl)
 - [高级篇-定制自己的Linux系统](#高级篇-定制自己的linux系统)
   - [基本介绍](#基本介绍-9)
   - [基本原理](#基本原理)
   - [制作min linux思路分析](#制作min-linux思路分析)
-- [linux内核源码介绍&内核升级](#linux内核源码介绍内核升级)
+- [linux内核源码介绍&amp;内核升级](#linux内核源码介绍内核升级)
   - [linux0.01内核源码](#linux001内核源码)
     - [基本介绍](#基本介绍-10)
   - [linux内核最新版和内核升级](#linux内核最新版和内核升级)
-    - [下载&解压最新版](#下载解压最新版)
+    - [下载&amp;解压最新版](#下载解压最新版)
     - [linux内核升级](#linux内核升级)
 - [linux系统备份与恢复](#linux系统备份与恢复)
   - [基本介绍](#基本介绍-11)
@@ -297,33 +298,32 @@
 - [linux可视化管理工具](#linux可视化管理工具)
   - [webmin](#webmin)
     - [基本介绍](#基本介绍-14)
-    - [安装webmin&配置](#安装webmin配置)
+    - [安装webmin&amp;配置](#安装webmin配置)
     - [简单使用](#简单使用)
   - [bt运维工具](#bt运维工具)
     - [基本介绍](#基本介绍-15)
     - [安装和使用](#安装和使用)
     - [使用介绍](#使用介绍)
 - [Linux面试题](#linux面试题)
-      - [分析日志t.log（访问量），将各个ip地址截取，并统计出现次数，并按从大到小排序（腾讯）](#分析日志tlog访问量将各个ip地址截取并统计出现次数并按从大到小排序腾讯)
-      - [统计连接到服务器的各个ip情况，并按连接数从大到小排序（腾讯）](#统计连接到服务器的各个ip情况并按连接数从大到小排序腾讯)
-      - [问题：如忘记了mysql5.7数据库的ROOT用户的密码，如何找回？（滴滴）](#问题如忘记了mysql57数据库的root用户的密码如何找回滴滴)
-      - [写出指令：统计ip访问情况，要求分析nginx访问目志（access.log），找出访问页面数量在前2位的ip（美团）](#写出指令统计ip访问情况要求分析nginx访问目志accesslog找出访问页面数量在前2位的ip美团)
-      - [使用tepdump监听本机，将来自ip 192.168.200.1，tcp端口为22的数据，保存输出到tcndumplog 用做将来数据分析（美团）【`>>`重定向】](#使用tepdump监听本机将来自ip-1921682001tcp端口为22的数据保存输出到tcndumplog-用做将来数据分析美团重定向)
-      - [常用的Nginx模块，用来做什么（头条）](#常用的nginx模块用来做什么头条)
-      - [如果你是系统管理员，在进行Linux系统权限划分时，应考虑哪些因素？（腾讯）](#如果你是系统管理员在进行linux系统权限划分时应考虑哪些因素腾讯)
-      - [权限思考题](#权限思考题)
-      - [说明Centos7启动流程，并说明和CentOS6相同和不同的地方（腾讯）](#说明centos7启动流程并说明和centos6相同和不同的地方腾讯)
-      - [问题：列举Linux高级命令，至少6个（百度）](#问题列举linux高级命令至少6个百度)
-      - [问题：Linux查看内存[`top`]、io读写[`iotop`]、磁盘存储[`df -lh`]、端口占用[`netstat -tunlp`]、进程查看命令[`ps-aux | grep ps_name`]是什么？（瓜子）](#问题linux查看内存topio读写iotop磁盘存储df--lh端口占用netstat--tunlp进程查看命令ps-aux--grep-ps_name是什么瓜子)
-      - [使用Linux命令计算t2.txt第二列的和并输出（美团）](#使用linux命令计算t2txt第二列的和并输出美团)
-      - [Shell脚本里如何检查一个文件是否存在？并给出提示（百度）](#shell脚本里如何检查一个文件是否存在并给出提示百度)
-      - [用shell写一个脚本，对文本t3.txt中无序的一列数字排序，并将总和输出（百度）](#用shell写一个脚本对文本t3txt中无序的一列数字排序并将总和输出百度)
-      - [请用指令写出查找当前文件夹（/home）下所有的文本文件内容中包含有字符"cat"的文件名称（金山）](#请用指令写出查找当前文件夹home下所有的文本文件内容中包含有字符cat的文件名称金山)
-      - [请写出统计/home目录下所有文件个数和所有文件总行数的指令（在金山面试题扩展）](#请写出统计home目录下所有文件个数和所有文件总行数的指令在金山面试题扩展)
-      - [列出你了解的web服务器负载架构（滴滴）](#列出你了解的web服务器负载架构滴滴)
-      - [每天晚上10点30分，打包站点目录/var/spool/mail备份到/home目录下（每次备份按时间生成不同的备份包比如按照年月日时分秒）（滴滴）](#每天晚上10点30分打包站点目录varspoolmail备份到home目录下每次备份按时间生成不同的备份包比如按照年月日时分秒滴滴)
-      - [如何优化Linux系统，说出你的方法（瓜子）](#如何优化linux系统说出你的方法瓜子)
-
+  - [分析日志t.log（访问量），将各个ip地址截取，并统计出现次数，并按从大到小排序（腾讯）](#分析日志tlog访问量将各个ip地址截取并统计出现次数并按从大到小排序腾讯)
+  - [统计连接到服务器的各个ip情况，并按连接数从大到小排序（腾讯）](#统计连接到服务器的各个ip情况并按连接数从大到小排序腾讯)
+  - [问题：如忘记了mysql5.7数据库的ROOT用户的密码，如何找回？（滴滴）](#问题如忘记了mysql57数据库的root用户的密码如何找回滴滴)
+  - [写出指令：统计ip访问情况，要求分析nginx访问目志（access.log），找出访问页面数量在前2位的ip（美团）](#写出指令统计ip访问情况要求分析nginx访问目志accesslog找出访问页面数量在前2位的ip美团)
+  - [使用tepdump监听本机，将来自ip 192.168.200.1，tcp端口为22的数据，保存输出到tcndumplog 用做将来数据分析（美团）【`>>`重定向】](#使用tepdump监听本机将来自ip-1921682001tcp端口为22的数据保存输出到tcndumplog-用做将来数据分析美团重定向)
+  - [常用的Nginx模块，用来做什么（头条）](#常用的nginx模块用来做什么头条)
+  - [如果你是系统管理员，在进行Linux系统权限划分时，应考虑哪些因素？（腾讯）](#如果你是系统管理员在进行linux系统权限划分时应考虑哪些因素腾讯)
+  - [权限思考题](#权限思考题)
+  - [说明Centos7启动流程，并说明和CentOS6相同和不同的地方（腾讯）](#说明centos7启动流程并说明和centos6相同和不同的地方腾讯)
+  - [问题：列举Linux高级命令，至少6个（百度）](#问题列举linux高级命令至少6个百度)
+  - [问题：Linux查看内存[`top`]、io读写[`iotop`]、磁盘存储[`df -lh`]、端口占用[`netstat -tunlp`]、进程查看命令[`ps-aux | grep ps_name`]是什么？（瓜子）](#问题linux查看内存topio读写iotop磁盘存储df--lh端口占用netstat--tunlp进程查看命令ps-aux--grep-ps_name是什么瓜子)
+  - [使用Linux命令计算t2.txt第二列的和并输出（美团）](#使用linux命令计算t2txt第二列的和并输出美团)
+  - [Shell脚本里如何检查一个文件是否存在？并给出提示（百度）](#shell脚本里如何检查一个文件是否存在并给出提示百度)
+  - [用shell写一个脚本，对文本t3.txt中无序的一列数字排序，并将总和输出（百度）](#用shell写一个脚本对文本t3txt中无序的一列数字排序并将总和输出百度)
+  - [请用指令写出查找当前文件夹（/home）下所有的文本文件内容中包含有字符&#34;cat&#34;的文件名称（金山）](#请用指令写出查找当前文件夹home下所有的文本文件内容中包含有字符cat的文件名称金山)
+  - [请写出统计/home目录下所有文件个数和所有文件总行数的指令（在金山面试题扩展）](#请写出统计home目录下所有文件个数和所有文件总行数的指令在金山面试题扩展)
+  - [列出你了解的web服务器负载架构（滴滴）](#列出你了解的web服务器负载架构滴滴)
+  - [每天晚上10点30分，打包站点目录/var/spool/mail备份到/home目录下（每次备份按时间生成不同的备份包比如按照年月日时分秒）（滴滴）](#每天晚上10点30分打包站点目录varspoolmail备份到home目录下每次备份按时间生成不同的备份包比如按照年月日时分秒滴滴)
+  - [如何优化Linux系统，说出你的方法（瓜子）](#如何优化linux系统说出你的方法瓜子)
 
 # Linux开山篇
 
@@ -336,8 +336,6 @@
 ## Linux学习方向
 
 ![image-20210425231100024](linux.assets/image-20210425231100024.png)
-
-
 
 Linux入式开发工程师、Linux嵌入式开发工程师、在linux下做各种程序开发
 
@@ -363,8 +361,6 @@ linux 运行稳定、对网络的良好支持性、低成本，且可以根据�
 
 主要应用：机顶盒、数字电视、网络电话、程控交换机、手机、PDA、智能家居、智能硬件等都是其应用领域。以后再物联网中应用会更加广泛
 
-
-
 ## 学习 Linux 的阶段（高手进阶过程）
 
 **linux 是一个开源、免费的操作系统**，其稳定性、安全性、处理多并发已经得到业界的认可，目前很多中型，大型甚至是集群项目都在使用linux,很多软件公司考虑到开发成本都首选linux,在中国软件公司得到广泛的使用。
@@ -380,15 +376,13 @@ linux 运行稳定、对网络的良好支持性、低成本，且可以根据�
 
 ## Linux 的学习方法和建议
 
-1)	高效而愉快的学习
-2)	先建立一个整体框架，然后细节
-3)	**不需要掌握所有的Linux 指令，要学会查询手册和百度**
-4)	先know how ,再know why
-5)	计算机是一门”做中学” 的学科 ,不是会了再做，而是做了才会.
-6)	适当的囫囵吞枣
-7)	Linux 不是编程，重点是实际操作，各种常用指令要玩的溜
-
-
+1) 高效而愉快的学习
+2) 先建立一个整体框架，然后细节
+3) **不需要掌握所有的Linux 指令，要学会查询手册和百度**
+4) 先know how ,再know why
+5) 计算机是一门”做中学” 的学科 ,不是会了再做，而是做了才会.
+6) 适当的囫囵吞枣
+7) Linux 不是编程，重点是实际操作，各种常用指令要玩的溜
 
 # 基础篇  Linux 入门
 
@@ -402,10 +396,7 @@ linux 运行稳定、对网络的良好支持性、低成本，且可以根据�
 
 4）Linux的吉祥物
 
-
 <img src="linux.assets/image-20210425235611889.png" alt="image-20210425235611889" style="zoom:50%;" />
-
-
 
 5）Linux 的主要发行版
 
@@ -420,8 +411,6 @@ windows，android，车载系统1inux等。
 
 ![image-20210426000205660](linux.assets/image-20210426000205660.png)
 
-
-
 ## Linux 是怎么来的
 
 ![image-20210426001619014](linux.assets/image-20210426001619014.png)
@@ -429,8 +418,6 @@ windows，android，车载系统1inux等。
 ## linux 和 unix 关系一览图
 
 ![image-20210426001629912](linux.assets/image-20210426001629912.png)
-
-
 
 ## linux 和 Windows 比较
 
@@ -442,9 +429,9 @@ windows，android，车载系统1inux等。
 
 学习Linux 需要一个环境，我们需要创建一个虚拟机，然后在虚拟机上安装一个 Centos 系统来学习。
 
-1)	先安装virtual machine ,vm12
-2)	再安装Linux (CentOS 6.8)
-3)	原理示意图，这里我们画图说明一下 VM 和 CentOS 的关系。
+1) 先安装virtual machine ,vm12
+2) 再安装Linux (CentOS 6.8)
+3) 原理示意图，这里我们画图说明一下 VM 和 CentOS 的关系。
 
 ![image-20210426002720722](linux.assets/image-20210426002720722.png)
 
@@ -462,11 +449,7 @@ windows，android，车载系统1inux等。
 
 这里在配置网络连接时，有三种形式，需要大家伙注意 ：
 
-
-
 ![image-20210426010015461](linux.assets/image-20210426010015461.png)
-
-
 
 2）开始安装系统（CentOS6.8）
 
@@ -484,13 +467,13 @@ windows，android，车载系统1inux等。
 
 ![image-20210426233406997](linux.assets/image-20210426233406997.png)
 
-##  vmtools 安装
+## vmtools 安装
 
 ### 介绍
 
-1)	可以直接粘贴命令在windows 和 centos 系统之间
-2)	可以设置windows 和centos 的共享文件夹
-3)	示意图
+1) 可以直接粘贴命令在windows 和 centos 系统之间
+2) 可以设置windows 和centos 的共享文件夹
+3) 示意图
 
 ![image-20210426233539599](linux.assets/image-20210426233539599.png)
 
@@ -498,25 +481,22 @@ windows，android，车载系统1inux等。
 
 安装vmtools的步骤:
 
+1. 进入centos
+2. 点击vm菜单的->install vmware tools
+3. centos会出现一个vm的安装包
+4. 点击右键解压, 得到一个安装文件
+5. 进入该vm解压的目录，该文件在 /root/桌面/vmware-tools-distrib/下
+6. 安装 `./vmware-install.pl`
+7. 全部使用默认设置即可
+8. 需要reboot重新启动即可生效
 
-1.	进入centos
-2.	点击vm菜单的->install vmware tools
-3.	centos会出现一个vm的安装包
-4.	点击右键解压, 得到一个安装文件
-5.	进入该vm解压的目录，该文件在 /root/桌面/vmware-tools-distrib/下
-6.	安装`./vmware-install.pl`
-7.	全部使用默认设置即可
-8.	需要reboot重新启动即可生效
-
-> 需要gcc   通过`gcc -v`查看
+> 需要gcc   通过 `gcc -v`查看
 
 ## 设置共享 文件夹
 
 ![image-20210426234713181](linux.assets/image-20210426234713181.png)
 
-映射到`cd /mnt/hgfs` 目录下
-
-
+映射到 `cd /mnt/hgfs` 目录下
 
 ## 虚拟机克隆步骤
 
@@ -526,18 +506,14 @@ https://blog.csdn.net/qq_35024768/article/details/121196596
 
 ## 基本介绍:
 
-linux的文件系统是采用级层式的树状目录结构，在此`结构中的最上层是根目录“/”`，然后在此目录下再创建其他的目录。
+linux的文件系统是采用级层式的树状目录结构，在此 `结构中的最上层是根目录“/”`，然后在此目录下再创建其他的目录。
 深刻理解linux树状文件目录是非常重要的，这里我给大家说明一下。
-
-
 
 记住一句经典的话：`在Linux世界里，一切皆文件`
 
 ## 具体的目录结构
 
 ![image-20210426235818215](linux.assets/image-20210426235818215.png)
-
-
 
 ![image-20210426235943820](linux.assets/image-20210426235943820.png)
 
@@ -551,11 +527,11 @@ linux的文件系统是采用级层式的树状目录结构，在此`结构中�
 
 说明：
 
-1)	linux 的目录中有且只要一个根目录 /
-2)	linux 的各个目录存放的内容是规划好，不用乱放文件。
-3)	linux 是以文件的形式管理我们的设备，因此linux 系统，一切皆为文件。
-4)	linux 的各个文件目录下存放什么内容，大家必须有一个认识。
-5)	学习后，你脑海中应该有一颗linux 目录树
+1) linux 的目录中有且只要一个根目录 /
+2) linux 的各个目录存放的内容是规划好，不用乱放文件。
+3) linux 是以文件的形式管理我们的设备，因此linux 系统，一切皆为文件。
+4) linux 的各个文件目录下存放什么内容，大家必须有一个认识。
+5) 学习后，你脑海中应该有一颗linux 目录树
 
 # 实操篇 远程登录 Linux 系统
 
@@ -569,11 +545,11 @@ linux的文件系统是采用级层式的树状目录结构，在此`结构中�
 
 说明: 公司开发时候， 具体的情况是这样的
 
-1)	linux 服务器是开发小组共享的.
-2)	正式上线的项目是运行在公网的.
-3)	因此程序员需要远程登录到centos 进行项目管理或者开发.
-4)	画出简单的网络拓扑示意图(帮助理解)
-5)	远程登录客户端有 Xshell5， Xftp5 , 我们学习使用 Xshell5 和 Xftp , 其它的远程工具大同
+1) linux 服务器是开发小组共享的.
+2) 正式上线的项目是运行在公网的.
+3) 因此程序员需要远程登录到centos 进行项目管理或者开发.
+4) 画出简单的网络拓扑示意图(帮助理解)
+5) 远程登录客户端有 Xshell5， Xftp5 , 我们学习使用 Xshell5 和 Xftp , 其它的远程工具大同
 
 ## 远程登录Linux-Xshell5
 
@@ -581,9 +557,7 @@ linux的文件系统是采用级层式的树状目录结构，在此`结构中�
 Xshell [1] 是一个强大的安全终端模拟软件，它支持 SSH1, SSH2, 以及 Microsoft Windows 平台的TELNET 协议。
 Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器，从而比较好的达到远程控制终端的目的。
 
-**特别说明**：如果希望安装好 XShell 5 就可以远程访问 Linux 系统的话，需要有一个**前提**，就是`Linux 启用了SSHD 服务`，该`服务会监听22 号端口`。
-
-
+**特别说明**：如果希望安装好 XShell 5 就可以远程访问 Linux 系统的话，需要有一个**前提**，就是 `Linux 启用了SSHD 服务`，该 `服务会监听22 号端口`。
 
 ### 查看方式是否开启SSHD服务
 
@@ -599,8 +573,6 @@ Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器�
 
 ![image-20210427001233905](linux.assets/image-20210427001233905.png)
 
-
-
 ## 远程上传下载文件Xftp5
 
 ![image-20210427002844372](linux.assets/image-20210427002844372.png)
@@ -611,8 +583,6 @@ Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器�
 
 # Linux实操篇 Vi和Vim编辑器
 
-
-
 ## vi和vim的基本介绍
 
 所有的Linux系統都会**内建vi文本編辑器**。
@@ -620,18 +590,14 @@ Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器�
 
 ## vi和vim常用的三种模式
 
-+ 正常模式: 
++ 正常模式:
 
   **在正常模式下，我们可以使用快捷键。**
   以vim 打开一个档案就直接进入一般模式了(这是默认的模式)。在这个模式中， 你可以使用『上下左右』按键来移动光标，你可以使用『删除字符』或『删除整行』来处理档案内容，也可以使用『复制、贴上』来处理你的文件数据。
-
 + 插入模式:
   按下i, I, o, O, a, A, r, R等任何一个字母之后才会进入编辑模式, 一般来说按i即可.
-
 + 命令行模式
   在这个模式当中，可以提供你相关指令，完成读取、存盘、替换、离开vim 、显示行号等的动作则是在此模式中达成的！
-
-
 
 ## vi和vim模式的相互切换
 
@@ -643,7 +609,7 @@ Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器�
 
 2)【删除】**删除当前行 `dd`**  , **删除当前行至向下的5行 `5dd`**
 
-3)【查找】在文件中**查找某个单词**[**命令行下`/关键字，回车查找`,  `输入n 就是查找下一个`**] ,查询 `/word `   `n下一个`
+3)【查找】在文件中**查找某个单词**[**命令行下 `/关键字，回车查找`,  `输入n 就是查找下一个`**] ,查询 `/word `   `n下一个`
 
 4)【行号】设置文件的**行号**，取消文件的行号.[命令行下 **`: set nu` 和 `:set nonu`**]
 
@@ -653,7 +619,7 @@ Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器�
 
 7)【跳转】编辑 /etc/profile 文件，并将光标移动到 第20行**【shift+g】**
 
-​		第一步：显示行号 ：set nu      第二步：输入20         第三步：输入`shift+g`
+    第一步：显示行号 ：set nu      第二步：输入20         第三步：输入`shift+g`
 
 8）替换
 
@@ -663,8 +629,6 @@ Xshell 可以在Windows 界面下用来访问远端不同系统下的服务器�
 :n,m s/old/new/g   #用new替换从n到m行里所有的old 
 :%s/old/new/g      #用new替换当前文件里所有的old
 ```
-
-
 
 ## vim和vi的快捷键键盘一览图
 
@@ -690,8 +654,8 @@ reboot        		#现在重新启动计算机
 
 基本介绍
 
-1)	登录时尽量少用root帐号登录，因为它是系统管理员，最大的权限，避免操作失误。可以利用普通用户登录，登录后再用**”su - 用户名’**命令`【su root】`来切换成系统管理员身份.
-2)	在提示符下输入**logout 即可注销用户**
+1) 登录时尽量少用root帐号登录，因为它是系统管理员，最大的权限，避免操作失误。可以利用普通用户登录，登录后再用**”su - 用户名’**命令 `【su root】`来切换成系统管理员身份.
+2) 在提示符下输入**logout 即可注销用户**
 
 ```shell
 [root@hadoop1 linux-share]$ logout
@@ -699,14 +663,10 @@ reboot        		#现在重新启动计算机
 
 > 注意：
 >
-> 1)	logout 注销指令在图形运行级别无效，在 运行级别3下有效.
-> 2)	运行级别这个概念，后面给大家介绍
-
-
+> 1) logout 注销指令在图形运行级别无效，在 运行级别3下有效.
+> 2) 运行级别这个概念，后面给大家介绍
 
 # 实操篇 用户管理
-
-
 
 ## 基本介绍
 
@@ -737,10 +697,8 @@ xm
 
 > 细节说明
 >
-> 1)	当创建用户成功后，会自动的创建和用户同名的家目录
-> 2)	也可以通过useradd -d  指定目录 新的用户名，给新创建的用户指定家目录，（PS：这个目录不能手动创建，自动创建）
-
-
+> 1) 当创建用户成功后，会自动的创建和用户同名的家目录
+> 2) 也可以通过useradd -d  指定目录 新的用户名，给新创建的用户指定家目录，（PS：这个目录不能手动创建，自动创建）
 
 特别说明：
 cd 表示change directory, 切换目录.
@@ -748,8 +706,6 @@ cd 表示change directory, 切换目录.
 ## 指定/修改密码
 
 `passwd    用户名`
-
-
 
 应用案例
 
@@ -772,7 +728,7 @@ passwd： 所有的身份验证令牌已经成功更新。
 
 应用案例
 
-1)	删除用户xiaoming，但是要保留家目录
+1) 删除用户xiaoming，但是要保留家目录
 
 ```sh
 [root@hadoop1 home]$ userdel xm
@@ -780,7 +736,7 @@ passwd： 所有的身份验证令牌已经成功更新。
 xm
 ```
 
-2)	删除用户以及用户主目录
+2) 删除用户以及用户主目录
 
 ```sh
 [root@hadoop1 home]$ useradd xh 
@@ -806,6 +762,7 @@ uid=500(xm) gid=500(xm) 组=500(xm)
 ```
 
 细节说明
+
 1) 当用户不存在时，返回无此用户
 
 ## 切换用户
@@ -816,6 +773,7 @@ uid=500(xm) gid=500(xm) 组=500(xm)
 基本语法
 `su  – 切换用户名`
 应用实例
+
 1) 创建一个用户zf, ，指定密码，然后切换到zf.
 
 ```sh
@@ -835,12 +793,10 @@ exit
 [root@hadoop1 home]$
 ```
 
-
-
 细节说明
 
-1)	**从权限高的用户切换到权限低的用户，不需要输入密码**，反之需要。
-2)	当需要返回到原来用户时，使用exit指令
+1) **从权限高的用户切换到权限低的用户，不需要输入密码**，反之需要。
+2) 当需要返回到原来用户时，使用exit指令
 
 ## 查看当前用户/登录用户
 
@@ -915,12 +871,9 @@ uid=502(zwj) gid=503(shaolin) 组=503(shaolin)
   每行的含义：`用户名：口令：用户标识号：组标识号：注释性描述：主目录：登录Shell`
 
   ![image-20210428010248553](linux.assets/image-20210428010248553.png)
-
 + `/etc/shadow`文件
   口令的配置文件
-  每行的含义：`登录名：加密口令：最后一次修改时间：最小时间间隔：最大时间间隔：警
-  告时间：不活动时间：失效时间：标志`
-
+  每行的含义：`登录名：加密口令：最后一次修改时间：最小时间间隔：最大时间间隔：警 告时间：不活动时间：失效时间：标志`
 + `/etc/group`文件
   **组（group）的配置文件**，记录Linux包含的组的信息
   每行含义：`组名：口令组标识号：组内用户列表`
@@ -1001,8 +954,6 @@ systemctl set-default TARGET.target    # 3
 systemctl set-default graphical.targe  # 5
 ```
 
-
-
 > 如何找回root密码
 
 思路：进入到单用户模式，然后修改root密码。因为进入单用户模式，root不需要密码就可以登录。
@@ -1010,8 +961,6 @@ systemctl set-default graphical.targe  # 5
 开机引导时【按回车】-> 看到一个界面按e -> 进入新的界面高亮选中第二行（编辑内核kenor，输入1） 回车退出  -> 再次输入b，进入单用户模式 ，使用passwd root  来修改root用户的密码    -> 重启登陆      【该操作不能远程】
 
 ![image-20210428231723237](linux.assets/image-20210428231723237.png)
-
-
 
 请设置我们的运行级别，linux 运行后，**直接进入到命令行界面，【即进入到3 运行级别】**
 vim /etc/inittab
@@ -1044,8 +993,6 @@ vim /etc/inittab
 cd: cd [-L|-P] [dir]
     Change the shell working directory.
 ```
-
-
 
 百度帮助更直接
 虽然上面两个都可以来获取指令帮助，但是需要英语功底，如果英语不太好的，我还是推荐大家直接百度靠谱。
@@ -1106,8 +1053,8 @@ drwxr-xr-x. 2 root root  4096 4月  27 08:54 桌面
 •常用参数
 	**绝对路径**和**相对路径**
 
-​	`cd ~` 或者cd ：回到自己的家目录
-​	`cd ..` 回到当前目录的上一级目录
+    `cd ~` 或者cd ：回到自己的家目录
+	`cd ..` 回到当前目录的上一级目录
 
 > 如何理解绝对路径和相对路径
 >
@@ -1149,8 +1096,6 @@ mkdir指令用于创建目录
 
 - `-p` ：创建多级目录
 
-
-
 应用实例
   案例1:创建一个目录/home/dog
   案例2:创建多级目录/home/animal/tiger
@@ -1179,8 +1124,6 @@ rmdir指令 **删除空目录**
 ```sh
 [root@hadoop1 ~]$ rmdir /home/dog/
 ```
-
-
 
 > 使用细节
 > rmdir 删除的是空目录，如果目录下有内容时无法删除的。
@@ -1230,14 +1173,10 @@ drwx------. 4 zwj  wudang 4096 4月  28 08:39 zwj
 
 cp 指令拷贝文件到指定目录
 
-
-
 •基本语法
 	`cp [选项] source dest`
 •常用选项
 	-r ：递归复制整个文件夹
-
-
 
 •应用实例
 案例1: 将/home/aaa.txt 拷贝到 /home/bbb 目录下[拷贝单个文件]
@@ -1264,8 +1203,6 @@ aaa.txt  bbb
 总用量 4
 drwxr-xr-x. 2 root root 4096 4月  29 08:07 bbb
 ```
-
-
 
 > 使用细节
 > 强制覆盖不提示的方法：\cp
@@ -1303,7 +1240,7 @@ rm: 无法删除"/home/bbb/": 是一个目录
 mv 移动文件与目录或重命名
 
 •基本语法
-	`mv  oldNameFile newNameFile `   (功能描述：重命名) 
+	`mv  oldNameFile newNameFile `   (功能描述：重命名)
 	`mv /temp/movefile /targetFolder` (功能描述：移动文件)
 •应用实例
 案例1: 将/home/aaa.txt 文件重新命名为pig.txt
@@ -1374,8 +1311,6 @@ less指令用来分屏查看文件内容，它的功能与more指令类似，但
 •操作说明
 
 ![image-20210429003626967](linux.assets/image-20210429003626967.png)
-
-
 
 案例: 采用less查看一个【懒加载模式】
 
@@ -1463,7 +1398,7 @@ ls -l >> /home/mydate.txt
 	1）`ls -l > 文件`		 （功能描述：列表的内容写入文件a.txt中（**覆盖写**）)
 	2）`ls -al >> 文件`		（功能描述：列表的内容**追加**到文件aa.txt的末尾）
 	3）`cat 文件1 > 文件2`	（功能描述：将文件1的内容覆盖到文件2）
-	4）`echo "内容" >> 文件`   
+	4）`echo "内容" >> 文件`
 应用实例
 案例1：将/home目录下的文件列表覆盖写入到/home/a.txt中
 
@@ -1483,7 +1418,7 @@ a.txt  mydate.txt
 ```sh
 [root@hadoop1 home]$ cal >> mycal.txt   # cal 查询日历  ，并追加写入到mycal.txt
 [root@hadoop1 home]$ more mycal.txt 
-      四月 2021     
+      四月 2021   
 日 一 二 三 四 五 六
              1  2  3
  4  5  6  7  8  9 10
@@ -1493,7 +1428,7 @@ a.txt  mydate.txt
 
 [root@hadoop1 home]$ cal >> mycal.txt  	# 再次 追加写入到mycal.txt
 [root@hadoop1 home]$ more mycal.txt 
-      四月 2021     
+      四月 2021   
 日 一 二 三 四 五 六
              1  2  3
  4  5  6  7  8  9 10
@@ -1501,7 +1436,7 @@ a.txt  mydate.txt
 18 19 20 21 22 23 24
 25 26 27 28 29 30
 
-      四月 2021     
+      四月 2021   
 日 一 二 三 四 五 六
              1  2  3
  4  5  6  7  8  9 10
@@ -1614,11 +1549,11 @@ ls -l
 ### date 指令-显示当前日期
 
 + 基本语法
-  	1）`date`（功能描述：显示当前时间）
-  	2）`date +%Y`（功能描述：显示当前年份）
-  	3）`date +%m`（功能描述：显示当前月份）
-  	4）`date +%d`（功能描述：显示当前是哪一天）
-  	5）`date"+%Y-%m-%d%H:%M:%S"`（功能描述：显示年月日时分秒）
+  1）`date`（功能描述：显示当前时间）
+  2）`date +%Y`（功能描述：显示当前年份）
+  3）`date +%m`（功能描述：显示当前月份）
+  4）`date +%d`（功能描述：显示当前是哪一天）
+  5）`date"+%Y-%m-%d%H:%M:%S"`（功能描述：显示年月日时分秒）
 + 应用实例
   案例1：显示当前时间信息
   案例2：显示当前时间年月日
@@ -1653,7 +1588,6 @@ ls -l
 
 + 基本语法
   `cal[选项]`   （功能描述：不加选项，显示本月日历）
-
 + 应用实例
   案例1：显示当前日历
 
@@ -1661,7 +1595,7 @@ ls -l
 
 ```sh
 [root@hadoop1 home]$ cal   # 查看本月日历
-      四月 2021     
+      四月 2021   
 日 一 二 三 四 五 六
              1  2  3
  4  5  6  7  8  9 10
@@ -1670,9 +1604,9 @@ ls -l
 25 26 27 28 29 30
 
 [root@hadoop1 home]$ cal 2020		# 查看2020年日历
-                               2020                               
+                               2020                             
 
-        一月                   二月                   三月        
+        一月                   二月                   三月      
 日 一 二 三 四 五 六  	 日 一 二 三 四 五 六   日 一 二 三 四 五 六
           1  2  3  4                      1    1  2  3  4  5  6  7
  5  6  7  8  9 10 11    2  3  4  5  6  7  8    8  9 10 11 12 13 14
@@ -1680,7 +1614,7 @@ ls -l
 19 20 21 22 23 24 25   16 17 18 19 20 21 22   22 23 24 25 26 27 28
 26 27 28 29 30 31      23 24 25 26 27 28 29   29 30 31
 
-        四月                   五月                   六月        
+        四月                   五月                   六月      
 日 一 二 三 四 五 六   	日 一 二 三 四 五 六   日 一 二 三 四 五 六
           1  2  3  4                   1  2       1  2  3  4  5  6
  5  6  7  8  9 10 11    3  4  5  6  7  8  9    7  8  9 10 11 12 13
@@ -1688,7 +1622,7 @@ ls -l
 19 20 21 22 23 24 25   17 18 19 20 21 22 23   21 22 23 24 25 26 27
 26 27 28 29 30         24 25 26 27 28 29 30   28 29 30
                        31
-        七月                   八月                   九月        
+        七月                   八月                   九月      
 日 一 二 三 四 五 六   	日 一 二 三 四 五 六   日 一 二 三 四 五 六
           1  2  3  4                      1          1  2  3  4  5
  5  6  7  8  9 10 11    2  3  4  5  6  7  8    6  7  8  9 10 11 12
@@ -1696,7 +1630,7 @@ ls -l
 19 20 21 22 23 24 25   16 17 18 19 20 21 22   20 21 22 23 24 25 26
 26 27 28 29 30 31      23 24 25 26 27 28 29   27 28 29 30
                        30 31
-        十月                  十一月                 十二月       
+        十月                  十一月                 十二月     
 日 一 二 三 四 五 六   	日 一 二 三 四 五 六   日 一 二 三 四 五 六
              1  2  3    1  2  3  4  5  6  7          1  2  3  4  5
  4  5  6  7  8  9 10    8  9 10 11 12 13 14    6  7  8  9 10 11 12
@@ -1727,11 +1661,14 @@ find指令将从指定目录向下递归地遍历其各个子目录，将满足�
 ```
 
 案例2：按拥有者：查找/opt目录下，用户名称为 nobody的文件
+
 ```sh
 [root@hadoop1 home]$ find /opt/ -user nobody	# 查找opt目录下属于nobody用户的文件
 [root@hadoop1 home]$ find /opt/ -user root		# 查找opt目录下属于root用户的文件
 ```
-案例3：查找整个linux系统下大于200m的文件（+n 大于 -n小于 n等于  n代表容量大小）   容量单位`k M G 区分大小写`
+
+案例3：查找整个linux系统下大于200m的文件（+n 大于 -n小于 n等于  n代表容量大小）   容量单位 `k M G 区分大小写`
+
 ```sh
 [root@hadoop1 home]$ find / -size +200M   # 从根目录下查找大于200M的文件   
 /opt/VMwareTools-10.3.22-15902021.tar.gz
@@ -1762,7 +1699,7 @@ locaate指令可以**快速定位文件路径**。locate指令利用事先建立
 /home/hello.txt
 ```
 
-### grep 指令和管道符号 | 
+### grep 指令和管道符号 |
 
 grep 过滤查找，管道符，“|”，表示将**前一个命令的处理结果输出传递给后面的命令处理**。
 
@@ -1789,12 +1726,11 @@ grep 过滤查找，管道符，“|”，表示将**前一个命令的处理结
 
 ### gzip/gunzip 指令
 
-​	gzip用于压缩文件，gunzip用于解压的
+    gzip用于压缩文件，gunzip用于解压的
 
 + 基本语法
   `gzip 文件`    （功能描述：压缩文件，只能将文件压缩为*.gz文件）
   `gunzip 文件.gz`（功能描述：解压缩文件命令）
-
 + 应用实例
   案例1：gzip压缩，将/home下的hello.txt文件进行压缩
 
@@ -1809,34 +1745,31 @@ grep 过滤查找，管道符，“|”，表示将**前一个命令的处理结
   ```
 
   > 细节说明：当我们使用gzip对文件进行压缩后，不会保留原来的文件
-
+  >
 + 案例2：gunzip压缩，将/home下的hello.txt.gz文件进行解压缩
 
-	```sh
-	[root@hadoop1 home]$ gunzip hello.txt.gz 
-	[root@hadoop1 home]$ ls
-	a.txt  hello.txt  mycal.txt  mydate.txt
-	```
+  ```sh
+  [root@hadoop1 home]$ gunzip hello.txt.gz 
+  [root@hadoop1 home]$ ls
+  a.txt  hello.txt  mycal.txt  mydate.txt
+  ```
 
-	> 细节说明：当我们使用gunzip对文件进行解压后，压缩文件会删除
+  > 细节说明：当我们使用gunzip对文件进行解压后，压缩文件会删除
+  >
 
 ### zip/unzip 指令
 
 zip 用于压缩文件，unzip 用于解压的，这个在项目打包发布中很有用的
 
 •基本语法
-	`zip [选项]   XXX.zip  将要压缩的内容`（功能描述：压缩文件和目录的命令） 
+	`zip [选项]   XXX.zip  将要压缩的内容`（功能描述：压缩文件和目录的命令）
 	`unzip [选项]  XXX.zip `（功能描述：解压缩文件）
-
-
 
 •zip常用选项
 	`-r`：递归压缩，即压缩目录
 
 •unzip的常用选项
 	`-d<目录>` ：指定解压后文件的存放目录
-
-
 
 •应用实例
 案例1: 将/home下的所有文件进行压缩成 home.zip
@@ -1859,7 +1792,7 @@ a.txt  hello.txt  home.zip  mycal.txt  mydate.txt
 Archive:  home.zip
    creating: /opt/temp/home/
   inflating: /opt/temp/home/mycal.txt  
-  inflating: /opt/temp/home/a.txt    
+  inflating: /opt/temp/home/a.txt  
   inflating: /opt/temp/home/hello.txt  
   inflating: /opt/temp/home/mydate.txt  
 [root@hadoop1 home]$ ls -l /opt/temp/
@@ -1890,7 +1823,9 @@ a2.txt
 -rw-r--r--. 1 root root    0 4月   9 22:23 a2.txt
 -rw-r--r--. 1 root root  118 4月   9 23:16 a.tar.gz
 ```
+
 案例2:  将/home 的文件夹压缩成myhome.tar.gz
+
 ```sh
 [root@hadoop1 home]$ tar -zcvf myhome.tar.gz /home/
 tar: 从成员名中删除开头的“/”
@@ -1907,7 +1842,9 @@ tar: /home: 在我们读入文件时文件发生了变化
 [root@hadoop1 home]$ ls
 a1.txt  a2.txt  a3.txt  a.tar.gz  a.txt  hello.txt  mycal.txt  mydate.txt  myhome.tar.gz
 ```
+
 案例3:   将a.tar.gz  解压到当前目录
+
 ```sh
 [root@hadoop1 home]$ tar -zxvf a.tar.gz    # 解压到当前目录
 a1.txt
@@ -1946,18 +1883,16 @@ drwxr-xr-x. 3 root root     4096 4月   9 22:19 temp
 drwxr-xr-x. 9 root root     4096 3月  25 2020 vmware-tools-distrib
 ```
 
-
-
 # 实操篇 组管理和权限管理
 
 ## Linux组基本介绍
 
 在linux中的**每个用户必须属于一个组，不能独立于组外**。在linux中**每个文件有所有者、所在组、其它组**的概念。
 
-1)	所有者
-2)	所在组
-3)	其它组
-4)	改变用户所在的组
+1) 所有者
+2) 所在组
+3) 其它组
+4) 改变用户所在的组
 
 ![image-20210429234545840](linux.assets/image-20210429234545840.png)
 
@@ -1967,7 +1902,7 @@ drwxr-xr-x. 9 root root     4096 3月  25 2020 vmware-tools-distrib
 
 ### 查看文件的所有者
 
-1)	指令：`ls –ahl`
+1) 指令：`ls –ahl`
 
 2）应用实例：创建一个组police，再创建一个用户tom，将tom放在police组然后使用tom来创建一个文件ok.txt，看看情况如何
 
@@ -2031,8 +1966,6 @@ drwx------.  4 tom  police 4.0K 4月  10 00:01 tom    # 所有者由上面的roo
 uid=504(fox) gid=505(monster) 组=505(monster)
 ```
 
-
-
 ## 文件/目录 所在组
 
 当某个用户创建了一个文件后，默认这个文件的所在组就是该用户所在的组。
@@ -2043,7 +1976,7 @@ uid=504(fox) gid=505(monster) 组=505(monster)
      `ls –ahl`
 •	应用实例
 
-### 		修改文件所在的组
+### 修改文件所在的组
 
 •	基本指令
 		`chgrp 组名 文件名`
@@ -2063,7 +1996,7 @@ drwxr-xr-x. 5 root root 4.0K 4月  10 00:17 ..
 总用量 8.0K
 drwxr-xr-x. 2 root root   4.0K 4月  10 00:18 .
 drwxr-xr-x. 5 root root   4.0K 4月  10 00:17 ..
--rw-r--r--. 1 root police    0 4月  10 00:18 orange.txt    
+-rw-r--r--. 1 root police    0 4月  10 00:18 orange.txt  
 ```
 
 ## 其它组
@@ -2076,8 +2009,8 @@ drwxr-xr-x. 5 root root   4.0K 4月  10 00:17 ..
 
 ### 改变用户所在组
 
-1)	`usermod  –g  组名 用户名`
-2)	`usermod  –d  目录名 用户名` 改变该用户登陆的初始目录。
+1) `usermod  –g  组名 用户名`
+2) `usermod  –d  目录名 用户名` 改变该用户登陆的初始目录。
 
 应用实例
 创建一个土匪组（bandit）将tom这个用户从原来所在的police组，修改到bandit（土匪）组。
@@ -2097,24 +2030,24 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
 
 0-9位说明
 
-1)	 第0位【-】确定文件类型(`d 目录`, `- 文件` , `l 软连接文件` , `c  字符设备【键盘鼠标】`, `b 块文件【硬盘】`  )
-2)	第1-3位【rw-】确定所有者（该文件的所有者）拥有该文件的权限。---User
-3)	第4-6位确定所属组（同用户组的）拥有该文件的权限，---Group
-4)	第7-9位确定其他用户拥有该文件的权限 ---Other
+1) 第0位【-】确定文件类型(`d 目录`, `- 文件` , `l 软连接文件` , `c  字符设备【键盘鼠标】`, `b 块文件【硬盘】`  )
+2) 第1-3位【rw-】确定所有者（该文件的所有者）拥有该文件的权限。---User
+3) 第4-6位确定所属组（同用户组的）拥有该文件的权限，---Group
+4) 第7-9位确定其他用户拥有该文件的权限 ---Other
 
 ## rwx权限详解
 
 ### rwx 作用到文件
 
-1)	**[  r  ]**    代表可读(read): 可以**读取,查看**
-2)	**[ w ]**    代表可写(write): 可**以修改,但是不代表可以删除该文件**,**删除一个文件**的前提条件是**对该文件所在的目录有写权限，才能删除该文件.**
-3)	**[ x ]**    代表可执行(execute):可以被**执行**
+1) **[  r  ]**    代表可读(read): 可以**读取,查看**
+2) **[ w ]**    代表可写(write): 可**以修改,但是不代表可以删除该文件**,**删除一个文件**的前提条件是**对该文件所在的目录有写权限，才能删除该文件.**
+3) **[ x ]**    代表可执行(execute):可以被**执行**
 
 ### rwx作用到目录
 
-1)	**[  r ]    **代表可读(read): 可以读取，ls查看目录内容
-2)	**[ w ]**    代表可写(write): 可以修改,目录内创建+删除+重命名目录
-3)	**[ x ]**    代表可执行(execute):可以**进入该目录**
+1) **[  r ]    **代表可读(read): 可以读取，ls查看目录内容
+2) **[ w ]**    代表可写(write): 可以修改,目录内创建+删除+重命名目录
+3) **[ x ]**    代表可执行(execute):可以**进入该目录**
 
 ## 权限管理
 
@@ -2122,17 +2055,16 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
 
 + 基本说明：
   通过chmod指令，可以修改文件或者目录的权限。
-
-
-
 + 第一种方式：**+ 、-、=** 变更权限
   u:所有者 g:所有组 o:其他人 a:所有人(u、g、o的总和)
-  1)	`chmod   u=rwx,g=rx,o=x   文件目录名`
-  2)	`chmod   o+w    文件目录名`    为其他用户组添加W【写】权限
-  3)	`chmod   a-x    文件目录名`    为所有用户去掉X【执行】权限
+
+  1) `chmod   u=rwx,g=rx,o=x   文件目录名`
+  2) `chmod   o+w    文件目录名`    为其他用户组添加W【写】权限
+  3) `chmod   a-x    文件目录名`    为所有用户去掉X【执行】权限
 
   案例演示
-  1)	给abc文件的所有者读写执行的权限，给所在组读执行权限，给其它组读执行权限。
+
+  1) 给abc文件的所有者读写执行的权限，给所在组读执行权限，给其它组读执行权限。
 
   ```sh
   [root@hadoop1 home]$ touch abc
@@ -2141,7 +2073,7 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
   -rwxr-xr-x. 1 root root 0 5月   7 23:19 abc
   ```
 
-  2)	给abc文件的所有者除去执行的权限，增加组写的权限
+  2) 给abc文件的所有者除去执行的权限，增加组写的权限
 
   ```sh
   [root@hadoop1 home]$ chmod u-x,g+w abc
@@ -2149,22 +2081,19 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
   -rw-rwxr-x. 1 root root 0 5月   7 23:19 abc
   ```
 
-  3)	给abc文件的所有用户添加读的权限
+  3) 给abc文件的所有用户添加读的权限
 
   ```sh
   [root@hadoop1 home]$ chmod  a+r abc
   [root@hadoop1 home]$ ls -l abc
   -rw-rwxr-x. 1 root root 0 5月   7 23:19 abc
   ```
-
-  
-
 + 第二种方式：通过数字变更权限
-  r=4 w=2 x=1        rwx=4+2+1=7 
+  r=4 w=2 x=1        rwx=4+2+1=7
 
-  ​            `chmod u=rwx,g=rx,o=x    文件目录名`
+      `chmod u=rwx,g=rx,o=x    文件目录名`
 
-  相当于`chmod   751  文件目录名`
+  相当于 `chmod   751  文件目录名`
 
   案例演示
   要求：将/home/abc.txt 文件的权限修改成 rwxr-xr-x, 使用给数字的方式实现：
@@ -2179,21 +2108,17 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
   -rwxr-xr-x. 1 root root 0 5月   7 23:25 abc.txt
   ```
 
-  
-
 ### 修改文件所有者-chown
 
 + 基本介绍
   `chown  newowner  file`  改变文件的所有者
   `chown newowner:newgroup  file`  改变用户的所有者和所有组
-
-+ 常用参数 
++ 常用参数
 
   -R   如果是目录则使其下所有子文件或目录递归生效
-
 + 案例演示：
 
-  1)	请将/home/abc .txt 文件的所有者修改成tom
+  1) 请将/home/abc .txt 文件的所有者修改成tom
 
   ```sh
   [root@hadoop1 home]$ ls -l abc.txt
@@ -2203,7 +2128,7 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
   -rwxr-xr-x. 1 tom root 0 5月   7 23:25 abc.txt
   ```
 
-  2)	请将/home/kkk 目录下所有的文件和目录的所有者都修改成tom
+  2) 请将/home/kkk 目录下所有的文件和目录的所有者都修改成tom
 
   ```sh
   [root@hadoop1 kkk]$ ll
@@ -2219,19 +2144,16 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
   -rwxr-xr-x. 1 tom root    0 5月   7 23:37 abc.txt
   ```
 
-  
-
 ### 修改文件所在组-chgrp
 
 + 基本介绍
   `chgrp newgroup file`  改变文件的所有组
-
-+ 常用参数 
++ 常用参数
 
   -R   如果是目录则使其下所有子文件或目录递归生效
-
 + 案例演示：
-  1)	请将/home/abc .txt 文件的所在组修改成bandit
+
+  1) 请将/home/abc .txt 文件的所在组修改成bandit
 
   ```sh
   [root@hadoop1 kkk]$ chgrp bandit /home/abc.txt 
@@ -2239,7 +2161,7 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
   -rwxr-xr-x. 1 tom bandit 0 5月   7 23:25 /home/abc.txt
   ```
 
-  2)	请将/home/kkk 目录下所有的文件和目录的所在组都修改成 bandit
+  2) 请将/home/kkk 目录下所有的文件和目录的所在组都修改成 bandit
 
   ```sh
   [root@hadoop1 kkk]$ chgrp -R bandit ./
@@ -2252,7 +2174,7 @@ uid=503(tom) gid=506(bandit) 组=506(bandit)
 
 ### 最佳实践
 
-police ，bandit 
+police ，bandit
 jack, jerry: 警察
 xh, xq: 土匪
 
@@ -2337,7 +2259,7 @@ jack01.txt
 
 ## crond 任务调度
 
-​	crontab 进行定时任务的设置。
+    crontab 进行定时任务的设置。
 
 ![image-20210508002240803](linux.assets/image-20210508002240803.png)
 
@@ -2356,7 +2278,6 @@ jack01.txt
 
 + 基本语法
   `crontab [选项]`
-
 + 常用选项
   ![image-20210508001751668](linux.assets/image-20210508001751668.png)
 
@@ -2365,10 +2286,10 @@ jack01.txt
 设置任务调度文件：`/etc/crontab`
 设置个人任务调度步骤：
 
-1. 执行`crontab –e 命令`。
+1. 执行 `crontab –e 命令`。
 2. 接着输入任务到调度文件
-   如：`*/1 * * * * ls –l  /etc/ > /tmp/to.txt` 
-   意思说每小时的每分钟执行`ls –l /etc/ > /tmp/to.txt`
+   如：`*/1 * * * * ls –l  /etc/ > /tmp/to.txt`
+   意思说每小时的每分钟执行 `ls –l /etc/ > /tmp/to.txt`
 
 ```sh
 # 1.执行crontab -e   按i编辑任务，输入*/1 * * * * ls –l  /etc/ > /tmp/to.txt，后显示如下，去ls -l /tmp | grep 'to.*'查看结果
@@ -2393,42 +2314,38 @@ crontab: installing new crontab
 
 ①创建 ` touch  /home/mytask1.sh`
 写入内容：`date >> /tmp/mydate`
-并赋予可执行权限`chmod 744 /home/mytask1.sh`
+并赋予可执行权限 `chmod 744 /home/mytask1.sh`
 
 ②`crontab –e`
 
 ③添加内容：`*/1 * * * * /home/mytask1.sh`
 
-
-
 **案例2：每隔1分钟，将当前日期和日历都追加到/home/mycal 文件中**
 
-①创建` touch /home/mytask2.sh`
+①创建 ` touch /home/mytask2.sh`
 写入内容：`vim /home/mytask2.sh`
 
- ```sh
+```sh
  date >> /tmp/mycal 
  cal>> /tmp/mycal 
- ```
+```
 
-并赋予可执行权限`chmod 744 /home/mytask2.sh`
+并赋予可执行权限 `chmod 744 /home/mytask2.sh`
 
 ②`crontab –e`
 
 ③添加内容：`*/1 * * * * /home/mytask2.sh`
 
-
-
 **案例3:    每天凌晨2:00 将mysql数据库testdb ，备份到文件mydb.bak中。**
 
-①创建` touch /home/mytask3.sh`
+①创建 ` touch /home/mytask3.sh`
 写入内容：`vim /home/mytask3.sh`
 
- ```sh
+```sh
 /usr/local/mysql/bin/mysqldump -u root -p root testdb > /tmp/mybd.bak
- ```
+```
 
-并赋予可执行权限`chmod 744 /home/mytask3.sh`
+并赋予可执行权限 `chmod 744 /home/mytask3.sh`
 
 ②`crontab –e`
 
@@ -2436,11 +2353,9 @@ crontab: installing new crontab
 
 ### crond 相关指令:
 
-1)	`crontab –r`：终止任务调度。
-2)	`crontab –l`：列出当前有那些任务调度
-3)	`service crond restart`   [重启任务调度]
-
-
+1) `crontab –r`：终止任务调度。
+2) `crontab –l`：列出当前有那些任务调度
+3) `service crond restart`   [重启任务调度]
 
 ## at定时任务
 
@@ -2452,8 +2367,6 @@ crontab: installing new crontab
 2、默认情况下，atd守护进程每60秒检查作业队列，有作业时，会检查作业运行时间，如果时间与当前时间匹配，则运行此作业【*运行完毕即从队列中删除*】
 3、at命令是一次性定时计划任务，执行完一个任务后不再执行此任务了
 4、在使用at命令的时候，一定要保证atd进程的启动，可以使用相关指令来查看[`ps -ef | grep atd`]
-
-
 
 ### at命令格式
 
@@ -2473,8 +2386,6 @@ at指定时间的方法：
 
 5、使用相对计时法。指定格式为：now + count time-units，now就是当前时间，time-units是时间单位，这里能够是minutes（分钟），hours（小时）、days（天），weeks（星期）.count是时间的数量几天，几小时。例如：now + 5 minutes
 6、直接使用today（今天）、tomorrow（明天）来指定完成命令的时间。
-
-
 
 ### 应用实例
 
@@ -2501,8 +2412,6 @@ at指定时间的方法：
 
 ![image-20210512203611956](linux.assets/image-20210512203611956.png)
 
-
-
 # 实操篇 Linux磁盘分区、挂载
 
 ## 分区基础知识
@@ -2512,13 +2421,9 @@ at指定时间的方法：
 + 1）mbr分区：
 
   + 1 、最多支持四个主分区
-
   + 2 、系统只能安装在主分区
-
   + 3 、扩展分区要占一个主分区
-
   + 4 、MBR最大只支持2TB，但拥有最好的兼容性
-
 + 2）gtp分区：
 
   + 1.支持无限多个主分区（但操作系统可能限制，比如windows下最多128个分区）
@@ -2543,15 +2448,14 @@ at指定时间的方法：
 
 ### 硬盘说明
 
-1)	Linux 硬盘分IDE 硬盘和SCSI 硬盘，目前**基本上是SCSI 硬盘**
-
-2)	对于IDE 硬盘，驱动器标识符为“hdx~”,其中“hd”表明分区所在设备的类型，这里是指IDE 硬盘了。“x”为盘号（a 为基本盘，b 为基本从属盘，c 为辅助主盘，d 为辅助从属盘）,“~”代表分区，前四个分区用数字1 到4 表示，它们是主分区或扩展分区，从5 开始就是逻辑分区。例，`hda3` 表示为第一个IDE 硬盘上的第三个主分区或扩展分区,hdb2 表示为第二个IDE 硬盘上的第二个主分区或扩展分区。
+1) Linux 硬盘分IDE 硬盘和SCSI 硬盘，目前**基本上是SCSI 硬盘**
+2) 对于IDE 硬盘，驱动器标识符为“hdx~”,其中“hd”表明分区所在设备的类型，这里是指IDE 硬盘了。“x”为盘号（a 为基本盘，b 为基本从属盘，c 为辅助主盘，d 为辅助从属盘）,“~”代表分区，前四个分区用数字1 到4 表示，它们是主分区或扩展分区，从5 开始就是逻辑分区。例，`hda3` 表示为第一个IDE 硬盘上的第三个主分区或扩展分区,hdb2 表示为第二个IDE 硬盘上的第二个主分区或扩展分区。
 
 3)对于 SCSI 硬盘则标识为“sdx~”，SCSI 硬盘是用“sd”来表示分区所在设备的类型的，其余则和IDE 硬盘的表示方法一样。
 
 ### 查看所有设备挂载情况
 
-命令：`lsblk`  或者`lsblk -f`
+命令：`lsblk`  或者 `lsblk -f`
 
 ![image-20210509155412519](linux.assets/image-20210509155412519.png)
 
@@ -2568,11 +2472,11 @@ sdb      8:16   0    2G  0 disk
 [root@hadoop1 ~]$ lsblk -f
 NAME   FSTYPE  LABEL            UUID                                 MOUNTPOINT
 sr0    iso9660 CentOS_6.8_Final                                      /media/CentOS_6.8_Final
-sda                                                                  
+sda                                                                
 ├─sda1 ext4                     9f45dd0f-024d-44ac-a9df-38997502b644 /boot
 ├─sda2 swap                     d064d64b-3707-423c-8e56-a49641b8da28 [SWAP]
 └─sda3 ext4                     b4a0528d-056c-4294-a462-d1c5c10cadc1 /
-sdb                                                                  
+sdb                                                                
 └─sdb1 ext4                     a00e0f34-f5a9-49d9-91f9-d568ce722731 /home/newdisk
 ```
 
@@ -2580,17 +2484,13 @@ sdb
 
 ![image-20210509154302075](linux.assets/image-20210509154302075.png)
 
-1)	虚拟机添加硬盘
-2)	分区
-3)	格式化
-4)	挂载
-5)	设置可以自动挂载。
-
-
+1) 虚拟机添加硬盘
+2) 分区
+3) 格式化
+4) 挂载
+5) 设置可以自动挂载。
 
 > 描述：添加一块硬盘，分成两个区，分别挂载到/mnt/boot、/mnt/sysroot
-
-
 
 #### 虚拟机增加硬盘步骤1   添加硬盘
 
@@ -2613,15 +2513,15 @@ sdb               8:16   0  20G  0 disk   # 新添加的硬盘名称
 
 #### 虚拟机增加硬盘步骤2  --分区
 
-分区命令 `fdisk /dev/sdb` 
+分区命令 `fdisk /dev/sdb`
 
-开始对`/sdb`分区
+开始对 `/sdb`分区
 
-​	•	m   显示命令列表
-​	•	p    显示磁盘分区同`fdisk  –l`
-​	•	n    新增分区
-​	•	d     删除分区
-​	•	w   写入并退出
+    •	m   显示命令列表
+	•	p    显示磁盘分区同`fdisk  –l`
+	•	n    新增分区
+	•	d     删除分区
+	•	w   写入并退出
 
 说明：开始分区后输入n，新增分区，然后选择p ，分区类型为主分区。两次回车默认剩余全部空间。最后输入w写入分区并退出，若不保存退出输入q。
 
@@ -2693,7 +2593,7 @@ sdb               8:16   0   20G  0 disk
 #### 虚拟机增加硬盘步骤3  --格式化
 
 格式化磁盘
-分区命令:`mkfs -t  ext4   /dev/sdb1` 
+分区命令:`mkfs -t  ext4   /dev/sdb1`
 
 其中ext4是分区类型
 
@@ -2717,8 +2617,8 @@ Superblock backups stored on blocks:
 	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208, 
 	4096000
 
-Allocating group tables: 完成                            
-正在写入inode表: 完成                            
+Allocating group tables: 完成                          
+正在写入inode表: 完成                          
 Creating journal (32768 blocks): 完成
 Writing superblocks and filesystem accounting information: 完成   
 # 对sdb2分区格式化
@@ -2739,8 +2639,8 @@ Maximum filesystem blocks=34078720
 Superblock backups stored on blocks: 
 	8193, 24577, 40961, 57345, 73729, 204801, 221185, 401409
 
-Allocating group tables: 完成                            
-正在写入inode表: 完成                            
+Allocating group tables: 完成                          
+正在写入inode表: 完成                          
 Creating journal (8192 blocks): 完成
 Writing superblocks and filesystem accounting information: 完成 
 [root@hadoop1 ~]$ 
@@ -2752,12 +2652,12 @@ Writing superblocks and filesystem accounting information: 完成
 [root@hadoop1 home]$ lsblk -f
 
 NAME            FSTYPE      LABEL UUID                                   MOUNTPOINT
-sda                                                                      
+sda                                                                    
 ├─sda1          xfs               ddfa3e72-23ae-4fcc-b6f9-227a4fc80e55   /boot
 └─sda2          LVM2_member       C8E352-asFy-tsKh-3HvL-ys83-023e-33bOWz 
   ├─centos-root xfs               1ef423ff-a5fe-4e54-bf3a-0c3fe707ca6a   /
   └─centos-swap swap              a61c857f-d418-4041-846b-059dd5c96f06   [SWAP]
-sdb                                                                      
+sdb                                                                    
 ├─sdb1          ext4              f6fe40a2-9912-4bc3-a034-22f06992af36   
 └─sdb2          ext4              2efa9170-bafb-4cb1-8faa-f9d88d4bd195  
 ```
@@ -2790,7 +2690,7 @@ sdb               8:16   0   20G  0 disk
 
 #### 虚拟机增加硬盘步骤5  --永久挂载
 
-永久挂载: 通过`修改/etc/fstab`实现挂载添加完成后执行`mount –a` 即刻生效
+永久挂载: 通过 `修改/etc/fstab`实现挂载添加完成后执行 `mount –a` 即刻生效
 
 `vim /etc/fstab`
 
@@ -2802,7 +2702,7 @@ sdb               8:16   0   20G  0 disk
 
 ### 查询系统整体磁盘使用情况
 
-•	基本语法`df -h`
+•	基本语法 `df -h`
 •	应用实例
 
 查询系统整体磁盘使用情况
@@ -2848,7 +2748,7 @@ tmpfs           931M   72K  931M   1% /dev/shm
 
 ### 磁盘情况-工作实用指令
 
-1)	统计/home文件夹下文件的个数
+1) 统计/home文件夹下文件的个数
 
 [ grep   匹配到开头是- 表示文件]      [`wc -l` 统计个数]
 
@@ -2857,25 +2757,25 @@ tmpfs           931M   72K  931M   1% /dev/shm
 12
 ```
 
-2)	统计/home文件夹下目录的个数
+2) 统计/home文件夹下目录的个数
 
 ```sh
 ls -l /home |grep '^d' |wc -l
 ```
 
-3)	统计/home文件夹下文件的个数，包括子文件夹里的
+3) 统计/home文件夹下文件的个数，包括子文件夹里的
 
 ```sh
 ls -lR /home |grep '^-' |wc -l
 ```
 
-4)	统计文件夹下目录的个数，包括子文件夹里的
+4) 统计文件夹下目录的个数，包括子文件夹里的
 
 ```sh
 ls -lR /home |grep '^d' |wc -l
 ```
 
-5)	以树状显示目录结构
+5) 以树状显示目录结构
 
 【https://segmentfault.com/a/1190000039199938】yum命令报错参考
 
@@ -2887,7 +2787,7 @@ tree
 
 # 实操篇 网络配置
 
-##  Linux 网络配置原理图(含虚拟机)
+## Linux 网络配置原理图(含虚拟机)
 
 ![image-20210512012033426](linux.assets/image-20210512012033426.png)
 
@@ -2917,9 +2817,7 @@ tree
 
 ![image-20210510223305586](linux.assets/image-20210510223305586.png)
 
-
-
-### linux 中ip查看`ifconfig`
+### linux 中ip查看 `ifconfig`
 
 ![image-20210512012438566](linux.assets/image-20210512012438566.png)
 
@@ -2942,18 +2840,14 @@ tree
 
 ![image-20210509192519340](linux.assets/image-20210509192519340.png)
 
-
-
 ![image-20210512012623349](linux.assets/image-20210512012623349.png)
-
-
 
 缺点: linux 启动后会自动获取 IP,缺点是每次自动获取的 ip 地址可能不一样。这个不适用于做服务器，因为我们的服务器的 ip 需要时固定的。
 
 ### 第二种方法(指定固定的ip)
 
 说明
-直接修改配置文件来指定IP,并可以连接到外网(程序员推荐)，编辑 
+直接修改配置文件来指定IP,并可以连接到外网(程序员推荐)，编辑
 
 ```sh
 #centos6
@@ -2962,8 +2856,6 @@ vi /etc/sysconfig/network-scripts/ifcfg-eth0
 #centos7
 vim /etc/sysconfig/network-scripts/ifcfg-ens33
 ```
-
-
 
 要求：将ip地址配置的静态的，ip地址为192.168.184.130    【前提：修改虚拟机虚拟的网卡网段】
 
@@ -3055,21 +2947,17 @@ EOF
 systemctl restart network
 ```
 
-
-
-
-
 ## 设置主机名和hosts映射
 
 ### 设置主机名
 
 1，为了方便记忆，可以给linux系统 置主机名，也可以根据需要修改主机名
 
-2，指令`hostname`：查看主机名
+2，指令 `hostname`：查看主机名
 
 ![image-20210512013602916](linux.assets/image-20210512013602916.png)
 
-3·修改文件在`vim /etc/hostname`指定
+3·修改文件在 `vim /etc/hostname`指定
 
 ![image-20210512015058930](linux.assets/image-20210512015058930.png)
 
@@ -3081,19 +2969,17 @@ systemctl restart network
 
 + windows
 
-  + 在`C:\Windows\System32\drivers\etc\hosts`文件指定即可
-  案例：`192.168.200.130  hspedu100`
-
+  + 在 `C:\Windows\System32\drivers\etc\hosts`文件指定即可
+    案例：`192.168.200.130  hspedu100`
 + linux
 
-  + 在`/etc/hosts`文件指定
+  + 在 `/etc/hosts`文件指定
     案例：`192.168.200.1  ThinkPad-PC`【我的电脑  右键 管理  计算机名】
 
 ### 主机名解析过程分析（Hosts，DNS）
 
 + Hosts是什么
   一个文本文件，用来记录IP和Hostname（主机名）的映射关系
-
 + DNS
 
   1、DNS，就是Domain Name System的缩写，翻译过来就是**域名系统**
@@ -3112,10 +2998,10 @@ https://blog.csdn.net/qq_35024768/article/details/121196596
 
 ## 基本介绍
 
-1)	在LINUX中，每个执行的程序（代码）都称为一个进程。每一个进程都分配一个ID号。
-2)	每一个进程，都会对应一个父进程，而这个父进程可以复制多个子进程。例如www服务器。
-3)	每个进程都可能以两种方式存在的。前台与后台，所谓前台进程就是用户目前的屏幕上可以进行操作的。后台进程则是实际在操作，但由于屏幕上无法看到的进程，通常使用后台方式执行。
-4)	一般系统的服务都是以后台进程的方式存在，而且都会常驻在系统中。直到关机才才结束。
+1) 在LINUX中，每个执行的程序（代码）都称为一个进程。每一个进程都分配一个ID号。
+2) 每一个进程，都会对应一个父进程，而这个父进程可以复制多个子进程。例如www服务器。
+3) 每个进程都可能以两种方式存在的。前台与后台，所谓前台进程就是用户目前的屏幕上可以进行操作的。后台进程则是实际在操作，但由于屏幕上无法看到的进程，通常使用后台方式执行。
+4) 一般系统的服务都是以后台进程的方式存在，而且都会常驻在系统中。直到关机才才结束。
 
 ## 显示系统执行的进程 ps
 
@@ -3129,20 +3015,20 @@ https://blog.csdn.net/qq_35024768/article/details/121196596
 
 ### ps详解
 
-1)	指令：`ps –aux|grep xxx` ，比如我看看有没有sshd服务`ps -aux | grep sshd`
-2)	指令说明
-•	System V展示风格
-•	USER：用户名称
-•	PID：进程号
-•	%CPU：进程占用CPU的百分比
-•	%MEM：进程占用物理内存的百分比
-•	VSZ：进程占用的虚拟内存大小（单位：KB）
-•	RSS：进程占用的物理内存大小（单位：KB）
-•	TT：终端名称,缩写.
-•	STAT：进程状态，其中S-睡眠，s-表示该进程是会话的先导进程，N-表示进程拥有比普通优先级更低的优先级，R-正在运行，D-短期等待，Z-僵死进程，T-被跟踪或者被停止等等
-•	STARTED：进程的启动时间
-•	TIME：CPU时间，即进程使用CPU的总时间
-•	COMMAND：启动进程所用的命令和参数，如果过长会被截断显示
+1) 指令：`ps –aux|grep xxx` ，比如我看看有没有sshd服务 `ps -aux | grep sshd`
+2) 指令说明
+   •	System V展示风格
+   •	USER：用户名称
+   •	PID：进程号
+   •	%CPU：进程占用CPU的百分比
+   •	%MEM：进程占用物理内存的百分比
+   •	VSZ：进程占用的虚拟内存大小（单位：KB）
+   •	RSS：进程占用的物理内存大小（单位：KB）
+   •	TT：终端名称,缩写.
+   •	STAT：进程状态，其中S-睡眠，s-表示该进程是会话的先导进程，N-表示进程拥有比普通优先级更低的优先级，R-正在运行，D-短期等待，Z-僵死进程，T-被跟踪或者被停止等等
+   •	STARTED：进程的启动时间
+   •	TIME：CPU时间，即进程使用CPU的总时间
+   •	COMMAND：启动进程所用的命令和参数，如果过长会被截断显示
 
 ![image-20210510224119734](linux.assets/image-20210510224119734.png)
 
@@ -3256,7 +3142,7 @@ bash-4.1# kill -9 21919
 [root@hadoop1 ~]$ pstree
 init─┬─NetworkManager
      ├─VGAuthService
-     
+   
      ├─abrtd
      ├─acpid
      ├─atd
@@ -3288,30 +3174,31 @@ init─┬─NetworkManager
 
 > 在CentOS7.0后不再使用service ,而是systemctl，后面专门讲
 
-> service指令管理的服务在`/etc/init.d`查看
+> service指令管理的服务在 `/etc/init.d`查看
 >
 > ![image-20210512004702243](linux.assets/image-20210512004702243.png)
 
 使用案例：
-1) （centos6     7以后防火墙被systemctl管理）查看当前防火墙的状况，关闭防火墙和重启防火墙。[防火墙服务名：iptables]  
+
+1) （centos6     7以后防火墙被systemctl管理）查看当前防火墙的状况，关闭防火墙和重启防火墙。[防火墙服务名：iptables]
 
 ```sh
 [root@hadoop1 ~]$ service iptables status
 表格：filter
 Chain INPUT (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination       
 1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
-2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
-3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0         
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0         
 4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
 5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
 
 Chain FORWARD (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination       
 1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
 
 Chain OUTPUT (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination       
 
 [root@hadoop1 ~]$ service iptables stop
 iptables：将链设置为政策 ACCEPT：filter                    [确定]
@@ -3324,19 +3211,19 @@ iptables：应用防火墙规则：                                 [确定]
 [root@hadoop1 ~]$ service iptables status
 表格：filter
 Chain INPUT (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination       
 1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
-2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
-3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0         
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0         
 4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
 5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
 
 Chain FORWARD (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination       
 1    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
 
 Chain OUTPUT (policy ACCEPT)
-num  target     prot opt source               destination         
+num  target     prot opt source               destination       
 
 [root@hadoop1 ~]$ 
 ```
@@ -3349,14 +3236,14 @@ centos7演示
 
 细节讨论：
 
-1)	关闭或者启用防火墙后，立即生效。[`telnet 测试 某个端口即可`]
+1) 关闭或者启用防火墙后，立即生效。[`telnet 测试 某个端口即可`]
 
 ![image-20210510001528597](linux.assets/image-20210510001528597.png)
 
 ![image-20210510001250412](linux.assets/image-20210510001250412.png)
 
-2)	这种方式只是临时生效，当重启系统后，还是回归以前对服务的设置。
-3)	如果希望设置某个服务自启动或关闭永久生效，要使用chkconfig指令，马上讲。
+2) 这种方式只是临时生效，当重启系统后，还是回归以前对服务的设置。
+3) 如果希望设置某个服务自启动或关闭永久生效，要使用chkconfig指令，马上讲。
 
 ### 查看服务名:
 
@@ -3365,14 +3252,13 @@ centos7演示
   ![image-20210510001913835](linux.assets/image-20210510001913835.png)
 
   ![image-20210511233334737](linux.assets/image-20210511233334737.png)
-
 + 方式2:   /etc/init.d/服务名称   在7.0中只能查看部分
 
   ![image-20210511233206018](linux.assets/image-20210511233206018.png)
 
 ### 服务的运行级别(runlevel):
 
-查看或者修改默认级别： `vi /etc/inittab` 
+查看或者修改默认级别： `vi /etc/inittab`
 Linux系统有7种运行级别(runlevel)：`常用的是级别3和5`
 
 •	运行级别0：系统停机状态，系统默认运行级别不能设为0，否则不能正常启动
@@ -3383,16 +3269,12 @@ Linux系统有7种运行级别(runlevel)：`常用的是级别3和5`
 •	运行级别5：X11控制台，登陆后进入图形GUI模式
 •	运行级别6：系统正常关闭并重启，默认运行级别不能设为6，否则不能正常启动
 
-
-
 开机的流程说明：
 
 ![image-20210510002439767](linux.assets/image-20210510002439767.png)
 
 > 思考题
 > 如果不小心将默认的运行级别设置成 0 或者7 ，怎么处理？进入单用户模式，修改成正常的即可。。。
-
-
 
 **CentOS7后运行级别说明**
 在/etc/initab进行了简化，如下：
@@ -3414,45 +3296,46 @@ systemctl set-default graphical.targe  # 5
 •	介绍
 
 + 通过chkconfig命令可以给服务的各个运行级别设置自启动/关闭
-+ chkconfig指令管理的服务在`/etc/init.d`查看
-
-+ 注意：Centos7.0后，很多服务`使用systemctl` 管理（后面马上讲）
++ chkconfig指令管理的服务在 `/etc/init.d`查看
++ 注意：Centos7.0后，很多服务 `使用systemctl` 管理（后面马上讲）
 
 •	基本语法
-1)	查看服务`chkconfig --list|grep  xxx`
+
+1) 查看服务 `chkconfig --list|grep  xxx`
 
 ![image-20210511234651543](linux.assets/image-20210511234651543.png)
 
-2)	`chkconfig   服务名 --list`
+2) `chkconfig   服务名 --list`
 
 ![image-20210510230401868](linux.assets/image-20210510230401868.png)
 
-3)	`chkconfig   --level  5   服务名   on/off`
+3) `chkconfig   --level  5   服务名   on/off`
 
 ![image-20210510230427631](linux.assets/image-20210510230427631.png)
 
 •	应用实例：
-1)	案例1： 请显示当前系统所有服务的各个运行级别的运行状态
+
+1) 案例1： 请显示当前系统所有服务的各个运行级别的运行状态
 
 `chkconfig --list`
 
-2)	案例2 ：请查看sshd服务的运行状态
+2) 案例2 ：请查看sshd服务的运行状态
 
 `service sshd status`
 
-3)	案例3： 将sshd 服务在运行级别5下设置为不自动启动，看看有什么效果？
+3) 案例3： 将sshd 服务在运行级别5下设置为不自动启动，看看有什么效果？
 
 `chkconfig --level 5 sshd off`
 
-4)	案例4： 当运行级别为5时，关闭防火墙。
+4) 案例4： 当运行级别为5时，关闭防火墙。
 
 `chkconfig --level 5 iptables off`
 
-5)	案例5： 在所有运行级别下，关闭防火墙
+5) 案例5： 在所有运行级别下，关闭防火墙
 
 `chkconfig iptables off`
 
-6)	案例6： 在所有运行级别下，开启防火墙
+6) 案例6： 在所有运行级别下，开启防火墙
 
 `chkconfig iptables on`
 
@@ -3460,15 +3343,11 @@ systemctl set-default graphical.targe  # 5
 
 > 1) chkconfig重新设置服务后自启动或关闭，需要重启机器reboot才能生效.
 
-
-
 ### systemctl管理指令
 
 1、基本语法：`systemctl [start | stop | restart | status] 服务名`
 
-2、systemctl指令**管理的服务**在`/usr/lib/systemd/system`**查看**
-
-
+2、systemctl指令**管理的服务**在 `/usr/lib/systemd/system`**查看**
 
 **systemctl设置服务的自启动状态**
 1.`systemctl list-unit-files [| grep 服务名]`（查看服务开机启动状态，grep可以进行过滤
@@ -3491,14 +3370,12 @@ firewalld.service                             enabled
 [root@localhost system]$ systemctl status firewalld.service
 ```
 
-
-
 细节讨论：
 1，关闭或者启用防火墙后，立即生效。[`telnet  测试某个端口`即可]，
 
 2，这种方式只是临时生效，当重启系统后，还是回归以前对服务的设置。
 
-3，如果希望设置某个服务自启动或关闭永久生效，要使用`systemctl [enable|disable] 服务名`.
+3，如果希望设置某个服务自启动或关闭永久生效，要使用 `systemctl [enable|disable] 服务名`.
 
 ### 打开或者关闭指定端口firewall
 
@@ -3611,8 +3488,6 @@ top与ps命令很相似。它们都用来显示正在执行的进程。Top与ps�
 
 交互操作说明![image-20210510004327955](linux.assets/image-20210510004327955.png)
 
-
-
 ### 应用实例：
 
 案例1.监视特定用户
@@ -3629,14 +3504,13 @@ top：输入此命令，按回车键，查看执行的进程。 k：然后输入
 
 `top -d 10`
 
-## 监控网络状态netstat 
+## 监控网络状态netstat
 
 ### 查看系统网络情况netstat
 
 •	基本语法
 `netstat [选项]`
 •	选项说明
-
 
 ```sh
 -an  按一定顺序排列输出
@@ -3687,8 +3561,6 @@ rpm包名基本格式：
 
 ![image-20210510231642960](linux.assets/image-20210510231642960.png)
 
-
-
 `rpm -q 软件包名`:【查询软件包是否安装】
 `rpm -q firefox`
 
@@ -3697,39 +3569,31 @@ rpm包名基本格式：
 
 ![image-20210510231714433](linux.assets/image-20210510231714433.png)
 
-
-
 `rpm -ql 软件包名` :【查询软件包中的文件的位置】
 `rpm -ql firefox`
 
 ![image-20210510231740848](linux.assets/image-20210510231740848.png)
-
-
 
 `rpm -qf 文件全路径名`  【 查询文件所属的软件包】
 `rpm -qf /etc/passwd`
 
 ![image-20210510231918214](linux.assets/image-20210510231918214.png)
 
-
-
 ### 卸载rpm包：
 
 + 基本语法
   `rpm -e RPM包的名称`
-
 + 应用案例
   1）删除firefox软件包
 
   ```sh
   rpm -e  firefox
   ```
-
 + 细节讨论
 
   + 1）如果其它软件包依赖于您要卸载的软件包，卸载时则会产生错误信息。
     如：$rpm-e foo removing these packages would break dependencies:foo is needed by bar-1.0-1
-  + 2）如果我们就是要删除foo这个rpm包，可以增加参数-nodeps，就可以`强制删除`，但是一般不推荐这样做，因为依赖于该软件包的程序可能无法运行如：`rpm-e--nodeps foo`
+  + 2）如果我们就是要删除foo这个rpm包，可以增加参数-nodeps，就可以 `强制删除`，但是一般不推荐这样做，因为依赖于该软件包的程序可能无法运行如：`rpm-e--nodeps foo`
 
 ### 安装rpm包：
 
@@ -3743,7 +3607,6 @@ rpm包名基本格式：
   1）演示卸载和安装firefox浏览器
 
 步骤先找到firefox 的安装rpm 包,你需要挂载上我们安装centos 的iso 文件【centOS安装光盘】，然后到/media/下去找rpm 找。
-
 
 ![image-20210510012621907](linux.assets/image-20210510012621907.png)
 
@@ -3778,10 +3641,9 @@ Yum 是一个Shell前端软件包管理器。基于RPM包管理，能够从指�
 ### yum的基本指令
 
 + 查询yum服务器是否有需要安装的软件
-  			`yum list|grep xx软件列表`
-
+  `yum list|grep xx软件列表`
 + 安装指定的yum包
-  	     `yum install xxx  `下载安装yum
+  `yum install xxx  `下载安装yum
 
   应用实例：
   案例：请使用yum的方式来安装firefox
@@ -3802,21 +3664,17 @@ yum install firefox
 
 ![image-20210510233043692](linux.assets/image-20210510233043692.png)
 
-
-
 # JavaEE定制篇  搭建JavaEE环境
 
 ## 概述
 
 ![image-20210510233732940](linux.assets/image-20210510233732940.png)
 
-
-
 ## 安装JDK
 
 ### 安装步骤
 
-0)	先将软件通过xftp5 上传到 /opt 下
+0) 先将软件通过xftp5 上传到 /opt 下
 
 ![image-20210510234600633](linux.assets/image-20210510234600633.png)1)	解压缩到 /opt
 
@@ -3829,17 +3687,17 @@ yum install firefox
 
 ![image-20210510234711429](linux.assets/image-20210510234711429.png)
 
-进入bin目录下执行`./java`
+进入bin目录下执行 `./java`
 
-2)	配置环境变量的配置文件`vim  /etc/profile`  添加
+2) 配置环境变量的配置文件 `vim  /etc/profile`  添加
 
 > 快捷键G到文件末尾
-> 进入jdk1.7.0_79/bin下   使用`pwd`查询路径
+> 进入jdk1.7.0_79/bin下   使用 `pwd`查询路径
 
 在末尾添加
 
 ```sh
-JAVA_HOME=/opt/jdk1.7.0_79     
+JAVA_HOME=/opt/jdk1.7.0_79   
 PATH=$JAVA_HOME/bin:$PATH    # 或者PATH=/opt/jdk1.7.0_79/bin:$PATH
 export JAVA_HOME PATH    # 输出变量，让环境变量剩下
 ```
@@ -3851,8 +3709,6 @@ export JAVA_HOME PATH    # 输出变量，让环境变量剩下
 如果是在5 运行级别，
 
 ![image-20210510235421235](linux.assets/image-20210510235421235.png)
-
-
 
 或者 `source /etc/profile`命令是配置生效
 
@@ -3880,13 +3736,13 @@ public class Hello{
 
 步骤:
 
-1)	解压缩到/opt
+1) 解压缩到/opt
 
 ```sh
 [root@hadoop1 opt]$ tar -zxvf apache-tomcat-7.0.70.tar.gz 
 ```
 
-2)	启动tomcat   ./startup.sh
+2) 启动tomcat   ./startup.sh
 
 ```sh
 #先进入到tomcat的bin目录
@@ -3899,13 +3755,10 @@ cd apache-tomcat-7.0.70
 
 ![image-20210511000814805](linux.assets/image-20210511000814805.png)
 
-​		
 
-3)	开放端口`vim /etc/sysconfig/iptables`    centOS6    7参考firewall指令
+3) 开放端口 `vim /etc/sysconfig/iptables`    centOS6    7参考firewall指令
 
 []:
-
-
 
 ```sh
 [root@hadoop1 bin]$ vim /etc/sysconfig/iptables   # 编辑防火墙配置
@@ -3913,7 +3766,7 @@ cd apache-tomcat-7.0.70
 
 ![image-20210511001213338](linux.assets/image-20210511001213338.png)
 
-4)  重启防火墙
+4) 重启防火墙
 
 ```sh
 [root@hadoop1 bin]$ service iptables restart  # 重启防火墙服务
@@ -3926,26 +3779,21 @@ cd apache-tomcat-7.0.70
 
 ## Eclipse的安装步骤 :
 
-1)	解压缩到/opt
+1) 解压缩到/opt
 
 ```sh
 tar - zxvf eclipse- j ee-mars -2- linux-gtk-x86_64. tar. gz
 ```
 
-2)	启动eclipse，配置jre和server
+2) 启动eclipse，配置jre和server
 
-​      启动方法1: 创建一个快捷方式
-​     启动方式2: 进入到eclipse 解压后的文件夹，然后执行./eclipse 即可
+    启动方法1: 创建一个快捷方式
+     启动方式2: 进入到eclipse 解压后的文件夹，然后执行./eclipse 即可
 
-3)	编写Hello world 程序并测试成功！
-
-
-
-4)	编写jsp 页面,并测试成功!
+3) 编写Hello world 程序并测试成功！
+4) 编写jsp 页面,并测试成功!
 
 ![image-20210511003346237](linux.assets/image-20210511003346237.png)
-
-
 
 ## mysql5.6的安装
 
@@ -3953,8 +3801,6 @@ tar - zxvf eclipse- j ee-mars -2- linux-gtk-x86_64. tar. gz
 [说明: 因为mysql安装时间很长，所以在授课时，可以考虑最先安装mysql]相关的安装软件在课件
 
 > 注意: 先删除一下Mysql 相关的软件..
-
-
 
 ```sh
 一：卸载旧版本
@@ -3993,7 +3839,7 @@ make && make install
 #整个过程需要30分钟左右……漫长的等待
 ```
 
-三：配置MySQL    
+三：配置MySQL
 
 ```sh
 #设置权限
@@ -4061,9 +3907,9 @@ firewall-cmd --state #查看默认防火墙状态（关闭后显示notrunning，
 
 ## 为什么要学习Shell编程
 
-1)	Linux运维工程师在进行服务器集群管理时，需要编写Shell程序来进行服务器管理。
-2)	对于JavaEE和Python程序员来说，工作的需要，你的老大会要求你编写一些Shell脚本进行程序或者是服务器的维护，比如编写一个定时备份数据库的脚本。
-3)	对于大数据程序员来说，需要编写Shell程序来管理集群。
+1) Linux运维工程师在进行服务器集群管理时，需要编写Shell程序来进行服务器管理。
+2) 对于JavaEE和Python程序员来说，工作的需要，你的老大会要求你编写一些Shell脚本进行程序或者是服务器的维护，比如编写一个定时备份数据库的脚本。
+3) 对于大数据程序员来说，需要编写Shell程序来管理集群。
 
 ## Shell是什么
 
@@ -4075,8 +3921,8 @@ Shell是一个命令行解释器，它为用户提供了一个向Linux内核发�
 
 ### 脚本格式要求
 
-1)	脚本以`#!/bin/bash`开头
-2)	脚本需要有可执行权限
+1) 脚本以 `#!/bin/bash`开头
+2) 脚本需要有可执行权限
 
 ### 编写第一个Shell脚本
 
@@ -4091,8 +3937,9 @@ echo 'hello world'
 ### 脚本的常用执行方式
 
 •	方式1(输入脚本的绝对路径或相对路径)
-1)	首先要赋予helloworld.sh 脚本的`+x权限`
-2)	执行脚本
+
+1) 首先要赋予helloworld.sh 脚本的 `+x权限`
+2) 执行脚本
 
 ```sh
 [root@hadoop1 tmp]$ chmod u+x hell.sh    # 添加权限   或者chmod 744 myShell.sh
@@ -4119,7 +3966,7 @@ echo 'hello world'
 echo 'hello worls'
 # 必须使用双引号
 echo "path=$PATH"
-echo "user=$USER"                
+echo "user=$USER"              
 ```
 
 ```sh
@@ -4137,10 +3984,9 @@ user=root
 
 + 基本语法
 
-  1)	定义变量：`变量=值`
-  2)	撤销变量：`unset 变量`
-  3)	声明静态变量：`readonly 变量`，注意：不能unset
-
+  1) 定义变量：`变量=值`
+  2) 撤销变量：`unset 变量`
+  3) 声明静态变量：`readonly 变量`，注意：不能unset
 + 快速入门
   案例1：定义变量A
 
@@ -4158,9 +4004,9 @@ user=root
 
 ### 定义变量的规则
 
-1)	变量名称可以由字母、数字和下划线组成，但是不能以数字开头。
-2)	`等号两侧不能有空格`
-3)	变量名称一般**习惯为大写**
+1) 变量名称可以由字母、数字和下划线组成，但是不能以数字开头。
+2) `等号两侧不能有空格`
+3) 变量名称一般**习惯为大写**
 
 ### 将命令的返回值赋给变量
 
@@ -4168,24 +4014,21 @@ user=root
 
 ![image-20210511013025615](linux.assets/image-20210511013025615.png)
 
-
-
 ## 设置环境变量
 
 ### 基本语法
 
-  1)	`export 变量名=变量值` （功能描述：将shell变量输出为环境变量）
-
-  2)	`source 配置文件`   （功能描述：让修改后的配置信息立即生效）
-  3)	`echo $变量名`  （功能描述：查询环境变量的值）
+1) `export 变量名=变量值` （功能描述：将shell变量输出为环境变量）
+2) `source 配置文件`   （功能描述：让修改后的配置信息立即生效）
+3) `echo $变量名`  （功能描述：查询环境变量的值）
 
 ### 快速入门
 
 ![image-20210511013351451](linux.assets/image-20210511013351451.png)
 
-1)	在/etc/profile文件中定义TOMCAT_HOME环境变量
-2)	查看环境变量TOMCAT_HOME的值
-3)	在另外一个shell程序中使用TOMCAT_HOME
+1) 在/etc/profile文件中定义TOMCAT_HOME环境变量
+2) 查看环境变量TOMCAT_HOME的值
+3) 在另外一个shell程序中使用TOMCAT_HOME
 
 ![image-20210511013630661](linux.assets/image-20210511013630661.png)
 
@@ -4197,9 +4040,7 @@ user=root
 
 ![image-20210511013847564](linux.assets/image-20210511013847564.png)
 
-
-
-注意：在输出TOMCAt_HOME 环境变量前，需要让其生效`source /etc/profile` 
+注意：在输出TOMCAt_HOME 环境变量前，需要让其生效 `source /etc/profile`
 
 ## 注释
 
@@ -4264,7 +4105,7 @@ $# 	#（功能描述：这个变量代表命令行中所有参数的个数）
 
 ### 基本语法
 
-1）`"$((运算式))"`或`"$[运算式]"`
+1）`"$((运算式))"`或 `"$[运算式]"`
 2）`expr m + n`注意expr运算符间要有空格
 3）`expr m - n`
 4）`expr \*，/，%`乘，除，取余
@@ -4286,7 +4127,6 @@ $# 	#（功能描述：这个变量代表命令行中所有参数的个数）
 + 基本语法
   `[  condition  ]`（注意condition前后要有空格）
   #非空返回true，可使用$?验证（0为true，>1为false）
-
 + 应用实例
   `[ atguigu ]`		返回true
   `[]`				返回false
@@ -4351,8 +4191,6 @@ fi
 
 注意事项：（1）`[ 条件判断式 ]`，中括号和条件判断式之间必须有空格（2）推荐使用第二种方式
 
-
-
 应用实例
 
 案例：请编写·个shell程序，如果输入的参数，大于等于60，则输出"及格了"，如果小于60，则输出"不及格
@@ -4366,7 +4204,7 @@ fi
 及格
 ```
 
-脚本内容  
+脚本内容
 
 ```shell
 #!/bin/bash
@@ -4520,7 +4358,7 @@ do
 done
 ```
 
-案例  
+案例
 
 ```sh
 #!/bin/bash
@@ -4587,7 +4425,6 @@ sum = 5050
 + 选项：
   `-p`：指定读取值时的提示符；
   `-t`：指定读取值时等待的时间（秒），如果没有在指定的时间内输入，就不再等待了。
-
 + 参数
   变量：指定读取值的变量名
 
@@ -4595,7 +4432,7 @@ sum = 5050
 
   testRead.sh
 
-  ```sh
+```sh
   #!/bin/bash
   
   #案例1：读取控制台输入一个num1值
@@ -4605,7 +4442,7 @@ sum = 5050
   #案例2：读取控制台输入一个num2值，在10秒内输入。
   read -t 10 -p "请输入一个数：" NUM2
   echo "NUM2=$NUM2"
-  ```
+```
 
 ```sh
 # 测试
@@ -4618,7 +4455,7 @@ NUM2=20
 
 ## 函数
 
-###   函数介绍
+### 函数介绍
 
 shell编程和其它编程语言一样，有系统函数，也可以自定义函数。系统函数中，我们这里就介绍两个。
 
@@ -4628,10 +4465,8 @@ shell编程和其它编程语言一样，有系统函数，也可以自定义函
 
   **功能**：返回完整路径最后 / 的部分，常用于**获取文件名**
 
-
   `basename [pathname] [suffix]`
   `basename [string] [suffix]`功能描述：basename命令会删掉所有的前缀包括最后一个（‘/’）字符，然后将字符串显示出来。
-
 
   **选项**：suffix为后缀，如果suffix被指定了，basename会将pathname或string中的suffix去掉。
 
@@ -4652,7 +4487,6 @@ test
 + `dirname`基本语法
 
   **功能**：返回完整路径最后/的前面的部分，常用于**返回路径部分**
-
 
   `dirname 文件绝对路径`（功能描述：从给定的包含绝对路径的文件名中去除文件名（非目录的部分），然后返回剩下的路径（目录的部分））
 
@@ -4723,7 +4557,7 @@ echo "函数返回值=$A"
 
 ![image-20210512235036270](linux.assets/image-20210512235036270.png)
 
-shell脚本`/usr/sbin/mysql_db_backup.sh`
+shell脚本 `/usr/sbin/mysql_db_backup.sh`
 
 ```sh
 #!/bin/bash
@@ -4802,15 +4636,11 @@ CentOS 是基于 Red Hat Enterprise Linux (RHEL / 业界最知名的发行版) �
 
 1.开启CPU虚拟化
 
-
-
 2.新建虚拟机，稍后安装系统
 
 ![image-20210513010642384](linux.assets/image-20210513010642384.png)
 
 ![image-20210513010817262](linux.assets/image-20210513010817262.png)
-
-
 
 3.加载安装镜像
 
@@ -4826,19 +4656,13 @@ CentOS 是基于 Red Hat Enterprise Linux (RHEL / 业界最知名的发行版) �
 
 6.选择安装软件
 
-
-
 带界面GUI     勾选【传统nuix兼容性   开发工具   性能工具】
 
 > 生产环境：最小安装
 
-
-
 7.分区操作
 
 ![image-20210513011622985](linux.assets/image-20210513011622985.png)
-
-
 
 ![image-20210513012056980](linux.assets/image-20210513012056980.png)
 
@@ -4865,7 +4689,7 @@ swap 分区     2G    	标准分区  	swap
 
 centos8更新后网络配置发生了变化，主要是在配置结束后网络重启这块。
 
-变化1:网络配置文件名称改变，配置文件地址没有变化`/etc/sysconfig/network-scripts`
+变化1:网络配置文件名称改变，配置文件地址没有变化 `/etc/sysconfig/network-scripts`
 
 ```sh
 [root@localhost network-scripts]$ pwd
@@ -4943,9 +4767,13 @@ DNS2=8.8.8.8
 centos8网卡默认是关闭的，在重启网络配置前需要先打开网卡（重点），再重启网络。
 
 ```bash
+
+
+
 # 启动网卡
 [root@localhost network-scripts]$ nmcli c up ens33
 连接已成功激活（D-Bus 活动路径：/org/freedesktop/NetworkManager/ActiveConnection/2
+
 
 #重启网络
 [root@localhost network-scripts]$ nmcli c reload
@@ -4965,6 +4793,16 @@ nmcli c down ens33
 
 #查看链接
 nmcli connection
+
+# 网络问题排查
+nmcli networking //查看托管状态
+如果显示 disabled 那么适用于下面的方法解决，如果不是就不是这里的问题
+
+开启网卡托管
+nmcli networking on
+
+重启网络管理
+systemctl restart NetworkManager
 ```
 
 ## 8.0与7.0区别
@@ -4981,37 +4819,29 @@ nmcli connection
 
 3、可以这样理解日志是用来*记录重大事件的工具*
 
-
-
 ## 系统常用的日志
 
 `/var/log/`目录就是系统日志文件的保存位置，看张图
 
 ![image-20210513014334912](linux.assets/image-20210513014334912.png)
 
-
-
 ![image-20210513014741930](linux.assets/image-20210513014741930.png)
 
-
-
 **应用案例**
-使用root用户通过xshell6登陆，第一次使用错误的密码，第二次使用正确的密码登录成功看看在日志文件`/var/log/secure`里有没有记录相关信息
+使用root用户通过xshell6登陆，第一次使用错误的密码，第二次使用正确的密码登录成功看看在日志文件 `/var/log/secure`里有没有记录相关信息
 
 ![image-20210513015522991](linux.assets/image-20210513015522991.png)
 
+## 日志管理服务 `rsyslogd`
 
-
-## 日志管理服务`rsyslogd` 
-
-CentOS7.6日志服务是`rsyslogd`，CentOS6.x日志服务是`syslogd`；rsyslogd功能更强大。rsyslogd的使用、日志文件的格式，和syslogd服务兼容的。
+CentOS7.6日志服务是 `rsyslogd`，CentOS6.x日志服务是 `syslogd`；rsyslogd功能更强大。rsyslogd的使用、日志文件的格式，和syslogd服务兼容的。
 
 ![image-20210513221027283](linux.assets/image-20210513221027283.png)
 
 查询Linux中的rsyslogd服务**是否启动**
 `ps -aux | grep "rsyslog" | grep -v "grep"`
 
-> 【第二次是过滤掉`grep -v`反向匹配】
+> 【第二次是过滤掉 `grep -v`反向匹配】
 
 查询rsyslogd服务的**自启动状态**
 `systemctl list-unit-files | grep rsyslog`
@@ -5022,7 +4852,7 @@ CentOS7.6日志服务是`rsyslogd`，CentOS6.x日志服务是`syslogd`；rsyslog
 
 ![image-20210513022147407](linux.assets/image-20210513022147407.png)
 
-编辑文件时的格式为：`*.*`存放日志文件其中第一个`*`代表日志类型，第二个`*`代表日志级别
+编辑文件时的格式为：`*.*`存放日志文件其中第一个 `*`代表日志类型，第二个 `*`代表日志级别
 1.日志类型分为：
 
 ```
@@ -5065,21 +4895,17 @@ none	##什么都不记录
 
 ![image-20210513021959684](linux.assets/image-20210513021959684.png)
 
-
-
 ### 应用实例
 
-在`vim /etc/rsyslog.conf`中添加一个日志文件`/var/og/hsp.log`，当有事件发送时（比如sshd服务相关事件），该文件会接收到信息并保存，给小伙伴演示，，看看是否有日志保存
+在 `vim /etc/rsyslog.conf`中添加一个日志文件 `/var/og/hsp.log`，当有事件发送时（比如sshd服务相关事件），该文件会接收到信息并保存，给小伙伴演示，，看看是否有日志保存
 
-
-
-在`/etc/rsyslog.conf`增加一条规则记录所有日志【参考邮件服务】
+在 `/etc/rsyslog.conf`增加一条规则记录所有日志【参考邮件服务】
 
 ```sh
 *.*         -/var/og/hsp.log
 ```
 
-过滤查看：`cat /var/og/hsp.log | grep sshd ` 
+过滤查看：`cat /var/og/hsp.log | grep sshd `
 
 ![image-20210513022658315](linux.assets/image-20210513022658315.png)
 
@@ -5091,17 +4917,13 @@ none	##什么都不记录
 
 ### 日志轮替文件命名
 
-1、**centos7使用logrotate进行日志轮替管理**，要想改变日志轮替文件名字，通过`/etc/logrotate.conf`配置文件中"`dateext`"参数
+1、**centos7使用logrotate进行日志轮替管理**，要想改变日志轮替文件名字，通过 `/etc/logrotate.conf`配置文件中"`dateext`"参数
 
 2、如果配置文件中有"`dateext`"参数，那么日志会用**日期**来作为日志文件的后缀，例如"secure-20201010"。这样日志文件名不会重叠，也就不需要日志文件的改名，只需要指定保存日志个数，删除多余的日志文件即可
 
 3，如果配置文件中**没有"`dateext`"参数**，日志文件就需要进行改名了。当第一次进行日志轮替时**，当前的secure"日志会目动改名为"secure.1"，然新建"secure"日志，用来保存新的日志**。当第二次进行日志轮替时，"secure.1"会自动改名为"secure.2"，当前的"secure"日志会自动改名为"secure.1"，然后也会新建"secure"日志，用来保存新的日志，以此类推。
 
-
-
 ### `logrotate`配置文件
-
-
 
 `/etc/logrotate.conf`为logrotate的全局配置文件
 
@@ -5152,21 +4974,17 @@ include /etc/logrotate.d
 
 ![image-20210513213101003](linux.assets/image-20210513213101003.png)
 
-
-
 ### 把自己的日志加入日志轮替
 
-**第一种**方法是直接在`/etc/logrotate.conf`配置文件中写入该日志的轮替策略
+**第一种**方法是直接在 `/etc/logrotate.conf`配置文件中写入该日志的轮替策略
 
-**第二种**方法是在`/etc/logrotate.d/`目录中新建立该日志的轮替文件，在该轮替文件中写入正确的轮替策略，`因为该目录中的文件都会被"include"到主配置文件中`，所以也可以把日志加入轮替。
-
-
+**第二种**方法是在 `/etc/logrotate.d/`目录中新建立该日志的轮替文件，在该轮替文件中写入正确的轮替策略，`因为该目录中的文件都会被"include"到主配置文件中`，所以也可以把日志加入轮替。
 
 *推荐使用第二种方法*，因为系统中需要轮替的日志非常多，如果全都直接写入/etc/logrotate.conf配置文件，那么这个文件的可管理性就会非常差，不利于此文件的维护。在/etc/logrotate.d/配置轮替文件一览
 
 ### 应用实例
 
-看一个案例，在`/etc/logrotate.conf`进行配置，或者直接在`/etc/logrotate.d/ 下创建文件hsplog`编写如下内容，具体轮替的效果可以参考**/var/log下的bopt.log**情况.
+看一个案例，在 `/etc/logrotate.conf`进行配置，或者直接在 `/etc/logrotate.d/ 下创建文件hsplog`编写如下内容，具体轮替的效果可以参考**/var/log下的bopt.log**情况.
 
 ```sh
 # 对hsp.log文件自定义轮替策略
@@ -5183,39 +5001,31 @@ include /etc/logrotate.d
 
 ![image-20210513221512490](linux.assets/image-20210513221512490.png)
 
-日志轮替之所以可以在指定的时间备份日志，是**依赖系统定时任务**。在`/etc/cron.daily/`目录，就会发现这个目录中是有`logrotate`文件（可执行），logrotate通过这个文件依赖定时任务执行的。
+日志轮替之所以可以在指定的时间备份日志，是**依赖系统定时任务**。在 `/etc/cron.daily/`目录，就会发现这个目录中是有 `logrotate`文件（可执行），logrotate通过这个文件依赖定时任务执行的。
 
 ![image-20210513220328346](linux.assets/image-20210513220328346.png)
 
+## 查看内存日志 `journalctl`
 
-
-## 查看内存日志`journalctl`
-
-`journalctl` 可以查看内存日志，这里我们看看常用的指令`journalctl`		##查看全部
+`journalctl` 可以查看内存日志，这里我们看看常用的指令 `journalctl`		##查看全部
 `journalctl -n 3`		##查看最新3条
 `journalctl --since 19:00--until 19:10:10`#查看起始时间到结束时间的日志可加日期
 
 `journalctl -p err`	##报错日志
 `journalctl -o verbose`	##日志详细内容
 `journalctl -PID=1245 _COMM=sshd`#查看包含这些参数的日志（在详细日志查看）
-或者`journalctl | grep sshd`
-
-
+或者 `journalctl | grep sshd`
 
 注意：journalctl查看的是**内存日志**，重启清空
 
-演示案例：使用`journalctl | grep sshd`来看看用户登录清空，重启系统，再次查询，看看日志有什么变化没有.
+演示案例：使用 `journalctl | grep sshd`来看看用户登录清空，重启系统，再次查询，看看日志有什么变化没有.
 
 # 高级篇-定制自己的Linux系统
-
-
 
 ## 基本介绍
 
 通过裁剪现有Linux系统（CentOS7.6），创建属于自己的min Linux小系统，可以加深我们对tlinux的理解。
 老韩利用centos7.6，搭建一个小小linux系统，很有趣。
-
-
 
 ## 基本原理
 
@@ -5247,8 +5057,6 @@ include /etc/logrotate.d
 
 4.以上步骤完成，我们的自制Linux就完成，创建一个新的linux虚拟机，将其硬盘指向我们创建的硬盘，启动即可
 
-
-
 # linux内核源码介绍&内核升级
 
 ## linux0.01内核源码
@@ -5258,10 +5066,6 @@ include /etc/logrotate.d
 Linux的内核源代码可以从网上下载，解压缩后文件一般也都位于linux目录下。内核源代码有很多版本，可以从linux0.01内核入手，总共的代码1w行左右，最新版本5.9.8总共代码超过700w行，非常庞大
 
 内核地址：https://www.kernel.org/
-
-
-
-
 
 linux0.01内核源码目录&阅读
 
@@ -5316,7 +5120,7 @@ yum list kernel -q	#查看已经安装的内核
 linux的备份和恢复很简单，有两种方式：
 1）把需要的文件（或者分区）用TAR打包就行，下次需要恢复的时候，再解压开覆盖即可
 
-2）使用`dump`和`restore`命令
+2）使用 `dump`和 `restore`命令
 
 安装dump和restore
 
@@ -5334,9 +5138,7 @@ yum -y install restore
 **dump支持分卷和增量备份**（所谓增量备份是指备份上次备份后修改/增加过的文件，也称差异备份）
 
 `dump [-cu] [-123456789] [-f<备份后文件名2] [-T<日期>] [目录或文件系统]`
-`dump []-wW` 
-
-
+`dump []-wW`
 
 说明：
 
@@ -5345,19 +5147,15 @@ yum -y install restore
 `-f<备份后文件名>`：指定备份后文件名
 `-j`：**调用bzlib库压缩备份文件**，也就是将备份后的文件压缩成bz2格式，让文件更小
 `-T<日期>`：指定开始备份的时间与日期
-`-u`：备份完毕后，在`/etc/umpdares`中记录备份的文件系统，层级，日期与时间等
+`-u`：备份完毕后，在 `/etc/umpdares`中记录备份的文件系统，层级，日期与时间等
 `-t`：指定文件名，若该文件已存在备份文件中，则列出名称
 `-W`：显示需要备份的文件及其最后一次备份的层级，时间，日期
-`-w`：与`-W`类似，但仅显示需要备份的文件。
-
-
+`-w`：与 `-W`类似，但仅显示需要备份的文件。
 
 ### 应用实例
 
 案例1：将/boot分区所有内容备份到/opt/boot.bak0.bz2文件中，备份层级为"0"**【全量】**
 `dump -0uj -f /opt/boot.bak0.bz2 /boot`
-
-
 
 案例2：在/boot目录下增加新文件，备份层级为"1"（只备份上次使用层次“0”备份后发生过改变的数据），注意比较看看这次生成的备份文件boo1.bak有多大**【增量】**
 
@@ -5366,8 +5164,6 @@ yum -y install restore
 ![image-20210514005703381](linux.assets/image-20210514005703381.png)
 
 老韩提醒：通过dump命令在配合crontab可以实现无人值守备份
-
-
 
 ### `dump -W`
 
@@ -5381,20 +5177,14 @@ yum -y install restore
 
 ![image-20210514005841232](linux.assets/image-20210514005841232.png)
 
-
-
-
-
 ### dump备份文件或者目录
 
-前面我们在备份**分区时，是可以支持增量备份的**，如果备份`文件或者目录，不再支持增量备份，即只能使用0级别备份`
-
-
+前面我们在备份**分区时，是可以支持增量备份的**，如果备份 `文件或者目录，不再支持增量备份，即只能使用0级别备份`
 
 案例，使用dump备份/etc整个目录
 `dump -0j -f /opt/etc.bak.bz2 /etc/`
 
-> 下面这条语句会报错，提示DUMP：Only level 0 dumps are allowed on a subdirectory 
+> 下面这条语句会报错，提示DUMP：Only level 0 dumps are allowed on a subdirectory
 > `dump -1j -f /opt/etc.bak.bz2 /etc/`
 
 ## 使用restore完成恢复
@@ -5412,11 +5202,8 @@ restore命令用来恢复已备份的文件，可以从dump生成的备份文件
   `-i`：使用交互模式，在进行还原操作时，restors指令将依序询问用户
   `-r`：进行还原模式
   `-t`：查看模式，看备份文件有哪些文件
-
 + 选项
   `-f<备份设备>`：从指定的文件中读取备份数据，进行还原操作
-
-
 
 ### 应用案例
 
@@ -5429,13 +5216,9 @@ restore命令用来恢复已备份的文件，可以从dump生成的备份文件
 
 ![image-20210514011339561](linux.assets/image-20210514011339561.png)
 
-
-
 案例2：restore命令查看模式，看备份文件有哪些数据/文件
 
 测试：`restore -t -f boot.bak0.bz2`
-
-
 
 案例3：restore命令还原模式，**注意细节**：如果你有增量备份，需要把增量备份文件也进行恢复，有几个增量备份文件就要恢复几个，按顺序来恢复即可。
 
@@ -5444,8 +5227,6 @@ restore命令用来恢复已备份的文件，可以从dump生成的备份文件
 `cd /opt/boottmp`
 `restore -r -f /opt/boot.bak0.bz2`  //恢复到第1次完全备份状态【0】
 `restore -r -f /opt/boot.bak1.bz2`  //恢复到第2次增量备份状态【1】
-
-
 
 案例4：restore命令恢复备份的文件，或者整个目录的文件
 基本语法：`restore -r -f 备份好的文件`
@@ -5464,17 +5245,11 @@ Webmin是功能强大的基于Web的Unix/inux系统管理工具。管理员通�
 
 ![image-20210516175329255](linux.assets/image-20210516175329255.png)
 
-
-
 ### 安装webmin&配置
-
-
 
 1. 下载地址：http://download.webmin.com/download/yum/
 
 ![image-20210516175403663](linux.assets/image-20210516175403663.png)
-
-
 
 也可以使用
 
@@ -5488,17 +5263,14 @@ wget http://download.webmin.com/download/yum/webmin-1.700-1.noarch.rpm
 nerpm -ivh webmin-1.700-1.noarch.rpm
 ```
 
-3. 重置密码`/usr/libexec/webmin/changepass.pl /etc/webmin root test` 
+3. 重置密码 `/usr/libexec/webmin/changepass.pl /etc/webmin root test`
    root是webmin的用户名，不是OS的，这里就是把webmin的root用户密码改成了test
-
 4. 修改webmin服务的端口号（默认是10001出于安全目的）
 
    ```sh
    vim /etc/webmin/miniserv.conf   #修改端口
    ```
-
 5. 将port-10000修改为其他端口号，如port-10001【避免使用浏览器保护的端口https://www.v2ex.com/t/696650】
-
 6. 重启webmin
 
    ```sh
@@ -5522,22 +5294,16 @@ firewall-cmd --zone=public --remove-port=10001/tcp --permanent
 ```
 
 8. 登录webmin
-   在浏览器中`http://ip：10001` 访问了  或者在linux中`curl http://ip：10001 `
+   在浏览器中 `http://ip：10001` 访问了  或者在linux中 `curl http://ip：10001 `
    用root账号和重置的新密码test
 
 ![image-20210516181746007](linux.assets/image-20210516181746007.png)
-
-
 
 ### 简单使用
 
 比如修改语言设置，IP访问控制，查看进程，修改密码，任务调度，mysql等.
 
-
-
 ![image-20210516181810253](linux.assets/image-20210516181810253.png)
-
-
 
 ## bt运维工具
 
@@ -5563,9 +5329,7 @@ yum install -y wget && wget -O install.sh http://download.bt.cn/install/install_
 
 ![image-20210516190339891](linux.assets/image-20210516190339891.png)
 
-
-
-3）如果bt的用户名，密码忘记了，使用`bt default`可以查看
+3）如果bt的用户名，密码忘记了，使用 `bt default`可以查看
 
 ![image-20210516190851894](linux.assets/image-20210516190851894.png)
 
@@ -5590,8 +5354,8 @@ http://192.168.200.10/order.html
 ```
 
 ```sh
-# 答案：					
-cat t.log | cut -d "/" -f 3 | sort | uniq -c| sort -nr 	
+# 答案：				
+cat t.log | cut -d "/" -f 3 | sort | uniq -c| sort -nr 
 # 结果
       3 192.168.200.10
       2 192.168.200.30
@@ -5621,7 +5385,7 @@ netstat -an | grep ESTABLISHED | awk -F " " '{print $5}' | cut -d ':' -f 1 | sor
       3 104.207.151.13
       2 192.168.64.130
 # 解释
-netstat -an \				    #查看网络连接	
+netstat -an \				    #查看网络连接
 	| grep ESTABLISHED \		# 过滤出ESTABLISHED状态 表示连接
 	| awk -F " " '{print $5}' \  # awk命令：按 空格分割  取第五块
 	| cut -d ':' -f 1 \			# cut命令：按：分割，去第一块
@@ -5632,9 +5396,8 @@ netstat -an \				    #查看网络连接
 
 #### 问题：如忘记了mysql5.7数据库的ROOT用户的密码，如何找回？（滴滴）
 
-1. 在`vim /etc/my.cnf` 配置部分添加`skip-grant-tables`
-2. 重启mysql服务`service mysqld restart`
-
+1. 在 `vim /etc/my.cnf` 配置部分添加 `skip-grant-tables`
+2. 重启mysql服务 `service mysqld restart`
 3. 使用空密码登入mysql，进入mysql数据库，
 
 ```mysql
@@ -5645,10 +5408,8 @@ update mysql.user set authentication_string=PASSWORD('root') where user='root';
 flush privileges;
 ```
 
-4. 删除`/etc/my.cnf`  配置部分的`skip-grant-tables`
-
-5. 重启mysql服务`service mysqld restart`
-
+4. 删除 `/etc/my.cnf`  配置部分的 `skip-grant-tables`
+5. 重启mysql服务 `service mysqld restart`
 6. 使用新密码登入
 
 #### 写出指令：统计ip访问情况，要求分析nginx访问目志（access.log），找出访问页面数量在前2位的ip（美团）
@@ -5698,13 +5459,11 @@ ngx_cache_purge 实现缓存清除功能
    + 注意权限分离，比如；工作中，Linux系统权限和数据库权限不要在同一个部门
    + 权限最小原则（即：在满足使用的情况下最少优先）
    + 减少使用root用户，尽量用普通用户+sudo提权进行日常操作。
-   + 重要的系统文件，比如/etc/passwd，/etc/shadow ，/etc/fstab，/etc/sudoers等，日常建议使用`chattr`（change attribute）锁定，需要操作时再打开。【演示比如：锁定/etc/passwd 让任何用户都不能随意useradd，除非解除锁定】
+   + 重要的系统文件，比如/etc/passwd，/etc/shadow ，/etc/fstab，/etc/sudoers等，日常建议使用 `chattr`（change attribute）锁定，需要操作时再打开。【演示比如：锁定/etc/passwd 让任何用户都不能随意useradd，除非解除锁定】
      ![image-20210516225209595](linux.assets/image-20210516225209595.png)
    + 使用SUID，SGID，Sticky 设置特殊权限。
-   + 可以利用工具，比如**chkrootkit**/**rootkit hunter** 检测rootkit脚本（rootkit是入侵者使用工具，在不察觉的建立了入侵系统途径）[演示使用`wget ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar.gz`]
+   + 可以利用工具，比如**chkrootkit**/**rootkit hunter** 检测rootkit脚本（rootkit是入侵者使用工具，在不察觉的建立了入侵系统途径）[演示使用 `wget ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar.gz`]
    + 利用工具**Tripwire**检测**文件系统完整性**
-
-
 
 #### 权限思考题
 
@@ -5717,38 +5476,40 @@ ngx_cache_purge 实现缓存清除功能
    ```sh
    /home/test				rwx
    /home/test/hello.java	 r--
-   
+
    tom对hello.java
    读	 √
    修改	×
    删除	√
    ```
-
 2. 用户tom对目录/home/test只有读写权限，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（no）？能修改吗（no）？能删除吗（no）？
-    ```sh
+
+   ```sh
    /home/test				rw-
    /home/test/hello.java	 r--
-   
+
    tom对hello.java
    读	 ×
    修改	×
    删除	×
    ```
 3. 用户tom对目录/home/test只有执行权限x，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（ok）？能修改吗（no）？能删除吗（no）？
+
    ```sh
    /home/test				--x
    /home/test/hello.java	 r--
-   
+
    tom对hello.java
    读	 √
    修改	×
    删除	×
    ```
 4. 用户tom对目录/home/tet只有执行和写权限，/home/test/hello.java是只读文件，问tom对hello.java文件能读吗（ok）？能修改吗（no）？能删除吗（ok）？
+
    ```sh
    /home/test				-wx
    /home/test/hello.java	 r--
-   
+
    tom对hello.java
    读	 √
    修改	×
@@ -5861,8 +5622,6 @@ systemctl//管理系统服务器
 
 #### 问题：Linux查看内存[`top`]、io读写[`iotop`]、磁盘存储[`df -lh`]、端口占用[`netstat -tunlp`]、进程查看命令[`ps-aux | grep ps_name`]是什么？（瓜子）
 
-
-
 #### 使用Linux命令计算t2.txt第二列的和并输出（美团）
 
 ![image-20210516234714741](linux.assets/image-20210516234714741.png)
@@ -5907,8 +5666,6 @@ find /home -name "*.*" | xargs wc -l # 显示每个文件的行数
 
 Nginx、Haproxy、Keepalived、LVS
 
-
-
 #### 每天晚上10点30分，打包站点目录/var/spool/mail备份到/home目录下（每次备份按时间生成不同的备份包比如按照年月日时分秒）（滴滴）
 
 1.编写脚本
@@ -5937,7 +5694,7 @@ cd /var && /bin/tar -zcf /home/mail-${FILE_NAME}.tar.gz mail/
 
 2）对linux系统本身的优化-规则
 （1）不用root，使用sudo提示权限
-（2）定时的自动更新服务时间，使用`nptdate npt1.aliyun.com`，让croud定时更新
+（2）定时的自动更新服务时间，使用 `nptdate npt1.aliyun.com`，让croud定时更新
 （3）配置yum源，指向国内镜像（清华，163）
 （4）配置合理的防火墙策略，打开必要的端口，关闭不必要的端口
 （5）打开最大文件数（调整文件的描述的数量）`vim/etc/profile ` 添加 `ulimit -SHn 65535`
@@ -5945,6 +5702,5 @@ cd /var && /bin/tar -zcf /home/mail-${FILE_NAME}.tar.gz mail/
 （7）配置合理的系统重要文件的备份策略
 （8）对安装的软件进行优化，比如nginx，apache
 （9）内核参数进行优化/etc/sysetl.conf
-（10）锁定一些重要的系统文件`chattr` /etc/passwd /ect/shadow /etc/inittab
-（11）禁用不必要的服务`setup`，`ntsysv`
-
+（10）锁定一些重要的系统文件 `chattr` /etc/passwd /ect/shadow /etc/inittab
+（11）禁用不必要的服务 `setup`，`ntsysv`
