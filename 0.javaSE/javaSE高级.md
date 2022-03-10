@@ -3523,6 +3523,10 @@ public class IteratorTest {
 
 ![image-20210412233857136](javaSE高级.assets/image-20210412233857136.png)
 
+> 迭代器删除和foreach遍历时remove元素时出现  并发修改异常
+>
+> 参考[Java集合 ConcurrentModificationException 异常原因和解决方法](./Java集合 ConcurrentModificationException 异常原因和解决方法.md)
+
 ```java
     @Test
     public void test2(){
@@ -3554,6 +3558,25 @@ public class IteratorTest {
             System.out.println(iterator.next());
         }
     }
+
+// remove 
+public class Test {
+    public static void main(String[] args)  {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        list.add(2);
+        Iterator<Integer> iterator = list.iterator();
+        while(iterator.hasNext()){
+            Integer integer = iterator.next();
+            if(integer==2)
+                iterator.remove();   //注意这个地方
+            	//list.remove(integer);//报ConcurrentModificationException异常  expectedModCount != modCount;  
+            // modCount 在List的add和remove方法中会修改值
+            //关键点就在于：调用list.remove()方法导致modCount和expectedModCount的值不一致。
+　　		 //注意，像使用for-each进行迭代实际上也会出现这种问题。 
+           //迭代器在获取时就对expectedModCount赋值，list.remove()不会修改这个值，迭代器的remove会进行修改modCount和expectedModCount同步
+        }
+    }
+}
 ```
 
 
