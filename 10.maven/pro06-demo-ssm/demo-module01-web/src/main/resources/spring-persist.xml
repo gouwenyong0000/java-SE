@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 加载外部属性文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="username" value="${dev.username}"/>
+        <property name="password" value="${dev.password}"/>
+        <property name="url" value="${dev.url}"/>
+        <property name="driverClassName" value="${dev.driverClassName}"/>
+        <property name="initialSize" value="${dev.initialSize}"/>
+        <property name="maxActive" value="${dev.maxActive}"/>
+        <property name="maxWait" value="${dev.maxWait}"/>
+    </bean>
+
+    <!-- 配置 SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+
+        <!-- 指定 Mapper 配置文件位置 -->
+        <property name="mapperLocations" value="classpath:mapper/*Mapper.xml"/>
+
+        <!-- 装配数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+
+    </bean>
+
+    <!-- 配置 Mapper 接口的扫描 -->
+    <mybatis:scan base-package="com.atguigu.imperial.court.mapper"/>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 装配数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 开启基于注解的声明式事务支持 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- 配置对 Service 的自动扫描 -->
+    <context:component-scan base-package="com.atguigu.imperial.court.service"/>
+    
+</beans>
