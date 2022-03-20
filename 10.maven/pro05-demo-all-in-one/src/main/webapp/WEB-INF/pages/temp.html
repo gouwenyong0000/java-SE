@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xml:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>临时</title>
+</head>
+<body>
+
+    <p th:text="${session.loginInfo}"></p>
+    <a th:href="@{/auth?method=logout}">退朝</a>
+
+</body>
+</html>

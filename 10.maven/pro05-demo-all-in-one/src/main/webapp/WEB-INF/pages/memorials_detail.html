@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style type="text/css">
+        table {
+            border-collapse: collapse;
+            margin: 0px auto 0px auto;
+            width: 70%;
+        }
+
+        table th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        div {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 登录信息部分 -->
+<div>
+    <span th:if="${session.loginInfo.empPosition == 'emperor'}">恭请皇上圣安</span>
+    <span th:if="${session.loginInfo.empPosition == 'minister'}">给<span th:text="${session.loginInfo.empName}">XXX</span>大人请安</span>
+    <a th:href="@{/auth?method=logout}">退朝</a>
+</div>
+
+<table>
+    <tr>
+        <td>奏折标题</td>
+        <td th:text="${memorials.memorialsTitle}"></td>
+    </tr>
+    <tr>
+        <td>上疏大臣</td>
+        <td th:text="${memorials.memorialsEmpName}"></td>
+    </tr>
+    <tr>
+        <td>上疏时间</td>
+        <td th:text="${memorials.memorialsCreateTime}"></td>
+    </tr>
+    <tr>
+        <td>奏折内容</td>
+        <td th:text="${memorials.memorialsContent}"></td>
+    </tr>
+    <tr th:if="${memorials.memorialsStatus == 2}">
+        <td>批复时间</td>
+        <td th:text="${memorials.feedbackTime}"></td>
+    </tr>
+    <tr th:if="${memorials.memorialsStatus == 2}">
+        <td>批复时间</td>
+        <td th:text="${memorials.feedbackContent}"></td>
+    </tr>
+</table>
+
+<div style="margin: 0 auto 0 auto;width: 60%;" th:if="${memorials.memorialsStatus != 2}">
+    <form th:action="@{/work}" method="post">
+
+        <input type="hidden" name="method" value="feedBack" />
+        <input type="hidden" name="memorialsId" th:value="${memorials.memorialsId}"/>
+
+        <textarea name="feedbackContent" style="width: 500px;height: 200px;"></textarea>
+
+        <button type="submit">御批</button>
+
+    </form>
+</div>
+
+<a th:href="@{/work?method=showMemorialsDigestList}">返回列表</a>
+
+</body>
+</html>

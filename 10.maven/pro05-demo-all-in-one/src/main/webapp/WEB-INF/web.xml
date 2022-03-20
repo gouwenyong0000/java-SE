@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+           version="2.5">
+    
+    <!-- 配置 Web 应用初始化参数指定视图前缀、后缀 -->
+    <!--
+        物理视图举例：/WEB-INF/pages/index.html
+        对应逻辑视图：index
+    -->
+    <context-param>
+        <param-name>view-prefix</param-name>
+        <param-value>/WEB-INF/pages/</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view-suffix</param-name>
+        <param-value>.html</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>portalServlet</servlet-name>
+        <servlet-class>com.atguigu.imperial.court.servlet.module.PortalServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>portalServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>authServlet</servlet-name>
+        <servlet-class>com.atguigu.imperial.court.servlet.module.AuthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>authServlet</servlet-name>
+        <url-pattern>/auth</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>workServlet</servlet-name>
+        <servlet-class>com.atguigu.imperial.court.servlet.module.WorkServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>workServlet</servlet-name>
+        <url-pattern>/work</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>loginFilter</filter-name>
+        <filter-class>com.atguigu.imperial.court.filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>loginFilter</filter-name>
+        <url-pattern>/work</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>txFilter</filter-name>
+        <filter-class>com.atguigu.imperial.court.filter.TransactionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>txFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>
