@@ -1,0 +1,15 @@
+server:
+  port: 10001
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_imperial_court
+    username: root
+    password: atguigu
+    type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: demo06-mysql-data-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848

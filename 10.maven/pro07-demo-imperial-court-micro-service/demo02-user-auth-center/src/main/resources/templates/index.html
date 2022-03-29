@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xml:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!-- @{/auth} 解析后：/demo/auth -->
+<form th:action="@{/consumer/do/login}" method="post">
+
+    <!-- th:text 解析表达式后会替换标签体 -->
+    <!-- ${attrName} 从请求域获取属性名为 attrName 的属性值 -->
+    <p style="color: red;font-weight: bold;" th:text="${message}"></p>
+    <p style="color: red;font-weight: bold;" th:text="${systemMessage}"></p>
+
+    账号：<input type="text" name="loginAccount"/><br/>
+    密码：<input type="password" name="loginPassword"><br/>
+    <button type="submit">进宫</button>
+</form>
+
+</body>
+</html>
