@@ -138,6 +138,9 @@ Git的设置文件为`.gitconfig`，它可以在用户主目录下（全局配�
  # 删除远程分支
  $ git push origin --delete [branch-name]
  $ git branch -dr [remote/branch]
+ 
+ #将main分支强制指向commiter
+ $ git branch -f main commiter
  ```
 
 ## 六、标签

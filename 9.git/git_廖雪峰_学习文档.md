@@ -56,7 +56,7 @@ Changes not staged for commit:
 ## 工作区和暂存区
 
 + 工作区（Working Directory）
-    
+  
     >就是你在电脑里能看到的目录，比如我的learngit文件夹就是一个工作区：
     
 + 版本库（Repository）
@@ -72,10 +72,9 @@ Changes not staged for commit:
 >因为我们创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，git commit就是往master分支上提交更改。
 >你可以简单理解为，需要提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改。
 
-
 `git diff HEAD -- <file>`   命令可以查看工作区和版本库里面最新版本的区别
-## 撤销修改
 
+## 撤销修改
 
 `git checkout -- <file>`  git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”
 
@@ -99,8 +98,8 @@ git checkout其实是用版本库里的版本替换工作区的版本，无论�
 
 + 第1步：创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：
  `ssh-keygen -t rsa -C "youremail@example.com"`
- 你需要把邮件地址换成你自己的邮件地址，然后一路回车，使用默认值即可，由于这个Key也不是用于军事目的，所以也无需设置密码。
- 如果一切顺利的话，可以在用户主目录里找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。
+  你需要把邮件地址换成你自己的邮件地址，然后一路回车，使用默认值即可，由于这个Key也不是用于军事目的，所以也无需设置密码。
+  如果一切顺利的话，可以在用户主目录里找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。
 
 +第2步：登陆GitHub，打开“Account settings”，“SSH Keys”页面：
 然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容：
@@ -169,3 +168,147 @@ printf (“test2″);
 
 + 然后使用`git commit`命令进行提交，merge就算完成了
 
+## 分支管理策略
+
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+
+首先，`master`分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+
+那在哪干活呢？干活都在`dev`分支上，也就是说，`dev`分支是不稳定的，到某个时候，比如1.0版本发布时，再把`dev`分支合并到`master`上，在`master`分支发布1.0版本；
+
+你和你的小伙伴们每个人都在`dev`分支上干活，每个人都有自己的分支，时不时地往`dev`分支上合并就可以了。
+
+所以，团队合作的分支看起来就像这样：
+
+![git-br-policy](git_廖雪峰_学习文档.assets/0.png)
+
+
+
+
+
++ 合并分支时，加上`--no-ff`参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而`fast forward`合并就看不出来曾经做过合并。
+
+
+
+---
+
+修复bug时，我们会通过创建新的bug分支进行修复，然后合并，最后删除；
+
+当手头工作没有完成时，先把工作现场`git stash`一下，
+
+一是用`git stash apply`恢复，但是恢复后，stash内容并不删除，
+
+另一种方式是用`git stash pop`，恢复的同时把stash内容也删了回到工作现场；
+
+```sh
+#保存现场
+git stash
+
+# 查看保存的列表
+git stash list
+
+#恢复上一次现场
+git stash apply
+# 删除上一次现场
+git stash drop
+
+#可以合并为
+git stash pop
+
+
+# 恢复指定现场使用现场索引进行
+git stash apply stash@{0}
+git stash pop stash@{0}
+
+```
+
+---
+
++ 在master分支上修复的bug，想要合并到当前dev分支，可以用`git cherry-pick <commit>`命令，把bug提交的修改“复制”到当前分支，避免重复劳动。
+
+---
+
++ 如果要丢弃一个没有被合并过的分支，可以通过`git branch -D <name>`强行删除。
+
+## Rebase
+
+- rebase操作可以把本地未push的分叉提交历史整理成直线；
+- rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+
+
+
+
+
+# 标签管理
+
+## 创建标签
+
+- 命令`git tag <tagname>`用于新建一个标签，默认为`HEAD`，也可以指定一个commit id；
+- 命令`git tag -a <tagname> -m "blablabla..."`可以指定标签信息；
+- 命令`git tag`可以查看所有标签。
+
+## 操作标签
+
+- 命令`git push origin <tagname>`可以推送一个本地标签；
+- 命令`git push origin --tags`可以推送全部未推送过的本地标签；
+- 命令`git tag -d <tagname>`可以删除一个本地标签；
+- 命令`git push origin :refs/tags/<tagname>`可以删除一个远程标签。
+
+# git指针
+
+## Head指针
+
+Head指针可以指向[快照](https://so.csdn.net/so/search?q=快照&spm=1001.2101.3001.7020)节点也可以指向branch。当指向branch时提交后会和branch指针一起向后移动，当不指向branch提交时时则会在一个detached状态。
+
+## 分支(Branch)指针
+
+使用`git branch -f` 来移动分支指针，移动的对象只能是快照。当且仅当HEAD指针指向分支指针的时候，提交才会有效。
+
+## [reset](https://so.csdn.net/so/search?q=reset&spm=1001.2101.3001.7020)
+
+reset是HEAD指针带着分支指针两个一起跑，可以是其Branch指针也可以是快照节点，当指向Branch指针时，最终是执行该Branch指针指向的快照
+
+## checkout
+
+使用`git checkout` 只移动HEAD指针，移动的对象可以是分支指针也可以是快照。
+
+## 实例
+
+### 1、HEAD指针默认指向当前的分支指针，用星号表示，如master*
+
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast.png)
+
+### 2、移动HEAD指针，`git checkout C1`
+
+这个时候HEAD指针指向的是快照，这个时候指针的状态称之为**游离状态，detached**。
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290263.png)
+
+### 3、HEAD指针在游离状态下提交，`git commit`
+
+游离状态下提交的commit，没有分支指针指向。可以在游离状态下的快照新建分支或强制移动已存在的分支
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290264.png)
+
+### 4、移动HEAD指针，让他指向master分支指针`git checkout master`
+
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290275.png)
+
+### 5、在master分支指针上提交`git commit`
+
+这个是正常的提交，和游离状态下的提交是不一样的
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290276.png)
+
+### 6、给detached状态下的快照添加分支。在3中我们提到给detached状态下的快照增加分支的两种方法。
+
+#### 6.1 给detached状态下的快照新建一个分支
+
+6.1.1 将HEAD指针移动到detached状态的快照`git checkout C2`
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290277.png)
+6.1.2添加分支`git branch new`
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290288.png)
+6.1.3 将HEAD指针移动到new分支指针上就可以在new分支上提交了`git checkout new`
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-16500419290289.png)
+
+#### 6.2 移动已存在的分支到detached状态的分支`git branch -f master C2`
+
+这个时候master分支以前的快照C3就变成了detached状态了
+![这里写图片描述](git_廖雪峰_学习文档.assets/SouthEast-165004192902810.png)
