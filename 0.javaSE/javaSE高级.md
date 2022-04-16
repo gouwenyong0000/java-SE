@@ -5159,7 +5159,7 @@ public class GenericTest {
 
 ![image-20210417005015277](javaSE高级.assets/image-20210417005015277.png)
 
-### 7.1.2. 路径分隔符
+### 7.1.2. 路径分隔符sqparator
 
 相对路径：相较于某个路径下，指明的路径。
 绝对路径：包含盘符在内的文件或文件目录的路径
@@ -5386,7 +5386,46 @@ public class FileTest {
 
 ```
 
-### 7.1.4. 课后题
+### 7.1.4 获取类的加载路径
+
+```java
+   /**
+     * 获取类的加载路径
+     */
+    public static void getCLassLoadPath() throws IOException {
+
+        // 第一种：获取类加载的根路径 D:\git\daotie\daotie\target\classes
+        Class<MyUrlDemo> aClass = MyUrlDemo.class;
+        File f = new File(aClass.getClass().getResource("/").getPath());
+        System.out.println(f);
+
+        // 获取当前类的所在工程路径; 如果不加“/” 获取当前类的加载目录 D:\git\daotie\daotie\target\classes\my
+        File f2 = new File(aClass.getClass().getResource("").getPath());
+        System.out.println(f2);
+
+        // 第二种：获取项目路径 D:\git\daotie\daotie
+        File directory = new File("");// 参数为空
+        String courseFile = directory.getCanonicalPath();
+        System.out.println(courseFile);
+
+        // 第三种： file:/D:/git/daotie/daotie/target/classes/
+        URL xmlpath = aClass.getClass().getClassLoader().getResource("");
+
+        System.out.println(xmlpath);
+
+        // 第四种： D:\git\daotie\daotie
+        System.out.println(System.getProperty("user.dir"));
+
+
+        // 第五种： 获取所有的类路径 包括jar包的路径
+        System.out.println(System.getProperty("java.class.path"));
+
+    }
+```
+
+
+
+### 7.1.5. 课后题
 
 ```java
 package com.atguigu.exer2;
