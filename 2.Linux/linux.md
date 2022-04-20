@@ -3084,6 +3084,22 @@ firewall-cmd --reload
 
 # 查询端口是否开放：
 firewall-cmd --query-port=端口/协议
+
+# 补充 配置复杂规则
+#开启防火墙
+systemctl start firewalld
+#重启防火墙
+systemctl restart firewalld
+#重载规则
+firewall-cmd --reload
+#查看已配置规则
+firewall-cmd --list-all
+
+#指定端口和ip访问  只允许指定ip访问 192.168.44.101 
+firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="192.168.44.101" port protocol="tcp" port="8080" accept"
+
+#移除规则
+firewall-cmd --permanent --remove-rich-rule="rule family="ipv4" source address="192.168.44.101" port port="8080" protocol="tcp" accept"
 ```
 
 > 协议类型查询：`netstat -anp`
