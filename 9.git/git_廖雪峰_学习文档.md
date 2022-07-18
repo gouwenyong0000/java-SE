@@ -483,7 +483,6 @@ git revert本质是对某次提交进行逆提交。你提交就是删除了某�
 1405c83  (HEAD -> master) c.txt c
 5138f97 b.txt b
 de92f35 a.txt a
-123
 ```
 
 然后执行`git revert 5138f97`对b.txt那次`commit`进行你提交
@@ -493,7 +492,6 @@ de92f35 a.txt a
 1405c83 c.txt c
 5138f97 b.txt b
 de92f35 a.txt a
-1234
 ```
 
 现在文件夹只剩下了`a.txt c.txt`，也就是说，我们进行了逆提交`b.txt`那次操作。
@@ -508,7 +506,7 @@ de92f35 a.txt a
 53c4d08 (HEAD -> master) aaa
 69d6b2a aa
 4b68781 a
-123
+
 ```
 
 对进行第二次提交"aa"的逆操作`git revert 69d6b2a`
@@ -518,7 +516,6 @@ error: could not revert 69d6b2a... aa
 hint: after resolving the conflicts, mark the corrected paths
 hint: with 'git add <paths>' or 'git rm <paths>'
 hint: and commit the result with 'git commit'
-1234
 ```
 
 不能进行逆操作，因为当我们进行逆操作的时候，文件a.txt有两种情况一个是第一次提交的只有一个“a”的情况，另一个是第三次提交的有“aaa”的情况，所以需要我们进行手动处理，我们是要保存第一次的“a”还是保存第三次的“aaa”。
@@ -535,7 +532,6 @@ Unmerged paths:
   (use "git add <file>..." to mark resolution)
 
         both modified:   a.txt
-12345678910
 ```
 
 `vi a.txt`进入有冲突的文件进行操作。可以看到以下内容`<<<<<<<HEAD`是指当前快照该行的内容，`>>>>>>> parent of 69d6b2a... aa`上是指之前`revert` 节点的父节点的内容。中间用`=======`来分隔。我们只需保留`aaa`或者`a`。
@@ -546,7 +542,6 @@ aaa
 =======
 a
 >>>>>>> parent of 69d6b2a... aa
-12345
 ```
 
 修改之后我们就可以`add`和`commit`了，最后输出`log`
@@ -561,7 +556,7 @@ git revert [--[no-]edit] [-n] [-m parent-number] [-s] [-S[<keyid>]] <commit>…
 git revert --continue
 git revert --quit
 git revert --abort
-1234
+
 ```
 
 git revert 会将现在的工作区和回退commit的之前的文件进行合并
@@ -572,3 +567,65 @@ git revert 会将现在的工作区和回退commit的之前的文件进行合并
 
 git revert是用一次新的commit来回滚之前的commit，git reset是直接删除指定的commit看似达到的效果是一样的,其实完全不同.
 上面我们说的如果你已经push到线上代码库, reset 删除指定commit以后,你git push可能导致一大堆冲突（或git push -f强制推送）.但是revert 并不会.
+
+# Git core.autocrlf [lf/crlf]配置说明
+
+JUN 19TH, 2015 4:03 PM
+
+### CRLF and LF
+
+CRLF 是 Carriage-Return Line-Feed 回车换行
+
+LF 是 line feed 的缩写，中文意思是换行。
+
+### 三种方式处理的不同
+
+CRLF->Windows-style
+
+LF->Unix Style
+
+CR->Mac Style
+
+CRLF 表示句尾使用回车换行两个字符(即我们常在Windows编程时使用"\r\n"换行)
+
+LF 表示表示句尾，只使用换行.
+
+CR 表示只使用回车.
+
+### 在 Git 中转换
+
+在 Git 通过下面的命令配置
+
+```
+$git config --global core.autocrlf true
+# Configure Git on Windows to properly handle line endings
+```
+
+解释：core.autocrlf 是 git 中负责处理 line endings 的变量，可以设置三个值 –true,inout,false.
+
+设置成三个值会有什么效果呢？
+
+If `core.autocrlf` is set to true, that means that any time you add a file to the git repo that git thinks is a text file, it will turn all CRLF line endings to just LF before it stores it in the commit.
+
+设置为 true，添加文件到 git 仓库时，git 将其视为文本文件。他将把 crlf 变成 lf。
+
+If `core.autocrlf` is set to false, no line-ending conversion is ever performed, so text files are checked in as-is. This usually works ok.
+
+设置为 fals e时，line-endings 将不做转换操作。文本文件保持原来的样子。
+
+设置为 input 时，添加文件git仓库时，git 把 crlf 编程 lf。当有人 Check 代码时还 是lf 方式。因此在 window操 作系统下，不要使用这个设置。
+
+Yet another way to show how autocrlf works
+
+```
+1) true:             x -> LF -> CRLF
+2) input:            x -> LF -> LF
+3) false:            x -> x -> x
+```
+
+### On OS X, you simply pass input to the configuration. For example:
+
+```
+git config --global core.autocrlf input
+# Configure Git on OS X to properly handle line endings
+```
