@@ -375,6 +375,8 @@
            <a href="http:\\www.baidu.com" v-bind:title="msg">v-bind</a>
            <!-- 支持表达式 -->
            <a href="http:\\www.baidu.com" :title="msg + '！！！'">v-bind简写</a>
+            <!-- 支持表达式 如果：payOrder.payType === 'wxpay'  增加current 样式 -->
+            <div :class="['ChannelOption_payment-channel-option', {current:payOrder.payType === 'wxpay'}]"
         </div>
         <!-- 1. 导入开发版本的Vue.js -->
         <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
