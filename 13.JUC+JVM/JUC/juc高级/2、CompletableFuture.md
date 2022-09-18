@@ -5,7 +5,7 @@ Future 接口（FutureTask实现类）定义了操作 异步任务执行一些�
 
 Callable 接口中定义了需要有返回的任务需要实现的方法。
 
-![](1、线程基础知识.assets/4f6e0d1d94a340a4b62e2da8c0f5c80d.png)
+![](image/2、CompletableFuture/4f6e0d1d94a340a4b62e2da8c0f5c80d.png)
 
 比如主线程让一个`子线程`去执行任务，子线程可能比较耗时，启动子线程开始执行任务后，主线程就去做其他事情了，过了一会才去获取子任务的执行结果。
 
@@ -17,7 +17,7 @@ Callable 接口中定义了需要有返回的任务需要实现的方法。
 
 Future是Java5新加的一个接口，它提供了一种`异步并行计算的功能`。
 
-![image-20220904182329956](1、线程基础知识.assets/image-20220904182329956.png)
+![image-20220904182329956](image/2、CompletableFuture/image-20220904182329956.png)
 
 如果主线程需要执行一个很耗时的计算任务，我们就可以通过future把这个任务放到异步线程中执行。主线程继续处理其他任务或者先行结束，再通过Future获取计算结果。
 
@@ -34,11 +34,11 @@ Future是Java5新加的一个接口，它提供了一种`异步并行计算的�
 2.2、本源的 Future 接口相关架构
 ---------------------
 
-![](1、线程基础知识.assets/c0cc940a4189488faa452d97da6dbc37-16622262765843-166222699646939.png)
+![](image/2、CompletableFuture/c0cc940a4189488faa452d97da6dbc37-16622262765843-166222699646939.png)
 
 **Thread类只接受Runnable接口为入参**
 
-![image-20220904014253139](1、线程基础知识.assets/image-20220904014253139.png)
+![image-20220904014253139](image/2、CompletableFuture/image-20220904014253139.png)
 
 FutureTask类 实现Runnable接口和Future接口，可以通过构造器注入Callable
 
@@ -141,7 +141,7 @@ public class FutureAPIDemo
 }
 ```
 
-![](1、线程基础知识.assets/941075b1645843cab5d8e5b1eda93b16.png)
+![](image/2、CompletableFuture/941075b1645843cab5d8e5b1eda93b16.png)
 
 #### isDone()轮询
 
@@ -179,7 +179,7 @@ public class FutureTaskDemo
 }
 ```
 
- ![](1、线程基础知识.assets/cf9386c4d36b43a9a737b43681ff10d0.png)
+ ![](image/2、CompletableFuture/cf9386c4d36b43a9a737b43681ff10d0.png)
 
 2.4、想完成一些复杂的任务
 --------------
@@ -228,7 +228,7 @@ CompletableFuture提供了一种`观察者模式`类似的机制，可以让任�
 
 ### 3.2.1、类架构说明
 
-![](1、线程基础知识.assets/afa2a36dafc6482a8739f291586a7d13.png)
+![](image/2、CompletableFuture/afa2a36dafc6482a8739f291586a7d13.png)
 
 ### 3.2.2、接口 CompletionStage
 
@@ -318,7 +318,7 @@ public class CompletableFutureBuildDemo {
 }
 ```
 
- ![](1、线程基础知识.assets/ecd2ce0e23b14407a376bc593b457732.png)
+ ![](image/2、CompletableFuture/ecd2ce0e23b14407a376bc593b457732.png)
 
 ####  有 返回值
 
@@ -345,7 +345,7 @@ public class CompletableFutureDemo2 {
 }
 ```
 
-![](1、线程基础知识.assets/e46570646da9444aa315c6dd91335f22.png)
+![](image/2、CompletableFuture/e46570646da9444aa315c6dd91335f22.png)
 
 ### 3.2.5、`whenComplete`、`exceptionally`，减少阻塞和轮询 
 
@@ -366,7 +366,7 @@ public CompletableFuture<T> exceptionally(Function<Throwable,? extends T> fn)
 
 可以看到Action的类型是`BiConsumer<? super T,? super Throwable>`它可以处理正常的计算结果，或者异常情况。
 
-![image-20220904211748265](1、线程基础知识.assets/image-20220904211748265.png)
+![image-20220904211748265](image/2、CompletableFuture/image-20220904211748265.png)
 
 whenComplete 和 whenCompleteAsync 的区别：
  whenComplete：是执行当前任务的线程执行继续执行 whenComplete 的任务。
@@ -521,17 +521,17 @@ public class CompletableFutureUseDemo {
 
 Lambda +Stream + Chain链式调用 + Java8 函数式编程带走
 
-### 3.4.1 常用函数式接口总结![](1、线程基础知识.assets/420670f508144106bce251dfcd03c0b5.png)
+### 3.4.1 常用函数式接口总结![](image/2、CompletableFuture/420670f508144106bce251dfcd03c0b5.png)
 
- ![](1、线程基础知识.assets/a6da3ed9a7354bb686e04275c5aeb957.png)
+ ![](image/2、CompletableFuture/a6da3ed9a7354bb686e04275c5aeb957.png)
 
-![](1、线程基础知识.assets/99d877c9fd5b481b9760d5909e98f8e7.png)
+![](image/2、CompletableFuture/99d877c9fd5b481b9760d5909e98f8e7.png)
 
- ![](1、线程基础知识.assets/9ff7afe46c1744fc8eb10e7cc91ea19b.png)
+ ![](image/2、CompletableFuture/9ff7afe46c1744fc8eb10e7cc91ea19b.png)
 
- ![](1、线程基础知识.assets/c64c595ade3b4882a9f038348427004a.png)
+ ![](image/2、CompletableFuture/c64c595ade3b4882a9f038348427004a.png)
 
-![](1、线程基础知识.assets/6b9c7a49400248de9505c2ebbbf578e8.png)
+![](image/2、CompletableFuture/6b9c7a49400248de9505c2ebbbf578e8.png)
 
 ### 链式调用|链式编程|链式写法
 
@@ -733,7 +733,7 @@ class NetMall {
 }
 ```
 
-![](1、线程基础知识.assets/60100ea630ff459db96f2c9629ffa7c3.png)
+![](image/2、CompletableFuture/60100ea630ff459db96f2c9629ffa7c3.png)
 
 5、CompletableFuture 常用方法
 ==========================
@@ -839,7 +839,7 @@ public class CompletableFutureDemo2 {
 }
 ```
 
-![](1、线程基础知识.assets/826b6f5375914fb1a05ff38c922362a8.png)
+![](image/2、CompletableFuture/826b6f5375914fb1a05ff38c922362a8.png)
 
 
 
@@ -882,11 +882,11 @@ public class CompletableFutureDemo2 {
 }
 ```
 
-![](1、线程基础知识.assets/b2889694f85342b99c0f6edd587b1ca2.png)
+![](image/2、CompletableFuture/b2889694f85342b99c0f6edd587b1ca2.png)
 
  总结：
 
-![](1、线程基础知识.assets/a19549c88da94cc4a3044f93bc232e1e.png)
+![](image/2、CompletableFuture/a19549c88da94cc4a3044f93bc232e1e.png)
 
 > whenComplete 和 whenCompleteAsync 的区别：
 >
@@ -919,7 +919,7 @@ public class CompletableFutureDemo2 {
 
 #### 任务之间的顺序执行 的区别
 
-![image-20220905002920182](1、线程基础知识.assets/image-20220905002920182.png)
+![image-20220905002920182](image/2、CompletableFuture/image-20220905002920182.png)
 
 ① thenRun：thenRun(Runnable runnable) 任务 A 执行完执行 B，并且 B 不需要 A 的结果
 

@@ -1,6 +1,6 @@
 # 先从阿里及其他大厂面试题说起
 
-![在这里插入图片描述](10、Java 对象内存布局和对象头.assets/6dec6853a18f461190651864183c58f2.png)
+![在这里插入图片描述](image/10、Java 对象内存布局和对象头/6dec6853a18f461190651864183c58f2-1663483405189-2.png)
 
 1、Object object = new Object() 谈谈你对这句话的理解?
 ==============================================
@@ -19,16 +19,16 @@
 
 周志明老师 JVM 第 3 版
 
-![](10、Java 对象内存布局和对象头.assets/0abe92a9c6944d25a65a68f9dbea51f8-1662740972054-28.png)
+![](image/10、Java 对象内存布局和对象头/0abe92a9c6944d25a65a68f9dbea51f8-1662740972054-28.png)
 
-<img src="10、Java 对象内存布局和对象头.assets/78c01d49192d47c68d40ddf0ed78d23b-1662740972054-29.png" style="zoom: 33%;" />
+<img src="image/10、Java 对象内存布局和对象头/78c01d49192d47c68d40ddf0ed78d23b-1662740972054-29.png" style="zoom: 33%;" />
 
 2.2、对象在堆内存中的存储布局
 --------------------
 
 下面分别是 **java对象** 和**数组**（数组对象会多一个length），原理其实类似
 
-![在这里插入图片描述](10、Java 对象内存布局和对象头.assets/a545ca804b27471abda1f3754f39a4c4-1662740972054-30.png)
+![在这里插入图片描述](image/10、Java 对象内存布局和对象头/a545ca804b27471abda1f3754f39a4c4-1662740972054-30.png)
 
 对象内部结构分为：对象头、实例数据、对齐填充（保证8个字节的倍数）
 
@@ -40,15 +40,15 @@
 
 它保存什么
 
-![](10、Java 对象内存布局和对象头.assets/7fe8d74ea49f4b62bcca098e8f3b2295.png)
+![](image/10、Java 对象内存布局和对象头/7fe8d74ea49f4b62bcca098e8f3b2295.png)
 
-![](10、Java 对象内存布局和对象头.assets/e02b8f95d5e54fff962f537e2a6f9eca.png)
+![](image/10、Java 对象内存布局和对象头/e02b8f95d5e54fff962f537e2a6f9eca.png)
 
 **在 64 位系统中， `Mark Word 占了 8 个字节`，`类型指针占了 8 个字节`，一共是 16 个字节** 
 
 
 
-![](10、Java 对象内存布局和对象头.assets/4a4914ff04d34506a6409cb6078061e2-1662740972054-31.png)
+![](image/10、Java 对象内存布局和对象头/4a4914ff04d34506a6409cb6078061e2-1662740972054-31.png)
 
 默认存储对象的 HashCode、分代年龄和锁标志位等信息。
 
@@ -60,7 +60,7 @@
 
 参考尚硅谷宋红康老师原图
 
-![在这里插入图片描述](10、Java 对象内存布局和对象头.assets/2620f3a4dd4f4ad997b26ac1cf69cda9.png)
+![在这里插入图片描述](image/10、Java 对象内存布局和对象头/2620f3a4dd4f4ad997b26ac1cf69cda9.png)
 
 对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例【class保存在方法区】。
 
@@ -74,7 +74,7 @@
 
 > 如果是数组的实例部分还包括`数组的长度`，这部分内存按 `4 字节`对齐。
 
-![在这里插入图片描述](10、Java 对象内存布局和对象头.assets/76d636f2fea440f884bee3efbb5ece73-1662740972055-32.png)
+![在这里插入图片描述](image/10、Java 对象内存布局和对象头/76d636f2fea440f884bee3efbb5ece73-1662740972055-32.png)
 
 ### **2.2.3、对齐填充**
 
@@ -82,14 +82,14 @@
 
 有个案例，`对象头16`+`实例数据（int 4 + boolean 1）5`+`对齐填充3`=`24字节`
 
-![在这里插入图片描述](10、Java 对象内存布局和对象头.assets/53df3f60fea84bb38e621b8ae53d3df3-1662740972055-33.png)
+![在这里插入图片描述](image/10、Java 对象内存布局和对象头/53df3f60fea84bb38e621b8ae53d3df3-1662740972055-33.png)
 
 2.3、官网理论
 ------------
 
 Hotspot 术语表官网 [HotSpot Glossary of Terms](http://openjdk.java.net/groups/hotspot/docs/HotSpotGlossary.html "HotSpot Glossary of Terms")
 
-![](10、Java 对象内存布局和对象头.assets/f593ca9279f7438e872b0e609469319f.png)
+![](image/10、Java 对象内存布局和对象头/f593ca9279f7438e872b0e609469319f.png)
 
 ## 2.3、底层源码理论证明
 
@@ -97,12 +97,12 @@ Hotspot 术语表官网 [HotSpot Glossary of Terms](http://openjdk.java.net/grou
 http://hg.openjdk.java.netjidlk8u/jdk8u/hotspot/file/89fb452b3688/src/share/vm/oops/oop.hpp
 ```
 
-![img](10、Java 对象内存布局和对象头.assets/f3ab347de6754c06a3f9b04b0b498099-1662740972055-34.png)
+![img](image/10、Java 对象内存布局和对象头/f3ab347de6754c06a3f9b04b0b498099-1662740972055-34.png)
 
 *mark 字段是 mark word，* metadata 是类指针 klass pointer，
 对象头（object header）即是由这两个字段组成，这些术语可以参考 Hotspot 术语表，
 
-![img](10、Java 对象内存布局和对象头.assets/a2bac7af31214dcfa1ae7765ba21ba10.png)
+![img](image/10、Java 对象内存布局和对象头/a2bac7af31214dcfa1ae7765ba21ba10.png)
 
 **3、再说对象头的 MarkWord**
 =====================
@@ -110,18 +110,18 @@ http://hg.openjdk.java.netjidlk8u/jdk8u/hotspot/file/89fb452b3688/src/share/vm/o
 **3.1、32 位 (看一下即可，不用学了，以 64 位为准)**
 ----------------------------------
 
-![](10、Java 对象内存布局和对象头.assets/e33ae0e30f244fac99db950104c4e86a-1662740972056-35.png)
+![](image/10、Java 对象内存布局和对象头/e33ae0e30f244fac99db950104c4e86a-1662740972056-35.png)
 
 3.2、64位重要
 ------------------------
 
-![img](10、Java 对象内存布局和对象头.assets/8d382140f36147fa844ea2be86e7acde-1662740972056-36.png)
+![img](image/10、Java 对象内存布局和对象头/8d382140f36147fa844ea2be86e7acde-1662740972056-36.png)
 
-![img](10、Java 对象内存布局和对象头.assets/26f34a826390476181a7ee1b23cecfe8-1662740972056-37.png)
+![img](image/10、Java 对象内存布局和对象头/26f34a826390476181a7ee1b23cecfe8-1662740972056-37.png)
 
 **oop.hpp**
 
-![](10、Java 对象内存布局和对象头.assets/235b85b2e59041fcb7cd91e0a1213260.png)
+![](image/10、Java 对象内存布局和对象头/235b85b2e59041fcb7cd91e0a1213260.png)
 
 
 
@@ -143,13 +143,13 @@ epoch： 保存偏向时间戳 
 >
 > 例如 MaxTenuringThreshold 参数默认值就是 15
 
-![](10、Java 对象内存布局和对象头.assets/f307d90afb52461186f83f0029dce041.png)
+![](image/10、Java 对象内存布局和对象头/f307d90afb52461186f83f0029dce041.png)
 
 **markword(64 位) 分布图，**
 
 对象布局、GC 回收和后面的锁升级就是对象标记 MarkWord 里面标志位的变化
 
-![](10、Java 对象内存布局和对象头.assets/3ba4aa64873f4d59af96e12326cdf575-1662740972056-38.png)
+![](image/10、Java 对象内存布局和对象头/3ba4aa64873f4d59af96e12326cdf575-1662740972056-38.png)
 
 4、聊聊 Object obj = new Object()  --JOL 证明 
 ==================================
@@ -186,7 +186,7 @@ public class MyObject {
 }
 ```
 
-![](10、Java 对象内存布局和对象头.assets/6e9cf011ab8545929acfd6fc4d57c157.png)
+![](image/10、Java 对象内存布局和对象头/6e9cf011ab8545929acfd6fc4d57c157.png)
 
 ## **代码**
 
@@ -207,7 +207,7 @@ public class JOLDemo {
 
 对象头 markword 8字节    类型指针8字节，但是这里显示4字节，默认开启指针压缩
 
-![](10、Java 对象内存布局和对象头.assets/7f0bd255471544c989f8c91bc2ec9aad-1662740972056-39.png)
+![](image/10、Java 对象内存布局和对象头/7f0bd255471544c989f8c91bc2ec9aad-1662740972056-39.png)
 
 | 表头名      | 说明                                       |
 | ----------- | ------------------------------------------ |
@@ -223,7 +223,7 @@ public class JOLDemo {
 >
 > 说明：启动是打印VM参数
 
-![](10、Java 对象内存布局和对象头.assets/db32b4d8850d40d6a8319c8b14e9ded8.png)
+![](image/10、Java 对象内存布局和对象头/db32b4d8850d40d6a8319c8b14e9ded8.png)
 
 > 默认开启压缩说明
 >
@@ -231,7 +231,7 @@ public class JOLDemo {
 
 **结果**
 
-![](10、Java 对象内存布局和对象头.assets/e052ef63dd794a94bcaecb5beeb0d749.png)
+![](image/10、Java 对象内存布局和对象头/e052ef63dd794a94bcaecb5beeb0d749.png)
 
 上述表示开启了类型指针的压缩，以节约空间，假如不加压缩？？？
 
@@ -241,7 +241,7 @@ public class JOLDemo {
 
 **结果**
 
-![](10、Java 对象内存布局和对象头.assets/b9a05a7249d246f095e429408d886277-1662740972056-40.png)
+![](image/10、Java 对象内存布局和对象头/b9a05a7249d246f095e429408d886277-1662740972056-40.png)
 
 ## GC 年龄采用 4 位 bit 存储，最大位 15
 
@@ -249,7 +249,7 @@ public class JOLDemo {
 
 - 对象分代年龄最大就是 15
 
-  ![img](https://img-blog.csdnimg.cn/c368292536aa46e3a51de4c6db6c88b2.png)
+  ![img](image/10、Java 对象内存布局和对象头/c368292536aa46e3a51de4c6db6c88b2.png)
 
 如果想证明一下
 
@@ -259,13 +259,13 @@ public class JOLDemo {
 -XX:MaxTenurningThreshold=16
 ```
 
-![img](https://img-blog.csdnimg.cn/4690e91ab23643f198b4a1dab7d6d032.png)
+![img](image/10、Java 对象内存布局和对象头/4690e91ab23643f198b4a1dab7d6d032.png)
 
 5、换成带字段的对象试试
 ==============
 
 **结果**
 
-![](10、Java 对象内存布局和对象头.assets/6ff6eccc87434796b6dc20a61b2e2cce.png)
+![](image/10、Java 对象内存布局和对象头/6ff6eccc87434796b6dc20a61b2e2cce.png)
 
-![](10、Java 对象内存布局和对象头.assets/b7fca2a53935461982ea9e6dd5ca15c4.png)
+![](image/10、Java 对象内存布局和对象头/b7fca2a53935461982ea9e6dd5ca15c4.png)
