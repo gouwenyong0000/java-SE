@@ -10,7 +10,7 @@
 
 今天我们就一起聊聊，事务失效的一些场景，说不定你已经中招了。不信，让我们一起看看。
 
-![img](images/8CEF7F469B3856928EF1A723D6A7BCA4.jpg)
+![img](image/Spring事务失效的12个场景/8CEF7F469B3856928EF1A723D6A7BCA4-1664082716744-2.jpg)
 
 ## 一 事务不生效
 
@@ -598,7 +598,7 @@ saveData(userModel);
 
 关于大事务问题的危害，可以阅读一下我的另一篇文章《[让人头痛的大事务问题到底要如何解决？](https://mp.weixin.qq.com/s?__biz=MzUxODkzNTQ3Nw==&mid=2247485262&idx=1&sn=abe19452e4c13876270f329cc6929be7&chksm=f9800194cef78882e5ad4d8eb00b7e3f745a4159aee6afb1858cc16cae599f8889afa330e17b&token=305097496&lang=zh_CN&scene=21#wechat_redirect)》，上面有详细的讲解。
 
-![img](images/DB24B3D6FC692D87F4FFA8FD4806C72C.jpg)
+![img](image/Spring事务失效的12个场景/DB24B3D6FC692D87F4FFA8FD4806C72C.jpg)
 
 ### 2.编程式事务
 

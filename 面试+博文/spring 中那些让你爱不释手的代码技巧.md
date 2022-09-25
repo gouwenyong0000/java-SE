@@ -82,7 +82,7 @@ public class PersonService3 implements ApplicationListener<ContextRefreshedEvent
 *   通过 ApplicationContextAware 获取 ApplicationContext
 *   通过 BeanNameAware 获取 BeanName 等 `Aware`接口是很常用的功能，目前包含如下功能：
 
-![](images/7dcf8487d9984a9fa6bfb61d5d3f3094tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中那些让你爱不释手的代码技巧/7dcf8487d9984a9fa6bfb61d5d3f3094tplv-k3u1fbpfcp-zoom-in-crop-mark3024000-1664082639300-2.webp)
 
 ### 二 如何初始化 bean
 
@@ -128,15 +128,15 @@ public class BService implements InitializingBean {
 
 决定他们调用顺序的关键代码在`AbstractAutowireCapableBeanFactory`类的`initializeBean`方法中。
 
-![](images/3232ecdda3f14ac789ecc461f2ffd589tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中那些让你爱不释手的代码技巧/3232ecdda3f14ac789ecc461f2ffd589tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 这段代码中会先调用`BeanPostProcessor的postProcessBeforeInitialization`方法，而`PostConstruct`是通过`InitDestroyAnnotationBeanPostProcessor`实现的，它就是一个`BeanPostProcessor`，所以`PostConstruct`先执行。
 
-而`invokeInitMethods`方法中的代码： ![](images/ecf56e55a26540d0b902ae00867de61ctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+而`invokeInitMethods`方法中的代码： ![](image/spring 中那些让你爱不释手的代码技巧/ecf56e55a26540d0b902ae00867de61ctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 决定了先调用`InitializingBean`，再调用`init-method`。
 
-所以得出结论，他们的调用顺序是： ![](images/f1d0bd023bd44134a7f5536d5789d57dtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+所以得出结论，他们的调用顺序是： ![](image/spring 中那些让你爱不释手的代码技巧/f1d0bd023bd44134a7f5536d5789d57dtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 ### 三 自定义自己的 Scope
 
@@ -234,7 +234,7 @@ public class CService {
 
 如果你看过 spring 源码，会发现它有 70 多个地方在用 FactoryBean 接口。
 
-![](images/30b1b87452fd468d898f537b4d5d4fabtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中那些让你爱不释手的代码技巧/30b1b87452fd468d898f537b4d5d4fabtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 上面这张图足以说明该接口的重要性，请勿忽略它好吗？
 
@@ -440,7 +440,7 @@ public class WebAuthConfig extends WebMvcConfigurerAdapter {
 
 该拦截器其实相对来说，比较简单，可以在`DispatcherServlet`类的`doDispatch`方法中看到调用过程：
 
-![](images/8f07d112f41045edb9198c3368a94aa6tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中那些让你爱不释手的代码技巧/8f07d112f41045edb9198c3368a94aa6tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 顺便说一句，这里只讲了 spring mvc 的拦截器，并没有讲 spring 的拦截器，是因为我有点小私心，后面就会知道。
 
@@ -586,7 +586,7 @@ public class TestController {
 复制代码
 ```
 
-如果不做任何处理请求 add 接口结果直接报错： ![](images/30904e34d0c44fffbb0bd70875480805tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+如果不做任何处理请求 add 接口结果直接报错： ![](image/spring 中那些让你爱不释手的代码技巧/30904e34d0c44fffbb0bd70875480805tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 what？用户能直接看到错误信息？
 
@@ -778,19 +778,19 @@ public class ThreadPoolConfig {
 复制代码
 ```
 
-spring 异步的核心方法： ![](images/3db2fff74a1645fca355aad37bebb441tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+spring 异步的核心方法： ![](image/spring 中那些让你爱不释手的代码技巧/3db2fff74a1645fca355aad37bebb441tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
-根据返回值不同，处理情况也不太一样，具体分为如下情况： ![](images/d19633ccf2fc4bf38c1d0f0d82b81411tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+根据返回值不同，处理情况也不太一样，具体分为如下情况： ![](image/spring 中那些让你爱不释手的代码技巧/d19633ccf2fc4bf38c1d0f0d82b81411tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 ### 十一 听说缓存好用，没想到这么好用
 
 spring cache 架构图：
 
-![](images/e3b33936abe4433ab0fed80a3adb3212tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中那些让你爱不释手的代码技巧/e3b33936abe4433ab0fed80a3adb3212tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 它目前支持多种缓存：
 
-![](images/b563239d9c294a47b6a9b1d613cdca21tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中那些让你爱不释手的代码技巧/b563239d9c294a47b6a9b1d613cdca21tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 我们在这里以 caffeine 为例，它是 spring 官方推荐的。
 

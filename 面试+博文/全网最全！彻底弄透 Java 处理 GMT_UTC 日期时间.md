@@ -26,7 +26,7 @@
     *   [推荐阅读](#推荐阅读)
     *   [关注我](#关注我)
 
-![](https://img-blog.csdnimg.cn/20210118055156568.jpg#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210118055156568.jpeg)
 
 前言
 ==
@@ -42,7 +42,7 @@
 本文提纲
 ----
 
-![](https://img-blog.csdnimg.cn/20210118055954767.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210118055954767-1664082850162-12.png)
 
 版本约定
 ----
@@ -56,7 +56,7 @@
 
 众所周知，JDK 以版本 8 为界，有两套处理日期 / 时间的 API：
 
-![](https://img-blog.csdnimg.cn/20210115104456702.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210115104456702.png)
 
 虽然我一直鼓励弃用 Date 而支持在项目中只使用 JSR 310 日期时间类型，但是呢，由于 Date 依旧有庞大的存量用户，所以本文也不落单，对二者的实现均进行阐述。
 
@@ -305,7 +305,7 @@ public void test6() {
 
 问题来了，光秃秃的扔给我个字符串说是 15 号晚上 6 点时间，我咋知道你指的是北京的晚上 6 点，还是东京的晚上 6 点呢？还是纽约的晚上 6 点呢？
 
-![](https://img-blog.csdnimg.cn/20210115154410245.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210115154410245.png)
 
 因此，对于字符串形式的日期时间，只有指定了时区才有意义。也就是说**字符串 + 时区** 才能精确知道它是什么时刻，否则是存在歧义的。
 
@@ -428,7 +428,7 @@ JSR 310 类型
 2.  java.util.Date 等类在建模日期的设计上行为不一致，缺陷明显。包括易变性、糟糕的偏移值、默认值、命名等等
 3.  java.util.Date 同时包含日期和时间，而其子类 java.sql.Date 却仅包含日期，这是什么神继承？
 
-![](https://img-blog.csdnimg.cn/20210116214805226.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210116214805226.png)
 
 ```
 @Test
@@ -462,7 +462,7 @@ Java 自己也实在忍不了这么难用的日期时间 API 了，于是在 201
 
 JSR 310 日期 / 时间 **所有的** API 都在 java.time 这个包内，没有例外。
 
-![](https://img-blog.csdnimg.cn/20210117054303212.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210117054303212.png)
 
 当然喽，本文重点并不在于讨论 JSR 310 日期 / 时间体系，而是看看 JSR 310 日期时间类型是如何处理上面 Date 类型遇到的那些 case 的。
 
@@ -483,7 +483,7 @@ UTC 偏移量更像是一种写死偏移量数值的做法，这在天朝这种�
 
 #### ZoneId
 
-![](https://img-blog.csdnimg.cn/20210117061051448.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210117061051448.png)
 
 它代表一个时区的 ID，如 Europe/Paris。它规定了一些规则可用于将一个 Instant 时间戳转换为本地日期 / 时间 LocalDateTime。
 
@@ -517,9 +517,9 @@ sun.util.calendar.ZoneInfo[id="Asia/Shanghai",offset=28800000,dstSavings=0,useDa
 
 二者结果是一样的，都是 Asia/Shanghai。因为 ZoneId 方法底层就是依赖 TimeZone，如图：
 
-![](https://img-blog.csdnimg.cn/20210117064928306.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210117064928306.png)
 
-![](https://img-blog.csdnimg.cn/20210117065004959.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210117065004959.png)
 
 2、指定字符串得到一个 ZoneId：
 
@@ -730,7 +730,7 @@ public void test12() {
 
 这里是我故意造了这么一个 case 引起你的重视，对此结果我做如下解释：
 
-![](https://img-blog.csdnimg.cn/20210117194528171.png#pic_center)
+![](image/全网最全！彻底弄透 Java 处理 GMT_UTC 日期时间/20210117194528171.png)
 
 如图，在 2021.03.14 - 2021.11.07 期间，纽约的偏移量是 - 4，其余时候是 - 5。本例的日期是 2021-05-05 处在夏令时之中，因此偏移量是 - 4，这就解释了为何你显示的写了 - 5 最终还是成了 - 4。
 

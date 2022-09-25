@@ -2,7 +2,7 @@
 
 在地球村的信息化时代背景下，跨国企业 / 跨国做生意的公司越来越多，所以我们程序员遇到不同时区之间的日期 / 时间转换 / 显示的概率大大增加。譬如说：电商平台的商品下单时间，你给中国人页面里展示北京时间是 ok 的，但你总不能给美国人也展示北京时间吧？否则美国人看到很多订单的下单时间是凌晨 1、2 点，还以为午夜凶铃呢。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuiaYGibplDhicODsv4SAeqkk2rKdcNsicwYDRY706sluvkMw7H8I0J8TTvQ/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593191-3.png)
 
 Java 在版本 8 之前用 Date 类型来表示日期 / 时间，自版本 8 起引入了 JSR 310 日期 / 时间类型。两套体系对于本地时间、时区时间、带时区的格式化都有着不同的处理办法。
 
@@ -20,7 +20,7 @@ A 哥因为跨时区日期转换问题，最近搞了一起**生产事故**，�
 本文提纲
 ----
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuHkKqpcGB26n5gcePRVicgUiaVHmg8YuY1DTsLSKyuBUN2gtN7xvo74iaw/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593198-37.png)
 
 版本约定
 ----
@@ -36,11 +36,11 @@ A 哥因为跨时区日期转换问题，最近搞了一起**生产事故**，�
 GMT：格林威治时间
 ----------
 
-格林威治（也称：格林尼治）时间，也叫世界时（Universal Time），也叫世界标准时间。是指位于**英国伦敦**郊区的【皇家格林尼治天文台】的标准时间，是本初子午线上的地方时，是 **0 时区**的区时。![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEujvJia22vFjJ9eDLHXETB58ESFiaGIAgxj5Df2ribFmp8pKXhiayNibAjHXQ/640?wx_fmt=png)
+格林威治（也称：格林尼治）时间，也叫世界时（Universal Time），也叫世界标准时间。是指位于**英国伦敦**郊区的【皇家格林尼治天文台】的标准时间，是本初子午线上的地方时，是 **0 时区**的区时。![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593192-4.png)
 
-众所周知，天朝统一用的北京时间是位于东八区（+8）与标准时间相差 8 小时。什么含义？举个例子：若 GMT（英国伦敦的格林威治）现在是上午 11 点，那中国北京时间现在就是 11 + 8 = 19 点（下午 7 点）。![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuSkmxiageEebzEZr9eT0leKu0jg3dZBV5RwbWF9rcMQ3YrRGDraOFmEA/640?wx_fmt=png)
+众所周知，天朝统一用的北京时间是位于东八区（+8）与标准时间相差 8 小时。什么含义？举个例子：若 GMT（英国伦敦的格林威治）现在是上午 11 点，那中国北京时间现在就是 11 + 8 = 19 点（下午 7 点）。![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593192-5.png)
 
-将这个公式再抽象一下，可表示为：本地时间 = GMT＋时区差![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuyRPaTdAXciadx3fCFtK6sGgXEcKquatkeZw7JTCjR1W9S2OpBc1OTiaA/640?wx_fmt=png)
+将这个公式再抽象一下，可表示为：本地时间 = GMT＋时区差![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593193-6.png)
 
 北京位于东八区，则时区差 N=+8，美国纽约位于西五区，则时区差 N=-5。这么算来，若北京时间是晚上 23 点的话，美国纽约时间就是**当天**上午 10 点（23 - 8 - 5 = 10）
 
@@ -58,13 +58,13 @@ GMT：格林威治时间
 
 其实选择英国格林威治最主要原因是：当时大部分的船只都**已经**以格林威治子午线做为参考标准，毕竟曾经的英国可是日不落帝国，大航海时代末便开始称霸世界，拳头里面出政权。
 
-格林威治天文台在计时领域的权威是非常大的，譬如离我们最近的一次 “时间风波”：在即将跨世纪的时候，世界各国对 21 世纪到底应该从 2000 年开始还是从 2001 年开始争论不休，最终还是格林威治天文台出面平息了争论，开新闻发布会宣布 **21 世纪始于 2001 年**。![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEu5VvOGiagv6Om8h2a7xredgDwQ8sDSpeHd2E5bib3hN4mrXLSw3ibCdrPw/640?wx_fmt=png)
+格林威治天文台在计时领域的权威是非常大的，譬如离我们最近的一次 “时间风波”：在即将跨世纪的时候，世界各国对 21 世纪到底应该从 2000 年开始还是从 2001 年开始争论不休，最终还是格林威治天文台出面平息了争论，开新闻发布会宣布 **21 世纪始于 2001 年**。![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593193-7.png)
 
 ### 地球自转
 
 地球绕自转轴**自西向东**的转动（太阳东起西落），所以东时区的人会比西时区的人**早**一些看到太阳，从而时间上会早一点。
 
-![](https://mmbiz.qpic.cn/mmbiz_gif/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuI6XUF0GIQOQQciawRTXJibBR13NSy9CG3sNqURiaWI5Mwv6sIOaS1MapQ/640?wx_fmt=gif)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593193-8.gif)
 
 以本初子午线为中心，按照地球自转方向，每隔经度 15° 划分一个时区的方法，全球共分为 24 个时区：东 1 区至东 12 区，西 1 区至西 12 区，其中东西 12 区跨度都是 7.5° 也叫半时区。
 
@@ -74,7 +74,7 @@ GMT：格林威治时间
 
 错是因为拍脑袋想一想就知道，中国东西横跨 5000 + 公里，怎么可能只躺在一个时区呢？正确答案是：中国大陆共横跨 **5** 个时区，各个时区大致的方位图如下：
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuiaIxib7TicUVahKicyKEGrDy9Vgt5b0sog5zykQ7mqdmIA43Lh6F7cxLuA/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593193-9.png)
 
 看图就清晰明了的知道天朝为何选用东八区时间作为全国标准时间了吧？没错，仅就因为北京在东八区，即使地图上只有弹丸大小，但就是这么豪横。
 
@@ -84,7 +84,7 @@ GMT：格林威治时间
 
 说到时区，就不得不提及计划再次伟大的美国了。美国同样的幅员辽阔，横跨了 4 个时区：
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEu7k7GYwKCdT9Va1WpB4N49dibBWDEiboGHpCiazb4uhm3byfl5jVicayP8Q/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593193-10.png)
 
 如图所示共有四个时区时间，按照图中颜色划分开（并非严格划分，不然出现同一小区隔壁时间比你晚 1 小时就尴尬了），从右到左依次为：
 
@@ -103,7 +103,7 @@ GMT：格林威治时间
 
 Http 1.1 协议对日期时间传输格式是有严格规定的，支持如下三种格式：
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEu3dZM17Tnd1sPUvN5S34hhqaib7KgriaOj21WQ01KHl2Ajh29Vib58G6mg/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-11.png)
 
 其中第一种格式是互联网传输的**标准格式**，也是现行的标准。2、3 种纯是为了兼容 Http 1.0 而设计，现在基本已经淘汰没人再会使用，所以事实上的格式只有第一种这 1 种，作为一个有经验的程序员对这种格式应该不陌生。
 
@@ -120,7 +120,7 @@ UTC：世界标准时间
 
 Coordinated Universal Time 直译为：世界协调时间。它是以**原子时**作为计量单位的时间，计算结果极其严谨和精密。它比 GMT 时间更来得精准，误差值必须保持在 0.9 秒以内，倘若大于 0.9 秒就会通过**闰秒**来 “解决”。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuK5Mqlk93kNYZDibjp5t5wK0bE1YSbREIaYt50biaPLDbgfQjibdlDfN4Q/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-12.png)
 
 原子时：物质的原子内部发射的电磁振荡频率为基准的时间计量系统。美国的物理实验市在 2014 年造出了人类历史上最精确的原子钟，**50 亿年误差 1s**，可谓相当靠谱了。中国的铯原子钟也能确保 2000 万年误差不超过 1s。
 
@@ -132,13 +132,13 @@ UTC 和 GMT 都称作世界标准时间，为毛有了 GMT 还搞出个 UTC，�
 
 **GMT**：老的时间计量标准，根据地球的自转和公转来计算时间的，自转一圈是一天，公转一圈是一年。但是呢，地球公转的轨道是椭圆形的：
 
-![](https://mmbiz.qpic.cn/mmbiz_gif/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEusxZiaibE5WuuORa4lXd8BWJ1hfq2Xo9IhpKBibwY6zZhBiasmuibfnNdJcA/640?wx_fmt=gif)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-13.gif)
 
 并且后来人们发现地球的自转时间也并不是恒定的，这么一来就会造成有一天时间长一些，有一天时间短一些的情况，误差较大给人感觉时间不那么 “精准” 了，因此迫切需要一个更加精准的方案来计时，UTC 诞生了。
 
 **UTC**：1967 年人类制作出原子钟，从而 “发明” 了 UTC 时间正式投入使用。它是真正意义上的标准时间，以原子钟所定义的秒长为基础，UTC 时间认为一个太阳日（一天）总是恒定的 86400 秒（24 小时）。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuUOdPL1oYsOSUJxnuzq94WliaM8XysTrg8m068WxbCCrsyXNAemKJNTw/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-14.png)
 
 UTC 是协调时间，含义为：**一切以我为基准，全部想我看齐**。所以称它为世界标准时间是没毛病的，而把 GMT 称作格林威治当地时间更为合适（也叫旧的标准时间）。
 
@@ -152,7 +152,7 @@ UTC 是协调时间，含义为：**一切以我为基准，全部想我看齐**
 
 在日常生活中，我们所使用的时间肯定是**本地时间**。在只有 GMT 的时候，本地时间是通过时区计算出来的，而现在 UTC 才是标准参考，因此采用 UTC 和偏移量（Offset）的方式来表示本地时间：
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuZHWudiaA78GpVnHs7Lzw7iaUWhfnV7zyNlzCdLS4zqSIqtINTHqnStYw/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-15.png)
 
 这个偏移量可表示为：`UTC -`或`UTC +`，后面接`小时数,分钟数`。如：UTC +9:30 表示澳大利亚中央标准时间，UTC +8 表示中国标准时间。偏移量常见的表示形式有：`±[hh]:[mm]`、`±[hh][mm]`、`±[hh]`这三种方式均可。
 
@@ -166,7 +166,7 @@ UTC 是协调时间，含义为：**一切以我为基准，全部想我看齐**
 
 可以看到偏移量可以精确到分钟级别控制，非常精细化。全球只有 24 个时区（只能精确到小时），但偏移量有 “无数个”。当然喽为了方便沟通，时间日期联盟组织把世界主要国家 / 城市的偏移量汇总起来且都给取了个`Time zone name`名称用于沟通，共好几百个，部分截图如下：
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEu4zMW7leYUOo6WEfCYhG3QX4VU9oXNZWia6o6eNXD2WdWlLeXzicHpekg/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-16.png)
 
 偏移量和国家 / 城市名称的全部对应关系，请参考网址（直接访问，无需梯子）：https://www.timeanddate.com/time/zones
 
@@ -191,7 +191,7 @@ ISO
 
 在时间日期上它全称是 ISO 8601，是一种日期 / 时间表示方法的规范。规定了一种明确的、国际上都能理解的日历和时钟格式。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuvDLTwuLictF8bgaicQfSgLksJETDttzWcQbbSSNwSkdch8LgwRj5LaHQ/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-17.png)
 
 这一 ISO 标准有助于消除各种日 - 日惯例、文化和时区对全球业务产生的影响。它提供了一种显示日期和时间的方式，这种方式是明确定义的，对人和机器都是可以理解的。当日期用数字表示时，它们可以以不同的方式进行解释。例如，01/05/12 可以表示 2012 年 1 月 5 日或 2012 年 5 月 1 日。在个人层面上，这种不确定性可能非常令人沮丧，在商业环境中，它可能非常昂贵。在日期不明确的情况下，组织会议和交付、书写合同和购买机票都是非常困难的。
 
@@ -211,7 +211,7 @@ ISO 8601 通过制定一种国际公认的日期表示方式来解决这种不�
 
 DST（Daylight Saving Time），夏令时又称夏季时间（可没有冬令时哦）。它是为节约能源而**人为规定**地方时间的制度（鼓励人们早睡早起，不要浪费电，夏天日照时间长尽量多用自然资源），全球约 40% 的国家在夏季使用夏令时，其他国家则全年只使用标准时间。正在使用夏令时的代表国家：美国、欧盟、俄罗斯等等。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEuZ2M4Pw2znVuqql2eCiciceVbNr0IDU3OvNKqy2jog3icFbjLo2VA7w6pA/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-18.png)
 
 每年的夏令时时间段还不一样（一般在 3 月的第 2 个周日开始），比如美国 2020 年夏令时时间是：2020 年 3 月 8 日 - 2020 年 11 月 1 日。具体做法是：在 3.8 号这天将时钟往前拨拨 1 个小时，11.1 号这天还原回来。
 
@@ -228,7 +228,7 @@ DST（Daylight Saving Time），夏令时又称夏季时间（可没有冬令时
 
 时间戳一般指的 UNIX 时间，或类 UNIX 系统（比如 Linux、MacOS 等）使用的时间表示方式。定义为：从 UTC 时间的`1970-1-1 0:0:0`起到现在的总秒数（秒是毫秒、微妙、纳秒的总称）。
 
-![](https://mmbiz.qpic.cn/mmbiz_png/crPesQVeyKKHsFZwGmTX0HQzp2tKfrEualNqjAH0glZJAkzJwVAvGS8ZbjlH2c8NkmW9xJlD95gUMSPMOTEYVQ/640?wx_fmt=png)
+![](image/GMT UTC CST ISO 夏令时 时间戳，都是些什么鬼？/640-1664082593194-19.png)
 
 但是不可忽略的一个 case：由于闰秒的存在，那么当闰秒发生时，就极有可能出现同一个时间戳表示两个时刻的情况（类似时钟回拨），而且闰秒还没规律所以无法程序式的避免，怎么破？
 

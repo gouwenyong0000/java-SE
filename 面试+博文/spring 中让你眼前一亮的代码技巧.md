@@ -108,7 +108,7 @@ demo.enable=false
 
 下面用一张图整体认识一下 @Conditional 家族。
 
-![](images/a2c7e9a78d4743c78a732977cd25623dtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中让你眼前一亮的代码技巧/a2c7e9a78d4743c78a732977cd25623dtplv-k3u1fbpfcp-zoom-in-crop-mark3024000-1664082662353-2.webp)
 
 #### 自定义 Conditional
 
@@ -144,9 +144,9 @@ public class MyCondition implements Condition {
 
 第三步，使用 @MyConditionOnProperty 注解。
 
-`Conditional`的奥秘就藏在`ConfigurationClassParser`类的`processConfigurationClass`方法中： ![](images/f78bb5d4fafc49ca9419f43d8a6b509btplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+`Conditional`的奥秘就藏在`ConfigurationClassParser`类的`processConfigurationClass`方法中： ![](image/spring 中让你眼前一亮的代码技巧/f78bb5d4fafc49ca9419f43d8a6b509btplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
-这个方法逻辑不复杂： ![](images/94739fef35484d0c82a71eec0eb9fc7btplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+这个方法逻辑不复杂： ![](image/spring 中让你眼前一亮的代码技巧/94739fef35484d0c82a71eec0eb9fc7btplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 1.  先判断有没有使用 Conditional 注解，如果没有直接返回 false
     
@@ -165,7 +165,7 @@ public class MyCondition implements Condition {
 
 但是我认为最好将普通类和`@Configuration`注解的配置类分开讲解，所以列了四种不同类型：
 
-![](images/dca149d356164b45a38299b26cb22779tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/spring 中让你眼前一亮的代码技巧/dca149d356164b45a38299b26cb22779tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 #### 普通类
 
@@ -290,7 +290,7 @@ public class TestConfiguration {
 3.  实现 ImportSelector 接口的类，用于一次性引入多个类的场景，或者可以根据不同的配置决定引入不同类的场景。
 4.  实现 ImportBeanDefinitionRegistrar 接口的类，主要用于可以手动控制 BeanDefinition 的创建和注册的场景，它的方法中可以获取 BeanDefinitionRegistry 注册容器对象。
 
-在`ConfigurationClassParser`类的`processImports`方法中可以看到这三种方式的处理逻辑： ![](images/b433168904864fbd9088108edd8eb17ftplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+在`ConfigurationClassParser`类的`processImports`方法中可以看到这三种方式的处理逻辑： ![](image/spring 中让你眼前一亮的代码技巧/b433168904864fbd9088108edd8eb17ftplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 最后的 else 方法其实包含了：普通类和 @Configuration 注解的配置类两种不同的处理逻辑。
 
@@ -396,7 +396,7 @@ public Executor threadPoolExecutor() {
 
 绑定是通过 Binder 类的 bindObject 方法完成的：
 
-![](images/6341b2fed2ca4c5cb3df3e6d0ddcc9b3tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 以上这段代码会递归绑定数据，主要考虑了三种情况：
+![](image/spring 中让你眼前一亮的代码技巧/6341b2fed2ca4c5cb3df3e6d0ddcc9b3tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 以上这段代码会递归绑定数据，主要考虑了三种情况：
 
 *   bindAggregate 绑定集合类
 *   bindBean 绑定对象
@@ -465,9 +465,9 @@ public class UserService {
 
 > spring 事务有个特别的地方：它获取的数据库连接放在 ThreadLocal 中的，也就是说同一个线程中从始至终都能获取同一个数据库连接，可以保证同一个线程中多次数据库操作在同一个事务中执行。
 
-正常情况下是没有问题的，但是如果使用不当，事务会失效，主要原因如下： ![](images/1d2352a7219040aa992364968c5b5cfctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+正常情况下是没有问题的，但是如果使用不当，事务会失效，主要原因如下： ![](image/spring 中让你眼前一亮的代码技巧/1d2352a7219040aa992364968c5b5cfctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
-除了上述列举的问题之外，由于`@Transactional`注解最小粒度是要被定义在方法上，如果有多层的事务方法调用，可能会造成大事务问题。 ![](images/aa0769e56f8248d593d19e18bb8ebe48tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 所以，建议在实际工作中少用 @Transactional 注解开启事务。
+除了上述列举的问题之外，由于`@Transactional`注解最小粒度是要被定义在方法上，如果有多层的事务方法调用，可能会造成大事务问题。 ![](image/spring 中让你眼前一亮的代码技巧/aa0769e56f8248d593d19e18bb8ebe48tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 所以，建议在实际工作中少用 @Transactional 注解开启事务。
 
 ### 编程式事务
 
@@ -495,7 +495,7 @@ public class UserService {
 
 ### 五. 跨域问题的解决方案
 
-关于跨域问题，前后端的解决方案还是挺多的，这里我重点说说 spring 的解决方案，目前有三种： ![](images/ed53356fcfdb4378a055d04fd3736ba5tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+关于跨域问题，前后端的解决方案还是挺多的，这里我重点说说 spring 的解决方案，目前有三种： ![](image/spring 中让你眼前一亮的代码技巧/ed53356fcfdb4378a055d04fd3736ba5tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 #### 一. 使用 @CrossOrigin 注解
 
@@ -572,7 +572,7 @@ public class CorsFilter implements Filter {
 
 顺便说一下，使用`@CrossOrigin`注解 和 实现`WebMvcConfigurer`接口的方案，spring 在底层最终都会调用到`DefaultCorsProcessor`类的`handleInternal`方法：
 
-![](images/bb46b6835bcf451bb48df0c71f8d3d36tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 最终三种方案殊途同归，都会往 header 中添加跨域需要参数，只是实现形式不一样而已。
+![](image/spring 中让你眼前一亮的代码技巧/bb46b6835bcf451bb48df0c71f8d3d36tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 最终三种方案殊途同归，都会往 header 中添加跨域需要参数，只是实现形式不一样而已。
 
 ### 六. 如何自定义 starter
 
@@ -593,11 +593,11 @@ starter 机制带来这些好处：
 3.  自动发现机制，将 spring.factories 文件中配置的类，自动注入到 spring 容器中。
 4.  遵循 “约定大于配置” 的理念。 在业务工程中只需引入 starter 包，就能使用它的功能，太爽了。
 
-下面用一张图，总结 starter 的几个要素： ![](images/5d1b168f820e4d08b95ec287a1ee3e00tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+下面用一张图，总结 starter 的几个要素： ![](image/spring 中让你眼前一亮的代码技巧/5d1b168f820e4d08b95ec287a1ee3e00tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 接下来我们一起实战，定义一个自己的 starter。
 
-第一步，创建 id-generate-starter 工程： ![](images/3e1cb82e965b4938815b264bb805e0bftplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 其中的`pom.xml`配置如下：
+第一步，创建 id-generate-starter 工程： ![](image/spring 中让你眼前一亮的代码技巧/3e1cb82e965b4938815b264bb805e0bftplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 其中的`pom.xml`配置如下：
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -620,7 +620,7 @@ starter 机制带来这些好处：
 复制代码
 ```
 
-第二步，创建 id-generate-spring-boot-autoconfigure 工程： ![](images/b767fb5a508b4af8b71769b51361edfctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 该项目当中包含：
+第二步，创建 id-generate-spring-boot-autoconfigure 工程： ![](image/spring 中让你眼前一亮的代码技巧/b767fb5a508b4af8b71769b51361edfctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 该项目当中包含：
 
 *   pom.xml
 *   spring.factories
@@ -796,9 +796,9 @@ public class TestRunner implements ApplicationRunner {
 
 答案是使用`@Order(n)`注解，n 的值越小越先执行。当然也可以通过`@Priority`注解指定顺序。
 
-`springboot`项目启动时主要流程是这样的： ![](images/edb3005a482b44318290825e86e12f2atplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+`springboot`项目启动时主要流程是这样的： ![](image/spring 中让你眼前一亮的代码技巧/edb3005a482b44318290825e86e12f2atplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
-在`SpringApplication`类的`callRunners`方法中，我们能看到这两个接口的具体调用：![](images/586c68b8f5db4c198700d6d3a9094235tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+在`SpringApplication`类的`callRunners`方法中，我们能看到这两个接口的具体调用：![](image/spring 中让你眼前一亮的代码技巧/586c68b8f5db4c198700d6d3a9094235tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 最后还有一个问题：这两个接口有什么区别？
 

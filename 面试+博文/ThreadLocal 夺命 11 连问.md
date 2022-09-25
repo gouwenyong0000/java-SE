@@ -7,7 +7,7 @@
 
 所以近期，我抽空把 ThreadLocal 的源码再研究了一下，越看越有意思，发现里面的东西还真不少。
 
-我把精华浓缩了一下，汇集成了下面 11 个问题，看看你能顶住第几个？ ![](images/b5bb8bfb40c3425c9385de71fea38d5atplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+我把精华浓缩了一下，汇集成了下面 11 个问题，看看你能顶住第几个？ ![](image/ThreadLocal 夺命 11 连问/b5bb8bfb40c3425c9385de71fea38d5atplv-k3u1fbpfcp-zoom-in-crop-mark3024000-1664082743459-2.webp)
 
 1. 为什么要用 ThreadLocal?
 ---------------------
@@ -143,11 +143,11 @@ public class Thread implements Runnable {
 复制代码
 ```
 
-下面用一张图从宏观上，认识一下 ThreadLocal 的整体结构： ![](images/eab84b4f8b6e44d9950063d18e2b07c8tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 从上图中看出，在每个`Thread`类中，都有一个`ThreadLocalMap`的成员变量，该变量包含了一个`Entry数组`，该数组真正保存了 ThreadLocal 类 set 的数据。
+下面用一张图从宏观上，认识一下 ThreadLocal 的整体结构： ![](image/ThreadLocal 夺命 11 连问/eab84b4f8b6e44d9950063d18e2b07c8tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 从上图中看出，在每个`Thread`类中，都有一个`ThreadLocalMap`的成员变量，该变量包含了一个`Entry数组`，该数组真正保存了 ThreadLocal 类 set 的数据。
 
 `Entry`是由 threadLocal 和 value 组成，其中 threadLocal 对象是弱引用，在`GC`的时候，会被自动回收。而 value 就是 ThreadLocal 类 set 的数据。
 
-下面用一张图总结一下引用关系： ![](images/f3aa72af4fe2433a9a6c411f3fc99731tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 上图中除了 Entry 的 key 对 ThreadLocal 对象是`弱引用`，其他的引用都是`强引用`。
+下面用一张图总结一下引用关系： ![](image/ThreadLocal 夺命 11 连问/f3aa72af4fe2433a9a6c411f3fc99731tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 上图中除了 Entry 的 key 对 ThreadLocal 对象是`弱引用`，其他的引用都是`强引用`。
 
 需要特别说明的是，上图中 ThreadLocal 对象我画到了堆上，其实在实际的业务场景中不一定在堆上。因为如果 ThreadLocal 被定义成了 static 的，ThreadLocal 的对象是类共用的，可能出现在方法区。
 
@@ -180,11 +180,11 @@ public class ThreadLocalService {
 
 假如使用`Thread`做 key 时，你的代码中定义了 3 个 ThreadLocal 对象，那么，通过 Thread 对象，它怎么知道要获取哪个 ThreadLocal 对象呢？
 
-如下图所示： ![](images/847e8b7e67464c7aa58156d9132d8e74tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+如下图所示： ![](image/ThreadLocal 夺命 11 连问/847e8b7e67464c7aa58156d9132d8e74tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 因此，不能使用`Thread`做 key，而应该改成用`ThreadLocal`对象做 key，这样才能通过具体 ThreadLocal 对象的`get`方法，轻松获取到你想要的 ThreadLocal 对象。
 
-如下图所示： ![](images/a9e224aa187047c887aa3efd2e7a60d1tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+如下图所示： ![](image/ThreadLocal 夺命 11 连问/a9e224aa187047c887aa3efd2e7a60d1tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 4. Entry 的 key 为什么设计成弱引用？
 -------------------------
@@ -193,7 +193,7 @@ public class ThreadLocalService {
 
 那么，为什么要这样设计呢？
 
-假如 key 对 ThreadLocal 对象的弱引用，改为强引用。 ![](images/3bc0a386467942b48263a7683b845c40tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 我们都知道 ThreadLocal 变量对 ThreadLocal 对象是有强引用存在的。
+假如 key 对 ThreadLocal 对象的弱引用，改为强引用。 ![](image/ThreadLocal 夺命 11 连问/3bc0a386467942b48263a7683b845c40tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 我们都知道 ThreadLocal 变量对 ThreadLocal 对象是有强引用存在的。
 
 即使 ThreadLocal 变量生命周期完了，设置成 null 了，但由于 key 对 ThreadLocal 还是强引用。
 
@@ -209,7 +209,7 @@ public class ThreadLocalService {
 
 如果 key 是弱引用，当 ThreadLocal 变量指向 null 之后，在 GC 做垃圾清理的时候，key 会被自动回收，其值也被设置成 null。
 
-如下图所示： ![](images/8970caec891042fd8a0cb6f21418410atplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) **接下来，最关键的地方来了。**
+如下图所示： ![](image/ThreadLocal 夺命 11 连问/8970caec891042fd8a0cb6f21418410atplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) **接下来，最关键的地方来了。**
 
 由于当前的 ThreadLocal 变量已经被指向`null`了，但如果直接调用它的`get`、`set`或`remove`方法，很显然会出现`空指针异常`。因为它的生命已经结束了，再调用它的方法也没啥意义。
 
@@ -316,7 +316,7 @@ null
 
 答案是否定的。
 
-如下图所示： ![](images/0bed9b2cdf3d45a18ce8c3726433a3ddtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 假如 ThreadLocalMap 中存在很多 key 为 null 的 Entry，但后面的程序，一直都没有调用过有效的 ThreadLocal 的`get`、`set`或`remove`方法。
+如下图所示： ![](image/ThreadLocal 夺命 11 连问/0bed9b2cdf3d45a18ce8c3726433a3ddtplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 假如 ThreadLocalMap 中存在很多 key 为 null 的 Entry，但后面的程序，一直都没有调用过有效的 ThreadLocal 的`get`、`set`或`remove`方法。
 
 那么，Entry 的 value 值一直都没被清空。
 
@@ -468,7 +468,7 @@ private static int nextIndex(int i, int len) {
 
 当通过 hash 算法计算出的下标小于数组大小，则将下标值加 1。否则，即下标大于等于数组大小，下标变成 0 了。下标变成 0 之后，则循环一次，下标又变成 1。。。
 
-寻找的大致过程如下图所示： ![](images/e4bda550512141de9ac79fb7f4175b93tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 如果找到最后一个，还是没有找到，则再从头开始找。 ![](images/593672c720e74ad59b9442c0ce0a74c9tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 不知道你有没有发现，它构成了一个：`环形`。
+寻找的大致过程如下图所示： ![](image/ThreadLocal 夺命 11 连问/e4bda550512141de9ac79fb7f4175b93tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 如果找到最后一个，还是没有找到，则再从头开始找。 ![](image/ThreadLocal 夺命 11 连问/593672c720e74ad59b9442c0ce0a74c9tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 不知道你有没有发现，它构成了一个：`环形`。
 
 ThreadLocal 从数组中找数据的过程大致是这样的：
 
@@ -604,7 +604,7 @@ private void resize() {
 
 resize 中每次都是按 2 倍的大小扩容。
 
-扩容的过程如下图所示： ![](images/8d47b890718c4b68924b6b1ebe16f0dctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 扩容的关键步骤如下：
+扩容的过程如下图所示： ![](image/ThreadLocal 夺命 11 连问/8d47b890718c4b68924b6b1ebe16f0dctplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp) 扩容的关键步骤如下：
 
 1.  老 size + 1 = 新 size
 2.  如果新 size 大于等于老 size 的 2/3 时，需要考虑扩容。

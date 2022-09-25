@@ -4,11 +4,11 @@
 
 如果有些朋友以前没有使用过 java8 stream 这种链式编程方式做开发，想学习一下。 如果有些朋友只学习了一部分用法，想学习更多。 如果有些朋友想看看有没有好的示例适用于实际工作当中。 那么恭喜你，这篇文章非常适合你。
 
-首先，我们一起看看 stream 的继承关系： ![](images/3fbb411bdaf84584b071246a4d50f081tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+首先，我们一起看看 stream 的继承关系： ![](image/5 分钟掌握 java8 stream 的常用开发技巧/3fbb411bdaf84584b071246a4d50f081tplv-k3u1fbpfcp-zoom-in-crop-mark3024000-1664082549293-2.webp)
 
 Stream、IntStream、LongStream、DoubleStream 的父接口都是 BaseStream。BaseStream 的四个子接口方法都差不多，只是 IntStream、LongStream、DoubleStream 直接存储基本类型，可以避免自动装 / 拆箱，效率会更高一些。但是，我们实际上使用 Stream 更多一些。
 
-我们再看看 stream 的工作流程图： ![](images/2c0e3de347344913850c99fc84d63128tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+我们再看看 stream 的工作流程图： ![](image/5 分钟掌握 java8 stream 的常用开发技巧/2c0e3de347344913850c99fc84d63128tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 ### 为什么要学 stream 的链式编程方式
 
@@ -669,7 +669,7 @@ public class ParallelStreamTest {
 
 parallelStream 的工作原理：
 
-![](images/732cb50ae43045ba94804d6820d4c20etplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+![](image/5 分钟掌握 java8 stream 的常用开发技巧/732cb50ae43045ba94804d6820d4c20etplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
 
 ### 实际工作中的案例
 
