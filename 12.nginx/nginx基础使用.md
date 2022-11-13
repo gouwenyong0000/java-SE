@@ -1,18 +1,16 @@
 # Nginx 基础使用
 
-
-
 ## 目录结构
 
 进入Nginx的主目录我们可以看到这些文件夹
 
-```
+```nginx
 client_body_temp conf fastcgi_temp html logs proxy_temp sbin scgi_temp uwsgi_temp
 ```
 
 其中这几个文件夹在刚安装后是没有的，主要用来存放运行过程中的临时文件
 
-```
+```nginx
 client_body_temp fastcgi_temp proxy_temp scgi_temp
 ```
 
@@ -30,7 +28,7 @@ nginx的主程序
 
 ## 基本运行原理
 
-![image-20220413004700752](nginx基础使用.assets/image-20220413004700752.png)
+![image-20220413004700752](image/nginx基础使用/image-20220413004700752-1666102497966-2.png)
 
 Master线程调度work线程进行实际工作
 
@@ -61,11 +59,11 @@ default_type application/octet-stream; 如果mime类型没匹配上，默认使�
 sendfile on; 使用linux的sendfile(socket, file, len) 高效网络传输，也就是数据0拷贝。
 未开启sendfile
 
-![image-20220413004955085](nginx基础使用.assets/image-20220413004955085.png)
+![image-20220413004955085](image/nginx基础使用/image-20220413004955085.png)
 
 开启后
 
-![image-20220413005013333](nginx基础使用.assets/image-20220413005013333.png)
+![image-20220413005013333](image/nginx基础使用/image-20220413005013333.png)
 
 #### keepalive_timeout 65;
 
@@ -73,20 +71,20 @@ keepalive_timeout 65;
 
 #### server
 
-![image-20220413005041716](nginx基础使用.assets/image-20220413005041716.png)
+![image-20220413005041716](image/nginx基础使用/image-20220413005041716.png)
 
 虚拟主机配置
 
 ```nginx
 server {
-    listen 80; #监听端口号
+    listen 80; #监听本机端口号
     server_name localhost   *.mmban.com  ~^[0-9]+\.mmban\.com$; #多域名匹配同一站点
     location / { #匹配路径
     	root htmlApp; #文件根目录
    	 	index index.html index.htm; #默认页名称
     }
-    error_page 500 502 503 504 /50x.html; #报错编码对应页面
-    	location = /50x.html {
+    error_page 500 502 503 504 /50x.html; #报错编码对应页面  其中 /50x.html  表示去寻找下面的location= /50x.html      500 502 503 504表示错误码
+    location = /50x.html {
     	root html;
     }
 }
@@ -200,11 +198,11 @@ location / {
 ```nginx
 # 配置域名代理
 server {
-	listen		80;
+	listen		80;  #监听本机端口号
 	server_name	manage.jt.com;
 	location / {		
 		#代理的是服务器地址
-		proxy_pass    http://jtW;
+		proxy_pass    http://jtW;  # 代理地址
 	}
 }
 
@@ -281,7 +279,20 @@ upstream  jtW {
 
 ### 总结
 
-![image-20220420223545047](nginx基础使用.assets/image-20220420223545047.png)
+![image-20220420223545047](image/nginx基础使用/image-20220420223545047.png)
+
+
+
+## 正向代理配置
+
+```nginx
+proxy_pass $scheme://$host$request_uri;
+resolver 8.8.8.8;
+```
+
+
+
+
 
 ## 动静分离
 
@@ -462,7 +473,7 @@ http跳转到https  可以使用
 return 301 https://$server_name$request_uri;
 ```
 
-![image-20220423200456423](nginx基础使用.assets/image-20220423200456423.png)
+![image-20220423200456423](image/nginx基础使用/image-20220423200456423.png)
 
 ### 同时使用负载均衡
 
@@ -507,6 +518,8 @@ server {
 ```
 
 ## 防盗链配置
+
+Referer防盗链，是基于HTTP请求头中Referer字段（例如，Referer黑白名单）来设置访问控制规则，实现对访客的身份识别和过滤，防止网站资源被非法盗用
 
 ```nginx
 valid_referers none | blocked | server_names | strings ....;
@@ -673,11 +686,11 @@ rpm -q -a keepalived
 ```
 
 为什么要配置nginx高可用？以防单一nginx挂了，另一个nginx能担当重任。
-![在这里插入图片描述](nginx基础使用.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70.png)
+![在这里插入图片描述](image/nginx基础使用/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70.png)
 
 #### 1、什么是Nginx高可用
 
-![在这里插入图片描述](nginx基础使用.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055845092817.png)
+![在这里插入图片描述](image/nginx基础使用/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055845092817.png)
 
 ```java
 需要两台 nginx 服务器
@@ -809,7 +822,7 @@ fi
 把主服务器（192.168.17.129） Nginx 和 keepalived 停止，再输入 192.168.17.50
 ```
 
-![在这里插入图片描述](nginx基础使用.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055845092918.png)
+![在这里插入图片描述](image/nginx基础使用/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055845092918.png)
 
 
 
@@ -823,7 +836,7 @@ fi
 
 **对称加密不安全**，加解密的秘钥都需要传递，会被拦截破解
 
-![image-20220422003603223](nginx基础使用.assets/image-20220422003603223.png)
+![image-20220422003603223](image/nginx基础使用/image-20220422003603223.png)
 
 #### **非对称解密算法**
 
@@ -836,13 +849,13 @@ fi
 >
 > **问题**：被钓鱼网站拦截，钓鱼网站返回伪造公私钥，用私钥解密出内容，去代理伪造请求  【第三方者攻击】
 
-![image-20220423154830601](nginx基础使用.assets/image-20220423154830601.png)
+![image-20220423154830601](image/nginx基础使用/image-20220423154830601.png)
 
 
 
 #### CA机构 + 非对称加密 = https
 
-![image-20220423160759700](nginx基础使用.assets/image-20220423160759700.png)
+![image-20220423160759700](image/nginx基础使用/image-20220423160759700.png)
 
 引入CA机构，通过【ca的私钥 + 算法】+ 认证公钥  = 证书
 
@@ -866,9 +879,9 @@ fi
 
 
 
-![image-20220423160621536](nginx基础使用.assets/image-20220423160621536.png)
+![image-20220423160621536](image/nginx基础使用/image-20220423160621536.png)
 
-![image-20220423160632325](nginx基础使用.assets/image-20220423160632325.png)
+![image-20220423160632325](image/nginx基础使用/image-20220423160632325.png)
 
 ### openssl
 
@@ -898,15 +911,15 @@ https://www.hohnstaedt.de/xca/index.php/download
 
 万维网、阿里云
 
-![image-20220423162006809](nginx基础使用.assets/image-20220423162006809.png)
+![image-20220423162006809](image/nginx基础使用/image-20220423162006809.png)
 
 
 
 ### 2、 申请主机
 
-![image-20220423162334690](nginx基础使用.assets/image-20220423162334690.png)
+![image-20220423162334690](image/nginx基础使用/image-20220423162334690.png)
 
-![image-20220423162757641](nginx基础使用.assets/image-20220423162757641.png)
+![image-20220423162757641](image/nginx基础使用/image-20220423162757641.png)
 
 ### 3、LNMP  搭建服务器环境
 
@@ -916,51 +929,51 @@ https://www.hohnstaedt.de/xca/index.php/download
 
 生成安装命令 + 安装
 
-![image-20220423163045010](nginx基础使用.assets/image-20220423163045010.png)
+![image-20220423163045010](image/nginx基础使用/image-20220423163045010.png)
 
 
 
-![image-20220423163059627](nginx基础使用.assets/image-20220423163059627.png)
+![image-20220423163059627](image/nginx基础使用/image-20220423163059627.png)
 
 
 
 开放防火墙
 
-![image-20220423163515854](nginx基础使用.assets/image-20220423163515854.png)
+![image-20220423163515854](image/nginx基础使用/image-20220423163515854.png)
 
 ### 4、解析域名到主机
 
 1、解析域名
 
-![image-20220423164127571](nginx基础使用.assets/image-20220423164127571.png)
+![image-20220423164127571](image/nginx基础使用/image-20220423164127571.png)
 
 2、泛解析
 
-![image-20220423164155688](nginx基础使用.assets/image-20220423164155688.png)
+![image-20220423164155688](image/nginx基础使用/image-20220423164155688.png)
 
 ### 5、 申请CA证书
 
 SSL证书
 
-![image-20220423164424269](nginx基础使用.assets/image-20220423164424269.png)
+![image-20220423164424269](image/nginx基础使用/image-20220423164424269.png)
 
 
 
-![image-20220423164631023](nginx基础使用.assets/image-20220423164631023.png)
+![image-20220423164631023](image/nginx基础使用/image-20220423164631023.png)
 
 ### 6、配置证书
 
 下载证书
 
-![image-20220423164820144](nginx基础使用.assets/image-20220423164820144.png)
+![image-20220423164820144](image/nginx基础使用/image-20220423164820144.png)
 
 上传到服务器
 
-![image-20220423165257112](nginx基础使用.assets/image-20220423165257112.png)
+![image-20220423165257112](image/nginx基础使用/image-20220423165257112.png)
 
 配置
 
-![image-20220423165328595](nginx基础使用.assets/image-20220423165328595.png)
+![image-20220423165328595](image/nginx基础使用/image-20220423165328595.png)
 
 重启nginx
 
@@ -968,11 +981,11 @@ SSL证书
 
 访问`https://upguigu.com`
 
-![image-20220423165424930](nginx基础使用.assets/image-20220423165424930.png)
+![image-20220423165424930](image/nginx基础使用/image-20220423165424930.png)
 
 
 
-![image-20220423165129547](nginx基础使用.assets/image-20220423165129547.png)
+![image-20220423165129547](image/nginx基础使用/image-20220423165129547.png)
 
 ### 8、discuz搭建BBS站点
 
@@ -991,15 +1004,15 @@ https://www.discuz.net/
 
 #### 1、mater 和 worker
 
-![在这里插入图片描述](nginx基础使用.assets/2021021516212841.png)
+![在这里插入图片描述](image/nginx基础使用/2021021516212841.png)
 
 #### 2、mater 和 worker两个进程
 
-![在这里插入图片描述](nginx基础使用.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055906585625.png)
+![在这里插入图片描述](image/nginx基础使用/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055906585625.png)
 
 #### 3、worker 如何进行工作的
 
-![在这里插入图片描述](nginx基础使用.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055906585626.png)
+![在这里插入图片描述](image/nginx基础使用/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055906585626.png)
 
 #### 4、master-workers 的机制的好处
 
@@ -1008,7 +1021,7 @@ https://www.discuz.net/
 其次，采用独立的进程，可以让互相之间不会影响，一个进程退出后，其它进程还在工作，服务不会中断， master 进程则很快启动新的worker进程。
 
 当然， worker 进程的异常退出，肯定是程序有 bug 了，异常退出，会导致当前 worker 上的所有请求失败，不过不会影响到所有请求，所以降低了风险。
-![在这里插入图片描述](nginx基础使用.assets/20210223005929964.png)
+![在这里插入图片描述](image/nginx基础使用/20210223005929964.png)
 
 #### 5、需要设置多少个 worker
 
@@ -1028,4 +1041,4 @@ worker_cpu_affinity 0000001 00000010 00000100 00001000
 
 #### 6、连接数 worker_connection
 
-![在这里插入图片描述](nginx基础使用.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055906585627.png)
+![在这里插入图片描述](image/nginx基础使用/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V4b2R1czM=,size_16,color_FFFFFF,t_70-165055906585627.png)
