@@ -6660,7 +6660,7 @@ public class JunitTest {
 
 ![image-20210329225059023](javaSE.assets/image-20210329225059023.png)
 
-![image-20210329225110196](../image-20210329225110196.png)
+![image-20210329225110196](image/javaSE/image-20210329225110196.png)
 
 ![image-20210329225243037](javaSE.assets/image-20210329225243037.png)
 
