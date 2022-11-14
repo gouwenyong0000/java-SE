@@ -69,19 +69,19 @@ Linux git maven
 
 		- 更快速的应用交付和部署
 
-		  传统的应用开发完成后，需要提供一堆安装程序和配置说明文档，安装部署后需根据配置文档进行繁杂的配置才能正常运行。Docker化之后只需要交付少量容器镜像文件，在正式生产环境加载镜像并运行即可，应用安装配置在镜像里已经内置好，大大节省部署配置和测试验证时间。
+	    传统的应用开发完成后，需要提供一堆安装程序和配置说明文档，安装部署后需根据配置文档进行繁杂的配置才能正常运行。Docker化之后只需要交付少量容器镜像文件，在正式生产环境加载镜像并运行即可，应用安装配置在镜像里已经内置好，大大节省部署配置和测试验证时间。
 
-		- 更便捷的升级和扩缩容
+	- 更便捷的升级和扩缩容
 
-		  随着微服务架构和Docker的发展，大量的应用会通过微服务方式架构，应用的开发构建将变成搭乐高积木一样，每个Docker容器将变成一块“积木”，应用的升级将变得非常容易。当现有的容器不足以支撑业务处理时，可通过镜像运行新的容器进行快速扩容，使应用系统的扩容从原先的天级变成分钟级甚至秒级。
+	  随着微服务架构和Docker的发展，大量的应用会通过微服务方式架构，应用的开发构建将变成搭乐高积木一样，每个Docker容器将变成一块“积木”，应用的升级将变得非常容易。当现有的容器不足以支撑业务处理时，可通过镜像运行新的容器进行快速扩容，使应用系统的扩容从原先的天级变成分钟级甚至秒级。
 
-		- 更简单的系统运维
+	- 更简单的系统运维
 
-		  应用容器化运行后，生产环境运行的应用可与开发、测试环境的应用高度一致，容器会将应用程序相关的环境和状态完全封装起来，不会因为底层基础架构和操作系统的不一致性给应用带来影响，产生新的BUG。当出现程序异常时，也可以通过测试环境的相同容器进行快速定位和修复。
+	  应用容器化运行后，生产环境运行的应用可与开发、测试环境的应用高度一致，容器会将应用程序相关的环境和状态完全封装起来，不会因为底层基础架构和操作系统的不一致性给应用带来影响，产生新的BUG。当出现程序异常时，也可以通过测试环境的相同容器进行快速定位和修复。
 
-		- 更高效的计算资源利用
+	- 更高效的计算资源利用
 
-		  　Docker是内核级虚拟化，其不像传统的虚拟化技术一样需要额外的Hypervisor支持，所以在一台物理机上可以运行很多个容器实例，可大大提升物理服务器的CPU和内存的利用率。
+	  　Docker是内核级虚拟化，其不像传统的虚拟化技术一样需要额外的Hypervisor支持，所以在一台物理机上可以运行很多个容器实例，可大大提升物理服务器的CPU和内存的利用率。
 
 - 企业级
 
@@ -207,129 +207,135 @@ CentOS Linux release 7.7.1908 (Core)
 
 - CentOS7安装Docker
 
+
+​	
+- https://docs.docker.com/install/linux/docker-ce/centos/
+- 安装步骤
+
+	- 官网中文安装参考手册
+
+		- https://docs.docker-cn.com/engine/installation/linux/docker-ce/centos/#prerequisites
+
+	- 确定你是CentOS7及以上版本
+
+		- `cat /etc/redhat-release`
+
+	- yum安装gcc相关
+
+		- CentOS7能上外网
+
+			- Subtopic
+
+		- `yum -y install gcc`
+		- `yum -y install gcc-c++`
+
+	- 卸载旧版本【二选一】
+
+	  - `yum -y remove docker docker-common docker-selinux docker-engine`
 	
+	  - 2018.3官网版本
 	
-	- https://docs.docker.com/install/linux/docker-ce/centos/
-	- 安装步骤
-
-		- 官网中文安装参考手册
-
-			- https://docs.docker-cn.com/engine/installation/linux/docker-ce/centos/#prerequisites
-
-		- 确定你是CentOS7及以上版本
-
-			- `cat /etc/redhat-release`
-
-		- yum安装gcc相关
-
-			- CentOS7能上外网
-
-				- Subtopic
+	    ```sh
+	    yum remove docker \
+	                      docker-client \
+	                      docker-client-latest \
+	                      docker-common \
+	                      docker-latest \
+	                      docker-latest-logrotate \
+	                      docker-logrotate \
+	                      docker-selinux \
+	                      docker-engine-selinux \
+	                      docker-engine
+	    ```
+	- 安装需要的软件包
 	
-			- `yum -y install gcc`
-			- `yum -y install gcc-c++`
-
-		- 卸载旧版本【二选一】
+		- `yum install -y yum-utils device-mapper-persistent-data lvm2`
 	
-		  - `yum -y remove docker docker-common docker-selinux docker-engine`
-		
-		  - 2018.3官网版本
-		
-		    ```sh
-		    yum remove docker \
-		                      docker-client \
-		                      docker-client-latest \
-		                      docker-common \
-		                      docker-latest \
-		                      docker-latest-logrotate \
-		                      docker-logrotate \
-		                      docker-selinux \
-		                      docker-engine-selinux \
-		                      docker-engine
-		    ```
-		    
-		  
-		- 安装需要的软件包
-		
-			- `yum install -y yum-utils device-mapper-persistent-data lvm2`
-		
-		- 设置stable镜像仓库
-		
-			- > 大坑【国外速度慢】
-		>
-				> - `yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
-		>		
-				>    报错：
-				1   [Errno 14] curl#35 - TCP connection reset by peer 
-				2   [Errno 12] curl#35 - Timeout
-		
-		```sh
-		# **推荐**
-		
-		yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-		```
-		
-		- 更新yum软件包索引
-		
-			- `yum makecache fast`
-		
-		- 安装DOCKER CE版本：社区版本免费
-		
-			- `yum -y install docker-ce`
-		
-		- 启动docker
-		
-			- `systemctl start docker`
-		
-		- 测试
-		
-			- `docker version`
-			- `docker run hello-world`
-		
-		- 配置镜像加速
-		
-		  - `mkdir -p /etc/docker`
-		
-		  - `vim  /etc/docker/daemon.json`
-		
-		      ```json
-		      # 网易云
-		      {"registry-mirrors": ["http://hub-mirror.c.163.com"] }
-		      
-		      
-		       # 阿里云
-		      sudo tee /etc/docker/daemon.json <<-'EOF'
-		      {
-		        "registry-mirrors": ["https://3avp670w.mirror.aliyuncs.com"]
-		      }
-		      EOF
-		      
-		      ------或者执行如下命令
-		      cat <<EOF > /etc/docker/daemon.json
-		      {
-		        "registry-mirrors": [
-		          "https://dockerhub.azk8s.cn",
-		          "https://hub-mirror.c.163.com"
-		        ]
-		      }
-		      EOF
-		      ```
-		
-		  - 重新加载docker配置`systemctl daemon-reload`
-		
-		  - 重启docker服务`systemctl restart docker`
-		
-		  - 查看镜像配置`docker info`
-		
-		      ![image-20210518010019768](Docker基础篇之快速上手.assets/image-20210518010019768.png)
-		
-		- 开机自启`systemctl enable docker`
-		
-		- 卸载
-		
-			- `systemctl stop docker` 【停止】
-			- `yum -y remove docker-ce`
-			- `rm -rf /var/lib/docker`
+	- 设置stable镜像仓库
+	
+		- > 大坑【国外速度慢】
+	>
+	>	> - `yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
+	>	
+	>	>    报错：
+	>	1   [Errno 14] curl#35 - TCP connection reset by peer 
+	>	2   [Errno 12] curl#35 - Timeout
+	
+	```sh
+	# **推荐**
+	
+	yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+	```
+	
+	- 更新yum软件包索引
+	
+		- `yum makecache fast`
+	
+	- 安装DOCKER CE版本：社区版本免费
+	
+		- `yum -y install docker-ce`
+	
+	- 启动docker
+	
+		- `systemctl start docker`
+	
+	- 测试
+	
+		- `docker version`
+		- `docker run hello-world`
+	
+	- 配置镜像加速
+	
+	  - `mkdir -p /etc/docker`
+	
+	  - `vim  /etc/docker/daemon.json`
+	
+	      ```json
+	      # 网易云
+	      {"registry-mirrors": ["http://hub-mirror.c.163.com"] }
+	       # 阿里云
+	      sudo tee /etc/docker/daemon.json <<-'EOF'
+	      {
+	        "registry-mirrors": ["https://3avp670w.mirror.aliyuncs.com"]
+	      }
+	      EOF
+	      
+	      ------或者执行如下命令
+	      cat <<EOF > /etc/docker/daemon.json
+	      {
+	        "registry-mirrors": [
+	          "https://dockerhub.azk8s.cn",
+	          "https://hub-mirror.c.163.com"
+	        ]
+	      }
+	      EOF
+	      ```
+	
+	  - 重新加载docker配置`systemctl daemon-reload`
+	
+	  - 重启docker服务`systemctl restart docker`
+	
+	  - 查看镜像配置`docker info`
+	
+	      ![image-20210518010019768](image/Docker基础篇之快速上手/image-20210518010019768.png)
+	
+	- 开机自启`systemctl enable docker`
+	
+	- 卸载
+	
+		- `systemctl stop docker` 【停止】
+		- `yum -y remove docker-ce`
+		- `rm -rf /var/lib/docker`		  
+
+
+​		  
+
+
+
+
+​		      
+
+
 
 ### 永远的HelloWorld
 
@@ -585,16 +591,16 @@ docker commit /docker push？？
 
   	     OPTIONS说明（常用）：有些是一个减号，有些是两个减号 
 
-  	     `--name="容器新名字"`: 为容器指定一个名称；
-  	     `-d`: 后台运行容器，并返回容器ID，也即启动守护式容器；
-  	     **`-i`：以交互模式运行容器，通常与 -t 同时使用；**
-  	     **`-t`：为容器重新分配一个伪输入终端，通常与 -i 同时使用；**
-  	     `-P`: 随机端口映射；【大写】
-  	     **`-p:` 指定端口映射，有以下四种格式**
-  	           ip:hostPort:containerPort
-  	           ip::containerPort
-  	           **hostPort:containerPort**
-  	           containerPort
+  	 `--name="容器新名字"`: 为容器指定一个名称；
+  	 `-d`: 后台运行容器，并返回容器ID，也即启动守护式容器；
+  	 **`-i`：以交互模式运行容器，通常与 -t 同时使用；**
+  	 **`-t`：为容器重新分配一个伪输入终端，通常与 -i 同时使用；**
+  	 `-P`: 随机端口映射；【大写】
+  	 **`-p:` 指定端口映射，有以下四种格式**
+  	       ip:hostPort:containerPort
+  	       ip::containerPort
+  	       **hostPort:containerPort**
+  	       containerPort
   	
   	- 启动交互式容器
   	
@@ -608,15 +614,15 @@ docker commit /docker push？？
   	-  OPTIONS说明
 
   	  OPTIONS说明（常用）： 
-  	  
+  	
   	  `-a` :列出当前所有正在运行的容器+历史上运行过的【默认显示当前正在运行的容器】
-  	  
+  	
   	  `-l` :显示最近创建的容器。
-  	  
+  	
   	  `-n`：显示最近n个创建的容器。
-  	  
+  	
   	  **`-q` :静默模式，只显示容器编号。**
-  	  
+  	
   	  `--no-trunc` :不截断输出。
 
 - **退出容器**
@@ -929,16 +935,18 @@ docker commit /docker push？？
 	   `docker run -it -p 8080:8080 tomcat`
 
 	  - - -p 主机端口:docker容器端口
-	  	  ![image-20210520011736221](Docker基础篇之快速上手.assets/image-20210520011736221.png)
-	  	- -P 随机分配端口
-	  	  ![image-20210520013101968](Docker基础篇之快速上手.assets/image-20210520013101968.png)
-	  	- -i:交互
-	  	- -t:终端
+	    - ![image-20210520011736221](Docker基础篇之快速上手.assets/image-20210520011736221.png)
+	      - -P 随机分配端口
+	        ![image-20210520013101968](Docker基础篇之快速上手.assets/image-20210520013101968.png)
+	      - -i:交互
+	      - -t:终端
+
+	
 
 	- 故意删除上一步镜像生产tomcat容器的文档
 
 	  ![image-20210520013513971](Docker基础篇之快速上手.assets/image-20210520013513971.png)
-
+	
 	- 也即当前的tomcat运行实例是一个没有文档内容的容器，
 	  以它为模板commit一个没有doc的tomcat新镜像atguigu/tomcat02
 	
@@ -1013,9 +1021,9 @@ docker commit /docker push？？
   	  ![image-20210520231002797](Docker基础篇之快速上手.assets/image-20210520231002797.png)
   	
   	  描述：
-  	  
+  	
   	  **容器内的映射文件夹：不能进行写操作，**
-  	  
+  	
   	  **宿主机内映射的文件夹：可以进行写操作**
 
   
@@ -1105,8 +1113,9 @@ docker commit /docker push？？
 	  	![image-20210521005539435](Docker基础篇之快速上手.assets/image-20210521005539435.png)
 	  	
 	  	- dc02/dc03分别在dataVolumeContainer2各自新增内容
-	  	
-	  	  
+	
+	
+	  ​	  
 	
 	- 回到dc01可以看到02/03各自添加的都能共享了
 	
@@ -1147,7 +1156,9 @@ docker commit /docker push？？
 	- 以我们熟悉的CentOS为例 
 
 		- https://hub.docker.com/_/centos/
-		  ![image-20210521013006806](Docker基础篇之快速上手.assets/image-20210521013006806.png)
+	-  ![image-20210521013006806](image/Docker基础篇之快速上手/image-20210521013006806.png)
+	
+	
 
 ### DockerFile构建过程解析
 
@@ -1336,6 +1347,7 @@ docker commit /docker push？？
     	- tomcat的讲解演示
 
     		- `docker run -it -p 8888:8080 tomcat ls -l`
+    	
     		  ![image-20210525005838565](Docker基础篇之快速上手.assets/image-20210525005838565.png)
     		  tomcat 的启动脚本被替换成`ls -l`打印
 
@@ -1350,7 +1362,7 @@ docker commit /docker push？？
   		   FROM centos
   		   RUN yum install -y curl
   		   CMD [ "curl", "-s", "http://ip.cn" ]
-  		   ```
+  		```
 
   		   - crul命令解释
 
@@ -1599,24 +1611,24 @@ docker commit /docker push？？
 	    	-e MYSQL_ROOT_PASSWORD=123456 \
 	    	-d mysql:5.6
 	     
-	    ```
+	   ```
 	
-	    ```sh
-	    # 命令说明：
-	    -p 12345:3306：将主机的12345端口映射到docker容器的3306端口。
-	    --name mysql：运行服务名字
-	    -v /zzyyuse/mysql/conf:/etc/mysql/conf.d ：将主机/zzyyuse/mysql录下的conf/my.cnf 挂载到容器的 /etc/mysql/conf.d
-	    -v /zzyyuse/mysql/logs:/logs：将主机/zzyyuse/mysql目录下的 logs 目录挂载到容器的 /logs。
-	    -v /zzyyuse/mysql/data:/var/lib/mysql ：将主机/zzyyuse/mysql目录下的data目录挂载到容器的 /var/lib/mysql 
-	    -e MYSQL_ROOT_PASSWORD=123456：初始化 root 用户的密码。
-	    -d mysql:5.6 : 后台程序运行mysql5.6
-	    ```
+	```sh
+	# 命令说明：
+	-p 12345:3306：将主机的12345端口映射到docker容器的3306端口。
+	--name mysql：运行服务名字
+	-v /zzyyuse/mysql/conf:/etc/mysql/conf.d ：将主机/zzyyuse/mysql录下的conf/my.cnf 挂载到容器的 /etc/mysql/conf.d
+	-v /zzyyuse/mysql/logs:/logs：将主机/zzyyuse/mysql目录下的 logs 目录挂载到容器的 /logs。
+	-v /zzyyuse/mysql/data:/var/lib/mysql ：将主机/zzyyuse/mysql目录下的data目录挂载到容器的 /var/lib/mysql 
+	-e MYSQL_ROOT_PASSWORD=123456：初始化 root 用户的密码。
+	-d mysql:5.6 : 后台程序运行mysql5.6
+	```
 	
-	    ```sh
-	    docker exec -it MySQL运行成功后的容器ID     /bin/bash
-	    ```
+	```sh
+	docker exec -it MySQL运行成功后的容器ID     /bin/bash
+	```
 	
-	    ![image-20210525021847628](Docker基础篇之快速上手.assets/image-20210525021847628.png)
+	![image-20210525021847628](Docker基础篇之快速上手.assets/image-20210525021847628.png)
 	
 	- 外部Win10也来连接运行在dokcer上的mysql服务
 	   ![image-20210525022136598](Docker基础篇之快速上手.assets/image-20210525022136598.png)
@@ -1643,7 +1655,7 @@ docker commit /docker push？？
 	   	-v /zzyyuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf  \
 	   	-d redis:3.2 redis-server /usr/local/etc/redis/redis.conf \
 	   	--appendonly yes
-	   ```
+	```
 	
 	- 在主机/zzyyuse/myredis/conf/redis.conf目录下新建redis.conf文件
 	  `vim /zzyyuse/myredis/conf/redis.conf/redis.conf`
