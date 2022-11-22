@@ -137,7 +137,7 @@
 </html>
 ```
 
-![image-20210801145710068](vue.assets/image-20210801145710068.png)
+![image-20210801145710068](image/vue/image-20210801145710068.png)
 
 ## v-on
 
@@ -184,7 +184,7 @@
 
 传递自定义参数事件修饰符
 
-![image-20210801203837013](vue.assets/image-20210801203837013.png)
+![image-20210801203837013](image/vue/image-20210801203837013.png)
 
 + 事件绑定的方法写成`函数调用`的形式，可以传入自定义参数
 + 定义方法时需要定义`形参`来接收传入的实参
@@ -231,7 +231,7 @@
 
 
 
-![image-20210801204422844](vue.assets/image-20210801204422844.png)
+![image-20210801204422844](image/vue/image-20210801204422844-1669116496799-2.png)
 
 ## 案例1：计数器
 
@@ -512,13 +512,13 @@
 
 ```
 
-![image-20210801162332890](vue.assets/image-20210801162332890.png)
+![image-20210801162332890](image/vue/image-20210801162332890.png)
 
 ## `v-model`
 
 获取和设置表单元素的值（**双向数据绑定**）
 
-![image-20210801204639198](vue.assets/image-20210801204639198.png)
+![image-20210801204639198](image/vue/image-20210801204639198.png)
 
 + `v-model`指令的作用是便捷的设置和获取表单元素的值
 + 绑定的数据会和表单元素**值**相关联
@@ -616,11 +616,11 @@
 
 
 
-![image-20210803215222784](vue.assets/image-20210803215222784.png)
+![image-20210803215222784](image/vue/image-20210803215222784.png)
 
 ## 记事本
 
-![image-20210801214143791](vue.assets/image-20210801214143791.png)
+![image-20210801214143791](image/vue/image-20210801214143791.png)
 
 
 
@@ -709,7 +709,7 @@
 
 功能强大的网络请求库`https://unpkg.com/axios@0.21.1/dist/axios.min.js`
 
-![image-20210801214625950](vue.assets/image-20210801214625950.png)
+![image-20210801214625950](image/vue/image-20210801214625950.png)
 
 
 
@@ -837,9 +837,9 @@
 
 ## 天知道  网络应用
 
-![image-20210801235555515](vue.assets/image-20210801235555515.png)
+![image-20210801235555515](image/vue/image-20210801235555515.png)
 
-![image-20210801235718857](vue.assets/image-20210801235718857.png)
+![image-20210801235718857](image/vue/image-20210801235718857.png)
 
 + 应用的逻辑代码建议和页面分离，使用单独的js文件编写
 + axios回调函数中this指向改变了，需要额外的保存一份
@@ -932,31 +932,31 @@
 
 # 综合应用
 
-![image-20210802004814327](vue.assets/image-20210802004814327.png)
+![image-20210802004814327](image/vue/image-20210802004814327.png)
 
 `https://autumnfish.cn/search`
 
-![image-20210802011650018](vue.assets/image-20210802011650018.png)
+![image-20210802011650018](image/vue/image-20210802011650018.png)
 
 `https://autumnfish.cn/song/url`
 
-![image-20210802013439785](vue.assets/image-20210802013439785.png)
+![image-20210802013439785](image/vue/image-20210802013439785.png)
 
 `https://autumnfish.cn/song/detail`
 
-![image-20210802015215753](vue.assets/image-20210802015215753.png)
+![image-20210802015215753](image/vue/image-20210802015215753.png)
 
-![image-20210802021021984](vue.assets/image-20210802021021984.png)
+![image-20210802021021984](image/vue/image-20210802021021984.png)
 
 监听播放条开始暂停事件，修改css样式
 
-![image-20210802021432636](vue.assets/image-20210802021432636.png)
+![image-20210802021432636](image/vue/image-20210802021432636.png)
 
-![image-20210802021746862](vue.assets/image-20210802021746862.png)
+![image-20210802021746862](image/vue/image-20210802021746862.png)
 
 
 
-![image-20210802022402446](vue.assets/image-20210802022402446.png)
+![image-20210802022402446](image/vue/image-20210802022402446.png)
 
 `https://autumnfish.cn/mv/url`
 

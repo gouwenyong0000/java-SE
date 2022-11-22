@@ -75,7 +75,7 @@ JS的注释符号和Java的注释符号相同，如下：
 </html>
 ```
 
-![](image/4、JavaScript学习/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263749-14.png)
+![](image/JavaScript/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263749-14.png)
 
 4.5 JS 引入方式
 -----------
@@ -89,7 +89,7 @@ JS的注释符号和Java的注释符号相同，如下：
 ### 4.5.2 外部引用
 
 1. 新建一个 JS 文件, 后缀名为 xxx.js  
-   ![](image/4、JavaScript学习/6a7f2c0153af4c39a43de70c187fad27.png)  
+   ![](image/JavaScript/6a7f2c0153af4c39a43de70c187fad27.png)  
 2. 编辑 JS 文件
 
 ```js
@@ -477,6 +477,7 @@ obj.gender = "男";
 //向obj中添加age属性
 obj.age = 18;
 ```
+
  对象的属性名不强制要求遵守标识符的规范，什么乱七八糟的名字都可以使用，但是我们使用时还是尽量按照标识符的规范去做。
 
 
@@ -495,6 +496,7 @@ obj["nihao"] = "nihao";
 var n = "123";
 console.log(obj[n]);//789  因为n的值为"123",而obj对象"123"的属性值为789
 ```
+
 JS中的属性值可以是任意的数据类型，甚至它也可以是一个对象
 
 ### 4.8.5 读取对象中的属性
@@ -516,6 +518,7 @@ in 运算符
 	console.log("test2" in obj);//false
 	console.log("test" in obj);//true
 ```
+
 #### 二、获取对象属性和方法
 
 **`Object.keys()`** 返回对象的**可枚举属性和方法**的**名称数组**。
@@ -1073,7 +1076,7 @@ JSON 格式:
 
 对象（object） 是一个无序的 “‘名称 / 值’对” 集合。一个对象以 “{”（左括号）开始，“}”（右括号）结束。每个“名称” 后跟一个 “:”（冒号）；“‘名称 / 值’ 对” 之间使用“,”（逗号）分隔。
 
-![](image/4、JavaScript学习/39aebc4ecaa54030b98463c28ba97069.gif)
+![](image/JavaScript/39aebc4ecaa54030b98463c28ba97069.gif)
 
 ```json
 {"id": 100, "name": "tomcat猫", "age": 18}
@@ -1083,7 +1086,7 @@ JSON 格式:
 
 值（value） 可以是双引号括起来的字符串（string）、数值 (number)、true、false、 null、对象（object）或者数组（array）。这些结构可以嵌套。
 
-![](image/4、JavaScript学习/242d3e210ca84381bdeeafb39bcaa253.gif)
+![](image/JavaScript/242d3e210ca84381bdeeafb39bcaa253.gif)
 
 ```json
 ["a","b","c","d"]
@@ -1093,7 +1096,7 @@ JSON 格式:
 
 值（value） 可以是双引号括起来的字符串（string）、数值 (number)、true、false、 null、对象（object）或者数组（array）。这些结构可以嵌套。
 
-![](image/4、JavaScript学习/b6f06f35cc324554a5fa23128d221f2a.gif)
+![](image/JavaScript/b6f06f35cc324554a5fa23128d221f2a.gif)
 
 ```json
 [{"id": 1,"name":"tomcat猫"},{"id": 2,"name":"狗"},{"id": 3,"name":"猪"}]
@@ -1163,7 +1166,7 @@ DOM 是 Document Object Model 的缩写，意思是『文档对象模型』—�
 
 而第一个读取到的肯定是根标签 html，然后是它的子标签 head，再然后是 head 标签里的子标签…… 所以从 html 标签开始，整个文档中的所有标签都会根据它们之间的『父子关系』被放到一个 『树形结构』的对象中
 
-![](image/4、JavaScript学习/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263748-3.png)
+![](image/JavaScript/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263748-3.png)
 
 ### 4.11.3 各个组成部分的类型
 
@@ -1175,11 +1178,11 @@ DOM 是 Document Object Model 的缩写，意思是『文档对象模型』—�
 
 ### 4.11.4 父子关系
 
-![](image/4、JavaScript学习/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263748-4.png)
+![](image/JavaScript/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263748-4.png)
 
 ### 4.11.5 先辈后代关系
 
-![](image/4、JavaScript学习/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263748-5.png)
+![](image/JavaScript/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_20,color_FFFFFF,t_70,g_se,x_16-1665590263748-5.png)
 
 ### 4.11.6 DOM 操作
 
@@ -1521,7 +1524,7 @@ getAttribute(“自定义属性的名字”)
 ④ 每条用户信息后都有一个删除的超链接，点击删除，删除当前用户信息
 
 图解:  
-![](image/4、JavaScript学习/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_11,color_FFFFFF,t_70,g_se,x_16.png)
+![](image/JavaScript/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6Zeq6ICA5aSq6Ziz,size_11,color_FFFFFF,t_70,g_se,x_16.png)
 
 ### 4.12.2 作业代码
 
