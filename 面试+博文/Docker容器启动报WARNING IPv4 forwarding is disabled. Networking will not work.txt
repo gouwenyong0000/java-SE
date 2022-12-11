@@ -1,0 +1,24 @@
+Docker容器启动报WARNING: IPv4 forwarding is disabled. Networking will not work
+
+容器启动报错
+
+解决方法
+vim /etc/sysctl.conf
+复制
+或者
+
+vi /usr/lib/sysctl.d/00-system.conf 
+复制
+添加如下代码：
+
+net.ipv4.ip_forward=1 
+复制
+重启network服务
+
+systemctl restart network  
+复制
+查看是否修改成功
+
+sysctl net.ipv4.ip_forward  
+复制
+如果返回为“net.ipv4.ip_forward = 1”则表示成功了 重启容器即可。

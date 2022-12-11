@@ -256,7 +256,7 @@ CentOS Linux release 7.7.1908 (Core)
 		- > 大坑【国外速度慢】
 	>
 	>	> - `yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
-	>	
+	>		
 	>	>    报错：
 	>	1   [Errno 14] curl#35 - TCP connection reset by peer 
 	>	2   [Errno 12] curl#35 - Timeout
@@ -1363,10 +1363,10 @@ docker commit /docker push？？
   		   RUN yum install -y curl
   		   CMD [ "curl", "-s", "http://ip.cn" ]
   		```
-
+		
   		   - crul命令解释
-
-  		      ```
+		
+  		```
   		        curl命令可以用来执行下载、发送各种HTTP请求，指定HTTP头部等操作。
   		        如果系统没有curl可以使用yum install curl安装，也可以下载安装。
   		        curl是将下载文件输出到stdout
@@ -1655,12 +1655,11 @@ docker commit /docker push？？
 	   	-v /zzyyuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf  \
 	   	-d redis:3.2 redis-server /usr/local/etc/redis/redis.conf \
 	   	--appendonly yes
-	```
-	
-	- 在主机/zzyyuse/myredis/conf/redis.conf目录下新建redis.conf文件
-	  `vim /zzyyuse/myredis/conf/redis.conf/redis.conf`
-
-	  ```sh
+	   ```
+	   
+	   - 在主机/zzyyuse/myredis/conf/redis.conf目录下新建redis.conf文件
+	   -   `vim /zzyyuse/myredis/conf/redis.conf/redis.conf`
+	```sh
 	  # Redis configuration file example.
 	  #
 	  # Note that in order to read the configuration file, Redis must be
@@ -2622,7 +2621,7 @@ docker commit /docker push？？
 	  # in order to commit the file to the disk more incrementally and avoid
 	  # big latency spikes.
 	  aof-rewrite-incremental-fsync yes
-	  ```
+	```
 	
 	- 测试redis-cli连接上来
 	
