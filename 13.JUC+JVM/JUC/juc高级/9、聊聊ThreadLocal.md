@@ -858,6 +858,8 @@ ThreadLocalMap 使用 ThreadLocal 的弱引用作为 key ，如果一个 ThreadL
 
 ![image-20220909002924306](image/9、聊聊ThreadLocal/image-20220909002924306-1662654867032-11-1662726623651-36.png)
 
+
+
 **5、小总结**
 =========
 
@@ -874,3 +876,124 @@ ThreadLocalMap 的 Entry 对 ThreadLocal 的引用为弱引用，避免了 Threa
 都会通过 expungeStaleEntry，cleanSomeSlots,replaceStaleEntry 这三个方法回收键为 null 的 Entry 对象的值（即为具体实例）以及 Entry 对象本身从而防止内存泄漏，属于安全加固的方法
 
 群雄逐鹿起纷争，人各一份天下安
+
+
+
+
+
+# 拓展：内存泄漏演示分析
+
+ThreadLocal 的作用是提供线程内的局部变量，API 简单易用。不过 ThreadLocal 的使用不是本文存在的原因，今天研究了一下 ThreadLocal 的设计思路，想在这里记录一下。
+
+### 问题剖析
+
+为了实现我们的想法`提供线程内的局部变量`，我们需要一个什么样的东西？官方的 API 大概是这样使用的：
+
+```java
+ThreadLocal foo = ThreadLocal.withInitial(()-> 0);
+foo.get();
+foo.set(1);
+foo.remove();
+```
+
+显而易见，我们直接操作`ThreadLocal变量`，而变量的值是根据`当前代码执行的上下文（当前线程）`确定的。所以我们起码可以提出 2 点：
+
+1.  线程和 ThreadLocal 变量是**多对多**的关系，即一个线程可以有多个 ThreadLocal 变量；一个 ThreadLocal 变量也对应多个线程。
+2.  为了确定一个值，我们至少需要知道是当前处于**哪个线程**？ 以及是**哪个变量？**
+
+幸运的是，这 2 个问题都不难回答。线程当然是**当前线程** ，而变量当然也就是我们**正在操作的变量**。这虽然看起来是 2 个傻问题，但记住这句话：**这确实是 ThreadLocal 设计的关键**。
+
+### 方案研究
+
+如果没看过 ThreadLocal 的源码，只使用过它的 API，让我们实现它，我们会怎么做？
+
+（阅读下文时请时刻记住上面提出的 2 个问题）
+
+（因为个人喜好，使用了 python 和 Java 混合代码）
+
+#### 设计 1：
+
+最容易想到的实现方式：当然是为每个变量维护一个线程表，然后根据线程来取得相应的值。
+
+```python
+# 设计1的实现
+class ThreadLocal:
+  	def get():
+      	Map<Thread, Object> threadMap = this.threadMap 
+        return threadMap.get(Thread.currentThread()).value()
+```
+
+这种方式先定位了变量，后定位了线程。值保存在 ThreadLocal 类的 map 中。
+
+#### 设计 2：
+
+还有一种实现方式：为每个线程维护一个变量表，然后根据变量来取得相应的值。
+
+```python
+# 设计2的实现
+class ThreadLocal:
+ 	def get():
+ 		Map<ThreadLocal, Object> threadLocalMap = Thread.currentThread().threadLocalMap
+        return threadLocalMap.get(this).value() # 因为我们操作的是变量，所以this指向当前操作的变量
+```
+
+这种方式先定位了线程，后定位了变量。值保存在 **Thread 类**的 map 中。
+
+以上 2 种设计都能满足最初的 API，也就是都能满足我们的需求。JDK 早期版本使用了设计 1 的方案，后来改为了设计 2 的方案。
+
+### 内存泄露
+
+在使用 ThreadLocal 时，仿佛耳边总有个人在轻声说着：泄露~ 内存泄露~! 网上的资料大都语焉不详，可能是因为知根知底的人实在太少了。虽然知道解决问题的方法很简单：调用 remove()，但总有一种知其然，而不知其所以然的感觉，非常难受。所以花了一天的时间研究 ThreadLocal。
+
+![](image/9、聊聊ThreadLocal/threadlocal.png)
+
+背景知识：Thread 类中有一个 ThreadLocalMap 类型的变量，它没有实现 Map 接口，但自己实现了类似 Map 的功能。ThreadLocalMap 的数据保存在一个 Entry 数组中，Entry 的 key 是 ThreadLocal，value 是实际的值。key 有一个特殊的地方在于，它是弱引用的。`弱引用：当所引用的对象在JVM内不再有强引用指向时，GC后weak reference将会被自动回收。` 基于以上背景知识，我们构造以下场景：
+
+```java
+// 位置A： some code here...
+ThreadLocal local = new ThreadLocal();  //1
+local.set("foo")						//2
+local = null;							//3
+System.gc();							//4
+// 位置B： other code here...
+```
+
+以上代码执行到位置 B 的时候就发生了内存泄露！
+
+第三行的时候我们把 local 赋值为 null，（请看一眼上图的图）可见，对 ThreadLocal 的引用只剩下 Entry 的 key 的弱引用了。紧接着第四行我们手动触发 GC，ThreadLocal 对象就被回收了，所以 Entry 的 key 指向了 null。但是这时候 Entry 对 value 还是有着强引用的，它不会被回收。更糟糕的是，我们好像没有办法通过**正常渠道**访问到这个 value 了，这个 value 此时失去了意义，只是平白无故地占用着我们的空间，直到**该线程结束**。
+
+**以上场景的条件并不苛刻**
+
+以最常见的 tomcat + springMVC 环境为例：
+
+```java
+@RequestMapping(value = "/thread/local")
+public String foo() {
+    ThreadLocal local = new ThreadLocal();  //1
+	local.set("foo")						//2
+}
+```
+
+以上场景就满足了内存泄露的所有条件：
+
+1.  local 变量是局部变量，方法结束后对 ThreadLocal 的强引用消失。下次 GC 后对 ThreadLocal 的弱引用也消失、
+2.  tomcat 使用线程池，每次请求取出一个线程，用完之后放回线程池（意味着线程不会结束）
+
+你可以实现一下上面的方法，请求`/thread/local`接口 100 次，然后在 101 次的时候打上断点，检查 Thread.currentThread().threadLocals，看是否有很多个 key 为 null，而 value 为”foo” 的 Entry。
+
+### 最佳实践
+
+1.  ThreadLocal 在没有线程池使用的情况下，不会存在内存泄露
+2.  如果使用了线程池的话，就依赖于线程池的实现，如果线程池不销毁线程的话，那么就会存在内存泄露。所以使用线程池的话，最好在线程工作结束的时候调用一下 remove()
+3.  tomcat 等框架使用了线程池，需要调用 remove()
+
+PS: 如果在线程池的情况下不调用 remove()，除了内存泄露还有另外一个被大家忽略的问题：
+
+线程工作结束，被回收后变量的值没有回收。下次再取出该线程，withInitial() 方法将不会执行，所以得到值也是上次的值。这可能会导致程序的逻辑出现错误。
+
+```
+private ThreadLocal<String> threadLocal = ThreadLocal.withInitial(()-> UUID.randomUUID().toString());
+```
+
+### 
+
