@@ -142,130 +142,89 @@ class SerializeTask implements Runnable {
 > ![](image/Runtime执行cmd&shell命令/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAamF2YV9tb25rZXlfMTEw,size_20,color_FFFFFF,t_70,g_se,x_16-1673195575008-3.png)  
 > ![](image/Runtime执行cmd&shell命令/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAamF2YV9tb25rZXlfMTEw,size_20,color_FFFFFF,t_70,g_se,x_16-1673195577052-6.png)
 
-## eg. 通过命令行统计内存
+## eg. java 利用控制台 与cmd输入交互
 
 ```java
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+public class Test1 {
 
-public class 统计内存 {
+    public static void main(String[] args) {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) throws IOException {
-        test();
-    }
-
-    /**
-     * 统计每个进程占用多少内存
-     *
-     * @throws IOException
-     */
-    private static void test() throws IOException {
-
-//        String command = "cmd /c tasklist | findstr svchost.exe";// 查看内存
-        String command = "cmd /c tasklist ";// 查看内存
         try {
-            Process process = Runtime.getRuntime().exec(command, null);
+            Runtime runtime = Runtime.getRuntime();
+            String[] cmds = {"cmd", "/k"};//此处必须用/k参数
+            Process exec = runtime.exec(cmds);
 
-            SerializeTask target = new SerializeTask(process.getInputStream());
-            SerializeTask err = new SerializeTask(process.getErrorStream());
+            BufferedReader  ResultErrorBuff = new BufferedReader(new InputStreamReader(exec.getErrorStream(), "gbk"));
+            BufferedReader  ResultSuccessBuff = new BufferedReader(new InputStreamReader(exec.getInputStream(), "gbk"));
 
-            new Thread(target).start();//开启线程读取返回值
-            new Thread(err).start();//开启线程读取错误返回
-            process.getOutputStream().close();
-            int exitValue = process.waitFor();//等待结束
-            System.out.println(target.res);
-
-            //正则解析结果
-            Pattern compile = Pattern.compile("(.+)\\s+\\d+\\s+\\w+\\s+\\d\\s+(\\d.+K)");
-            Matcher matcher = compile.matcher(target.res);
-            int total = 0;
-            Map<String, Integer> map = new HashMap<>();
-
-            while (matcher.find()) {
-                int me = ConversionFormat(matcher.group(2));
-                total += me;
-
-                String name = matcher.group(1);
-                if (map.containsKey(name)) {
-                    map.put(name, map.get(name) + me);
-                } else {
-                    map.put(name, me);
+            //处理回显
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String line = null;
+                        while ((line = ResultSuccessBuff.readLine()) != null) {
+                            System.out.println(line);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }finally {
+                        if (ResultSuccessBuff != null) {
+                            try {
+                                ResultSuccessBuff.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
                 }
-
-            }
-            System.out.println("总共占用内存 " + total);
-
-            System.out.println("=================");
-            System.out.println(map);
-
-            //解析结果结束
-
-            System.out.println("运行返回值：" + exitValue);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * 转换数据格式  7,752 K   7752
-     *
-     * @param group
-     * @return
-     */
-    private static int ConversionFormat(String group) {
-        String replace = group.replace(",", "");
-        String replace1 = replace.replace(" K", "");
-        return Integer.parseInt(replace1) / 1024;
-    }
-}
-
-/**
- * 打印输出线程
- */
-class SerializeTask implements Runnable {
-    private InputStream in;
-    String res = "";
-
-    public SerializeTask(InputStream in) {
-        this.in = in;
-    }
-
-    @Override
-    public void run() {
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(in, "gbk"));
-            String line = null;
-            while ((line = br.readLine()) != null) {
-//                System.out.println(line);
-                res = res + line + "\r\n";
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) {
-                    br.close();
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String line = null;
+                        while ((line = ResultErrorBuff.readLine()) != null) {
+                            System.out.println(line);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        if (ResultErrorBuff != null) {
+                            try {
+                                ResultErrorBuff.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            }).start();
+
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(exec.getOutputStream(),"gbk"));
+            Scanner scanner = new Scanner(System.in);
+            while (true) {
+                System.out.print("输入需要执行的命令>>>");
+                String inCmd = scanner.nextLine();
+
+                if (inCmd.equals("break")){
+                    bufferedWriter.write("exit");
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                    //等价于
+                    exec.destroy();
+                    break;
+                }
+                bufferedWriter.write(inCmd);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
             }
-        }
+            System.out.println("exec.waitFor() = " + exec.waitFor());
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        } 
     }
 }
 ```
