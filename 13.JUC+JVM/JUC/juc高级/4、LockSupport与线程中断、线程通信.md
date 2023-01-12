@@ -508,6 +508,14 @@ public class InterruptDemo04 {
 
 ### 正常代码：
 
+> 如果 synchronized 锁定的是 this，那么对应的一定是 this.wait()、this.notify()、this.notifyAll()；
+>
+> 如果 synchronized 锁定的是 target，那么对应的一定是 target.wait()、target.notify()、target.notifyAll() 。
+>
+> 而且 wait()、notify()、notifyAll() 这三个方法能够被调用的前提是已经获取了相应的互斥锁，所以我们会发现 wait()、notify()、notifyAll() 都是在 synchronized{} 内部被调用的。
+>
+> 如果在 synchronized{} 外部调用，或者锁定的 this，而用 target.wait() 调用的话，JVM 会抛出一个运行时异常：`java.lang.IllegalMonitorStateException`。
+
 ```java
 public class LockSupportDemoCopy {
     public static void main(String[] args)//main 方法，主线程一切程序入口
@@ -626,6 +634,8 @@ public class LockSupportDemoCopy {
 
 *   wait 和 notify 方法必须要在同步块或者方法里面，且成对出现使用   否则会出现IllegalMonitorStateException
 *   先 wait 后 notify 才 OK, **顺序**
+
+
 
 3.3、`Condition` 接口中的 `await` 后 `signal` 方法实现线程的等待和唤醒
 ----------------------------------------------
