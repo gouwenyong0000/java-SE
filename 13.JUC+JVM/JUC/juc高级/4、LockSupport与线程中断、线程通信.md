@@ -260,6 +260,7 @@ public void interrupt() {
 - 具体来说，当对一个线程，调用 interrupt() 时：
   1. 如果线程处于**正常活动状态**，那么会将该线程的中断标志设置为 true，仅此而已。被设置中断标志的线程将继续正常运行，不受影响。所以， interrupt() 并不能真正的中断线程，需要被调用的线程自己进行配合才行。
   2. 如果线程处于**被阻塞状态**（例如处于 sleep, wait, join 等状态），在别的线程中调用当前线程对象的`interrupt`方法，那么线程将**立即退出被阻塞状态**（并中断状态将被清除），并抛出一个 InterruptedException 异常。
+   >其他线程调用线程 A 的 interrupt() 方法，会使线程 A 返回到 RUNNABLE 状态，重置interrupt() 标记位，同时线程 A 的代码会触发 InterruptedException 异常
   3. （**中断不活动**的线程**不会**产生任何影响，看下面案例）
 
 **code1 **  验证1、3 点
@@ -308,7 +309,7 @@ public class InterruptDemo2
 
 
 
-**后手案例 - 深入 code2**
+**后手案例 - 深入 被阻塞状态 时被中断**
 
 - 在我们基本中断程序的骨架上 + 一个 sleep 阻塞
 - 中断异常 且 会导致程序无限循环.
@@ -324,7 +325,7 @@ public class InterruptDemo03 {
                     break;
                 }
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(200);//阻塞状态时被中断，抛出InterruptedException异常，且重置interrupt()标记
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     // Thread.currentThread().interrupt();  假如加了这个，程序可以终止，只会爆异常
