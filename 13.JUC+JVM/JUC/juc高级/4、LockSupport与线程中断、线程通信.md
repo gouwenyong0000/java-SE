@@ -263,7 +263,7 @@ public void interrupt() {
    >其他线程调用线程 A 的 interrupt() 方法，会使线程 A 返回到 RUNNABLE 状态，重置interrupt() 标记位，同时线程 A 的代码会触发 InterruptedException 异常
   3. （**中断不活动**的线程**不会**产生任何影响，看下面案例）
 
-**code1 **  验证1、3 点
+#### **code1 **  验证1、3 点
 
 ```java
 public class InterruptDemo2
@@ -309,7 +309,7 @@ public class InterruptDemo2
 
 
 
-**后手案例 - 深入 被阻塞状态 时被中断**
+#### **后手案例 - 深入 wait sleep被阻塞状态 时被中断**
 
 - 在我们基本中断程序的骨架上 + 一个 sleep 阻塞
 - 中断异常 且 会导致程序无限循环.
@@ -468,6 +468,37 @@ public class InterruptDemo04 {
   + 调用`private native boolean isInterrupted(boolean ClearInterrupted);`传入`ClearInterrupted = true`
 
 
+
+> 注意 **InterruptedException 的处理方式**。当你调用 Java 对象的 wait() 方法或者线程的 sleep() 方法时，需要捕获并处理 InterruptedException 异常，在思考题里面（如下所示），本意是通过 isInterrupted() 检查线程是否被中断了，如果中断了就退出 while 循环。当**其他线程通过调用`th.interrupt()`来中断 th 线程时**，会设置 th 线程的中断标志位，从而使`th.isInterrupted()`返回 true，这样就能退出 while 循环了。
+>
+> ```java
+> Thread th = Thread.currentThread();
+> while(true) {  
+>     if(th.isInterrupted()) {   
+>         break;  
+>     }  
+>     // 省略业务代码无数  
+>     try {    
+>         Thread.sleep(100); 
+>     }catch (InterruptedException e){    
+>         e.printStackTrace();  
+>     }
+> }
+> ```
+>
+> 这看上去一点问题没有，实际上却是几乎起不了作用。原因是这段代码在执行的时候，大部分时间都是阻塞在 sleep(100) 上，当其他线程通过调用`th.interrupt().`来中断 th 线程时，大概率地会触发 InterruptedException 异常，**在触发 InterruptedException 异常的同时，JVM 会同时把线程的中断标志位清除**，所以这个时候`th.isInterrupted()`返回的是 false。
+>
+> 正确的处理方式应该是捕获异常之后重新设置中断标志位，也就是下面这样：
+>
+> ```java
+> try {  
+>     Thread.sleep(100);
+> }catch(InterruptedException e){  
+>     // 重新设置中断标志位  
+>     th.interrupt();
+> }
+> ```
+>
 
 2、LockSupport 是什么
 =================
