@@ -43,6 +43,47 @@ ThreadLocal 提供线程局部变量。这些变量与正常的变量不同，�
 
 ![](image/9、聊聊ThreadLocal/7b31eeea758045a29dc2dc7626885c53.png)
 
+**get（）方法分析**
+
+```java
+返回此线程局部变量的当前线程副本中的值。如果变量没有当前线程的值，则首先将其初始化为调用该方法返回 initialValue 的值。
+返回值: 此线程本地的当前线程值
+   public T get() {
+        Thread t = Thread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null) {
+            //通过 key 【this :ThreadLocal类型】在Thread的map中获取value,如果value是null，则去根据默认值put
+            ThreadLocalMap.Entry e = map.getEntry(this);
+            if (e != null) {
+                @SuppressWarnings("unchecked")
+                T result = (T)e.value;
+                return result;
+            }
+        }
+        return setInitialValue();//检查Thread中map是否初始化，设置key【this Threradlocal】-value【initialValue()】
+    }
+
+    private T setInitialValue() {
+        T value = initialValue();
+        Thread t = Thread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null)
+            map.set(this, value);
+        else
+            createMap(t, value);
+        return value;
+    }
+    
+实现类   
+java.lang.ThreadLocal.SuppliedThreadLocal
+    @Override
+    protected T initialValue() {
+        return supplier.get();
+    }
+```
+
+
+
 **1.5、从 helloworld 讲起**
 -----------------------
 
