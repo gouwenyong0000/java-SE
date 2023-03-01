@@ -1,7 +1,5 @@
 > 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/98134)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除我们在《20 | 并发容器：都有哪些 “坑” 需要我们填？》介绍过 Java SDK 提供了 2 个有界队列：ArrayBlockingQueue 和 ......
-
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 我们在[《20 | 并发容器：都有哪些 “坑” 需要我们填？》](https://time.geekbang.org/column/article/90201)介绍过 Java SDK 提供了 2 个有界队列：ArrayBlockingQueue 和 LinkedBlockingQueue，它们都是基于 ReentrantLock 实现的，在高并发场景下，锁的效率并不高，那有没有更好的替代品呢？有，今天我们就介绍一种性能更高的有界队列：Disruptor。
@@ -21,8 +19,45 @@
 *   构建 Disruptor 对象除了要指定队列大小外，还需要传入一个 EventFactory，示例代码中传入的是`LongEvent::new`；
 *   消费 Disruptor 中的 Event 需要通过 handleEventsWith() 方法注册一个事件处理器，发布 Event 则需要通过 publishEvent() 方法。
 
-```
-//自定义Eventclass LongEvent {  private long value;  public void set(long value) }//指定RingBuffer大小,//必须是2的N次方int bufferSize = 1024;//构建DisruptorDisruptor<LongEvent> disruptor   = new Disruptor<>(    LongEvent::new,    bufferSize,    DaemonThreadFactory.INSTANCE);//注册事件处理器disruptor.handleEventsWith(  (event, sequence, endOfBatch) ->    System.out.println("E: "+event));//启动Disruptordisruptor.start();//获取RingBufferRingBuffer<LongEvent> ringBuffer   = disruptor.getRingBuffer();//生产EventByteBuffer bb = ByteBuffer.allocate(8);for (long l = 0; true; l++){  bb.putLong(0, l);  //生产者生产消息  ringBuffer.publishEvent(    (event, sequence, buffer) ->       event.set(buffer.getLong(0)), bb);  Thread.sleep(1000);}
+```java
+//自定义Event
+class LongEvent {
+  private long value;
+  public void set(long value) {
+    this.value = value;
+  }
+}
+//指定RingBuffer大小,
+//必须是2的N次方
+int bufferSize = 1024;
+
+//构建Disruptor
+Disruptor<LongEvent> disruptor = new Disruptor<>(
+    LongEvent::new,
+    bufferSize,
+    DaemonThreadFactory.INSTANCE);
+
+//注册事件处理器
+disruptor.handleEventsWith(
+  (event, sequence, endOfBatch) ->
+    System.out.println("E: "+event));
+
+//启动Disruptor
+disruptor.start();
+
+//获取RingBuffer
+RingBuffer<LongEvent> ringBuffer = disruptor.getRingBuffer();
+//生产Event
+ByteBuffer bb = ByteBuffer.allocate(8);
+for (long l = 0; true; l++){
+  bb.putLong(0, l);
+  //生产者生产消息
+  ringBuffer.publishEvent(
+    (event, sequence, buffer) -> 
+      event.set(buffer.getLong(0)), bb);
+  Thread.sleep(1000);
+}
+
 ```
 
 RingBuffer 如何提升性能
@@ -36,19 +71,24 @@ CPU 的缓存就利用了程序的局部性原理：CPU 从内存中加载数据
 
 首先是 ArrayBlockingQueue。生产者线程向 ArrayBlockingQueue 增加一个元素，每次增加元素 E 之前，都需要创建一个对象 E，如下图所示，ArrayBlockingQueue 内部有 6 个元素，这 6 个元素都是由生产者线程创建的，由于创建这些元素的时间基本上是离散的，所以这些元素的内存地址大概率也不是连续的。
 
-[![](https://static001.geekbang.org/resource/image/84/90/848fd30644355ea86f3f91b06bfafa90.png)](https://static001.geekbang.org/resource/image/84/90/848fd30644355ea86f3f91b06bfafa90.png)
+[![](./image/40_案例分析（三）：高性能队列Disruptor/848fd30644355ea86f3f91b06bfafa90-1677688850940-68.png)](https://static001.geekbang.org/resource/image/84/90/848fd30644355ea86f3f91b06bfafa90.png)
 
 ArrayBlockingQueue 内部结构图
 
 下面我们再看看 Disruptor 是如何处理的。Disruptor 内部的 RingBuffer 也是用数组实现的，但是这个数组中的所有元素在初始化时是一次性全部创建的，所以这些元素的内存地址大概率是连续的，相关的代码如下所示。
 
-```
-for (int i=0; i<bufferSize; i++){  //entries[]就是RingBuffer内部的数组  //eventFactory就是前面示例代码中传入的LongEvent::new  entries[BUFFER_PAD + i]     = eventFactory.newInstance();}
+```java
+for (int i=0; i<bufferSize; i++){
+  //entries[]就是RingBuffer内部的数组
+  //eventFactory就是前面示例代码中传入的LongEvent::new
+  entries[BUFFER_PAD + i] 
+    = eventFactory.newInstance();
+}
 ```
 
 Disruptor 内部 RingBuffer 的结构可以简化成下图，那问题来了，数组中所有元素内存地址连续能提升性能吗？能！为什么呢？因为消费者线程在消费的时候，是遵循空间局部性原理的，消费完第 1 个元素，很快就会消费第 2 个元素；当消费第 1 个元素 E1 的时候，CPU 会把内存中 E1 后面的数据也加载进 Cache，如果 E1 和 E2 在内存中的地址是连续的，那么 E2 也就会被加载进 Cache 中，然后当消费第 2 个元素的时候，由于 E2 已经在 Cache 中了，所以就不需要从内存中加载了，这样就能大大提升性能。
 
-[![](https://static001.geekbang.org/resource/image/33/37/33bc0d35615f5d5f7869871e0cfed037.png)](https://static001.geekbang.org/resource/image/33/37/33bc0d35615f5d5f7869871e0cfed037.png)
+[![](./image/40_案例分析（三）：高性能队列Disruptor/33bc0d35615f5d5f7869871e0cfed037.png)](https://static001.geekbang.org/resource/image/33/37/33bc0d35615f5d5f7869871e0cfed037.png)
 
 Disruptor 内部 RingBuffer 结构图
 
@@ -63,13 +103,20 @@ Disruptor 内部 RingBuffer 结构图
 
 伪共享和 CPU 内部的 Cache 有关，Cache 内部是按照缓存行（Cache Line）管理的，缓存行的大小通常是 64 个字节；CPU 从内存中加载数据 X，会同时加载 X 后面（64-size(X)）个字节的数据。下面的示例代码出自 Java SDK 的 ArrayBlockingQueue，其内部维护了 4 个成员变量，分别是队列数组 items、出队索引 takeIndex、入队索引 putIndex 以及队列中的元素总数 count。
 
-```
-/** 队列数组 /final Object[] items;/* 出队索引 /int takeIndex;/* 入队索引 /int putIndex;/* 队列中元素总数 */int count;
+```java
+/** 队列数组 */
+final Object[] items;
+/** 出队索引 */
+int takeIndex;
+/** 入队索引 */
+int putIndex;
+/** 队列中元素总数 */
+int count;
 ```
 
 当 CPU 从内存中加载 takeIndex 的时候，会同时将 putIndex 以及 count 都加载进 Cache。下图是某个时刻 CPU 中 Cache 的状况，为了简化，缓存行中我们仅列出了 takeIndex 和 putIndex。
 
-[![](https://static001.geekbang.org/resource/image/fd/5c/fdccf96bda79453e55ed75e418864b5c.png)](https://static001.geekbang.org/resource/image/fd/5c/fdccf96bda79453e55ed75e418864b5c.png)
+[![](./image/40_案例分析（三）：高性能队列Disruptor/fdccf96bda79453e55ed75e418864b5c.png)](https://static001.geekbang.org/resource/image/fd/5c/fdccf96bda79453e55ed75e418864b5c.png)
 
 CPU 缓存示意图
 
@@ -77,14 +124,27 @@ CPU 缓存示意图
 
 ArrayBlockingQueue 的入队和出队操作是用锁来保证互斥的，所以入队和出队不会同时发生。如果允许入队和出队同时发生，那就会导致线程 A 和线程 B 争用同一个缓存行，这样也会导致性能问题。所以为了更好地利用缓存，我们必须避免伪共享，那如何避免呢？
 
-[![](https://static001.geekbang.org/resource/image/d5/27/d5d5afc11fe6b1aaf8c9be7dba643827.png)](https://static001.geekbang.org/resource/image/d5/27/d5d5afc11fe6b1aaf8c9be7dba643827.png)
+[![](./image/40_案例分析（三）：高性能队列Disruptor/d5d5afc11fe6b1aaf8c9be7dba643827.png)](https://static001.geekbang.org/resource/image/d5/27/d5d5afc11fe6b1aaf8c9be7dba643827.png)
 
 CPU 缓存失效示意图
 
 方案很简单，**每个变量独占一个缓存行、不共享缓存行**就可以了，具体技术是**缓存行填充**。比如想让 takeIndex 独占一个缓存行，可以在 takeIndex 的前后各填充 56 个字节，这样就一定能保证 takeIndex 独占一个缓存行。下面的示例代码出自 Disruptor，Sequence 对象中的 value 属性就能避免伪共享，因为这个属性前后都填充了 56 个字节。Disruptor 中很多对象，例如 RingBuffer、RingBuffer 内部的数组都用到了这种填充技术来避免伪共享。
 
-```
-//前：填充56字节class LhsPadding{    long p1, p2, p3, p4, p5, p6, p7;}class Value extends LhsPadding{    volatile long value;}//后：填充56字节class RhsPadding extends Value{    long p9, p10, p11, p12, p13, p14, p15;}class Sequence extends RhsPadding{  //省略实现}
+```java
+//前：填充56字节
+class LhsPadding{
+    long p1, p2, p3, p4, p5, p6, p7;
+}
+class Value extends LhsPadding{
+    volatile long value;
+}
+//后：填充56字节
+class RhsPadding extends Value{
+    long p9, p10, p11, p12, p13, p14, p15;
+}
+class Sequence extends RhsPadding{
+  //省略实现
+}
 ```
 
 Disruptor 中的无锁算法
@@ -96,8 +156,34 @@ ArrayBlockingQueue 是利用管程实现的，中规中矩，生产、消费操�
 
 下面是 Disruptor 生产者入队操作的核心代码，看上去很复杂，其实逻辑很简单：如果没有足够的空余位置，就出让 CPU 使用权，然后重新计算；反之则用 CAS 设置入队索引。
 
-```
-//生产者获取n个写入位置do {  //cursor类似于入队索引，指的是上次生产到这里  current = cursor.get();  //目标是在生产n个  next = current + n;  //减掉一个循环  long wrapPoint = next - bufferSize;  //获取上一次的最小消费位置  long cachedGatingSequence = gatingSequenceCache.get();  //没有足够的空余位置  if (wrapPoint>cachedGatingSequence || cachedGatingSequence>current){    //重新计算所有消费者里面的最小值位置    long gatingSequence = Util.getMinimumSequence(        gatingSequences, current);    //仍然没有足够的空余位置，出让CPU使用权，重新执行下一循环    if (wrapPoint > gatingSequence){      LockSupport.parkNanos(1);      continue;    }    //从新设置上一次的最小消费位置    gatingSequenceCache.set(gatingSequence);  } else if (cursor.compareAndSet(current, next)){    //获取写入位置成功，跳出循环    break;  }} while (true);
+```java
+//生产者获取n个写入位置
+do {
+  //cursor类似于入队索引，指的是上次生产到这里
+  current = cursor.get();
+  //目标是在生产n个
+  next = current + n;
+  //减掉一个循环
+  long wrapPoint = next - bufferSize;
+  //获取上一次的最小消费位置
+  long cachedGatingSequence = gatingSequenceCache.get();
+  //没有足够的空余位置
+  if (wrapPoint>cachedGatingSequence || cachedGatingSequence>current){
+    //重新计算所有消费者里面的最小值位置
+    long gatingSequence = Util.getMinimumSequence(
+        gatingSequences, current);
+    //仍然没有足够的空余位置，出让CPU使用权，重新执行下一循环
+    if (wrapPoint > gatingSequence){
+      LockSupport.parkNanos(1);
+      continue;
+    }
+    //从新设置上一次的最小消费位置
+    gatingSequenceCache.set(gatingSequence);
+  } else if (cursor.compareAndSet(current, next)){
+    //获取写入位置成功，跳出循环
+    break;
+  }
+} while (true);
 ```
 
 总结
@@ -108,5 +194,26 @@ Disruptor 在优化并发性能方面可谓是做到了极致，优化的思路�
 发挥硬件的能力一般是 C 这种面向硬件的语言常干的事儿，C 语言领域经常通过调整内存布局优化内存占用，而 Java 领域则用的很少，原因在于 Java 可以智能地优化内存布局，内存布局对 Java 程序员的透明的。这种智能的优化大部分场景是很友好的，但是如果你想通过填充方式避免伪共享就必须绕过这种优化，关于这方面 Disruptor 提供了经典的实现，你可以参考。
 
 由于伪共享问题如此重要，所以 Java 也开始重视它了，比如 Java [8 中，提供了避免伪共享的注解：@sun.misc.Contended，通过这个注解就能轻松避免伪共享（需要设置 JVM 参数 - XX](mailto:8%E4%B8%AD%EF%BC%8C%E6%8F%90%E4%BE%9B%E4%BA%86%E9%81%BF%E5%85%8D%E4%BC%AA%E5%85%B1%E4%BA%AB%E7%9A%84%E6%B3%A8%E8%A7%A3%EF%BC%9A@sun.misc.Contended%EF%BC%8C%E9%80%9A%E8%BF%87%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E5%B0%B1%E8%83%BD%E8%BD%BB%E6%9D%BE%E9%81%BF%E5%85%8D%E4%BC%AA%E5%85%B1%E4%BA%AB%EF%BC%88%E9%9C%80%E8%A6%81%E8%AE%BE%E7%BD%AEJVM%E5%8F%82%E6%95%B0-XX):-RestrictContended）。不过避免伪共享是以牺牲内存为代价的，所以具体使用的时候还是需要仔细斟酌。
+
+
+
+> 单机提升性能不外乎是围绕CPU，内存和IO想办法。
+>
+> **CPU**:
+>
+> - 1.避免线程切换：单线程，对于多线程进行线程绑定，使用CAS无锁技术
+> - 2.利用CPU缓存，还有缓存填充，设计数据结构和算法
+>
+> **内存**：
+>
+> - 1.多级缓存：应用缓存，第三方缓存，系统缓存
+> - 2.数组优于链表：连续的内容地址
+> - 3.避免频繁内存碎片：利用池思想复用对象
+>
+> **解决IO产生的速度差**:
+>
+> - 1.多路复用
+> - 2.队列削峰
+> - 3.协程
 
 欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。

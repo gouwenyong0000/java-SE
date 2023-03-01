@@ -28,8 +28,39 @@ Thread-Per-Message 模式的一个最经典的应用场景是**网络编程里�
 
 在 Java 语言中，实现 echo 程序的服务端还是很简单的。只需要 30 行代码就能够实现，示例代码如下，我们为每个请求都创建了一个 Java 线程，核心代码是：new Thread(()->).start()。
 
-```
-final ServerSocketChannel  =   ServerSocketChannel.open().bind(    new InetSocketAddress(8080));//处理请求    try {  while (true) {    // 接收请求    SocketChannel sc = ssc.accept();    // 每个请求都创建一个线程    new Thread(()->{      try {        // 读Socket        ByteBuffer rb = ByteBuffer          .allocateDirect(1024);        sc.read(rb);        //模拟处理请求        Thread.sleep(2000);        // 写Socket        ByteBuffer wb =           (ByteBuffer)rb.flip();        sc.write(wb);        // 关闭Socket        sc.close();      }catch(Exception e){        throw new UncheckedIOException(e);      }    }).start();  }} finally {  ssc.close();}
+```java
+
+final ServerSocketChannel  = 
+  ServerSocketChannel.open().bind(
+    new InetSocketAddress(8080));
+//处理请求    
+try {
+  while (true) {
+    // 接收请求
+    SocketChannel sc = ssc.accept();
+    // 每个请求都创建一个线程
+    new Thread(()->{
+      try {
+        // 读Socket
+        ByteBuffer rb = ByteBuffer
+          .allocateDirect(1024);
+        sc.read(rb);
+        //模拟处理请求
+        Thread.sleep(2000);
+        // 写Socket
+        ByteBuffer wb = 
+          (ByteBuffer)rb.flip();
+        sc.write(wb);
+        // 关闭Socket
+        sc.close();
+      }catch(Exception e){
+        throw new UncheckedIOException(e);
+      }
+    }).start();
+  }
+} finally {
+  ssc.close();
+}   
 ```
 
 如果你熟悉网络编程，相信你一定会提出一个很尖锐的问题：上面这个 echo 服务的实现方案是不具备可行性的。原因在于 Java 中的线程是一个重量级的对象，创建成本很高，一方面创建线程比较耗时，另一方面线程占用的内存也比较大。所以，为每个请求创建一个新的线程并不适合高并发场景。
@@ -47,8 +78,39 @@ Java 语言目前也已经意识到轻量级线程的重要性了，OpenJDK 有�
 
 Loom 项目在设计轻量级线程时，充分考量了当前 Java 线程的使用方式，采取的是尽量兼容的态度，所以使用上还是挺简单的。用 Fiber 实现 echo 服务的示例代码如下所示，对比 Thread 的实现，你会发现改动量非常小，只需要把 new Thread(()->).start() 换成 Fiber.schedule(()->{}) 就可以了。
 
-```
-final ServerSocketChannel ssc =   ServerSocketChannel.open().bind(    new InetSocketAddress(8080));//处理请求try{  while (true) {    // 接收请求    final SocketChannel sc =       ssc.accept();    Fiber.schedule(()->{      try {        // 读Socket        ByteBuffer rb = ByteBuffer          .allocateDirect(1024);        sc.read(rb);        //模拟处理请求        LockSupport.parkNanos(2000*1000000);        // 写Socket        ByteBuffer wb =           (ByteBuffer)rb.flip()        sc.write(wb);        // 关闭Socket        sc.close();      } catch(Exception e){        throw new UncheckedIOException(e);      }    });  }//while}finally{  ssc.close();}
+```java
+
+final ServerSocketChannel ssc = 
+  ServerSocketChannel.open().bind(
+    new InetSocketAddress(8080));
+//处理请求
+try{
+  while (true) {
+    // 接收请求
+    final SocketChannel sc = 
+      ssc.accept();
+    Fiber.schedule(()->{
+      try {
+        // 读Socket
+        ByteBuffer rb = ByteBuffer
+          .allocateDirect(1024);
+        sc.read(rb);
+        //模拟处理请求
+        LockSupport.parkNanos(2000*1000000);
+        // 写Socket
+        ByteBuffer wb = 
+          (ByteBuffer)rb.flip()
+        sc.write(wb);
+        // 关闭Socket
+        sc.close();
+      } catch(Exception e){
+        throw new UncheckedIOException(e);
+      }
+    });
+  }//while
+}finally{
+  ssc.close();
+}
 ```
 
 那使用 Fiber 实现的 echo 服务是否能够达到预期的效果呢？我们可以在 Linux 环境下做一个简单的实验，步骤如下：
@@ -60,14 +122,34 @@ final ServerSocketChannel ssc =   ServerSocketChannel.open().bind(    new InetSo
 压测执行结果如下：
 
 ```
-Concurrency Level:      20000Time taken for tests:   67.718 secondsComplete requests:      200000Failed requests:        0Write errors:           0Non-2xx responses:      200000Total transferred:      16400000 bytesHTML transferred:       0 bytesRequests per second:    2953.41 [#/sec] (mean)Time per request:       6771.844 [ms] (mean)Time per request:       0.339 [ms] (mean, across all concurrent requests)Transfer rate:          236.50 [Kbytes/sec] receivedConnection Times (ms)              min  mean[+/-sd] median   maxConnect:        0  557 3541.6      1   63127Processing:  2000 2010  31.8   2003    2615Waiting:     1986 2008  30.9   2002    2615Total:       2000 2567 3543.9   2004   65293
+
+Concurrency Level:      20000
+Time taken for tests:   67.718 seconds
+Complete requests:      200000
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      200000
+Total transferred:      16400000 bytes
+HTML transferred:       0 bytes
+Requests per second:    2953.41 [#/sec] (mean)
+Time per request:       6771.844 [ms] (mean)
+Time per request:       0.339 [ms] (mean, across all concurrent requests)
+Transfer rate:          236.50 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0  557 3541.6      1   63127
+Processing:  2000 2010  31.8   2003    2615
+Waiting:     1986 2008  30.9   2002    2615
+Total:       2000 2567 3543.9   2004   65293
+
 ```
 
 你会发现即便在 20000 并发下，该程序依然能够良好运行。同等条件下，Thread 实现的 echo 程序 512 并发都抗不过去，直接就 OOM 了。
 
 如果你通过 Linux 命令 `top -Hp pid` 查看 Fiber 实现的 echo 程序的进程信息，你可以看到该进程仅仅创建了 16（不同 CPU 核数结果会不同）个操作系统线程。
 
-[![](https://static001.geekbang.org/resource/image/ae/e9/aebe9691be206fb88f45e4f763bcb7e9.png)](https://static001.geekbang.org/resource/image/ae/e9/aebe9691be206fb88f45e4f763bcb7e9.png)
+[![](./image/33_Thread-Per-Message模式：最简单实用的分工方法/aebe9691be206fb88f45e4f763bcb7e9.png)](https://static001.geekbang.org/resource/image/ae/e9/aebe9691be206fb88f45e4f763bcb7e9.png)
 
 如果你对 Loom 项目感兴趣，也想上手试一把，可以下载源代码自己构建，构建方法可以参考 [Project Loom 的相关资料](https://wiki.openjdk.java.net/display/loom/Main)，不过需要注意的是构建之前一定要把代码分支切换到 Fibers。
 
@@ -87,4 +169,8 @@ Thread-Per-Message 模式在 Java 领域并不是那么知名，根本原因在�
 
 使用 Thread-Per-Message 模式会为每一个任务都创建一个线程，在高并发场景中，很容易导致应用 OOM，那有什么办法可以快速解决呢？
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> 每次创建一个线程高并发肯定OOM
+>
+> 1. 引入`线程池`控制创建线程的大小，通过压测得到比较合理的线程数量配置
+> 2. 需要在请求端增加一个`限流`模块，自我保护
+> 3. 降级方案

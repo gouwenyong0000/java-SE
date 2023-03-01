@@ -1,21 +1,26 @@
-> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/89461)
-
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除前几天老板突然匆匆忙忙过来，说对账系统最近越来越慢了，能不能快速优化一下。
-
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 前几天老板突然匆匆忙忙过来，说对账系统最近越来越慢了，能不能快速优化一下。我了解了对账系统的业务后，发现还是挺简单的，用户通过在线商城下单，会生成电子订单，保存在订单库；之后物流会生成派送单给用户发货，派送单保存在派送单库。为了防止漏派送或者重复派送，对账系统每天还会校验是否存在异常订单。
 
 对账系统的处理逻辑很简单，你可以参考下面的对账系统流程图。目前对账系统的处理逻辑是首先查询订单，然后查询派送单，之后对比订单和派送单，将差异写入差异库。
 
-[![](https://static001.geekbang.org/resource/image/06/fe/068418bdc371b8a1b4b740428a3b3ffe.png)](https://static001.geekbang.org/resource/image/06/fe/068418bdc371b8a1b4b740428a3b3ffe.png)
+[![](./image/19_CountDownLatch和CyclicBarrier：如何让多线程步调一致？/068418bdc371b8a1b4b740428a3b3ffe-1677163229152-7.png)](https://static001.geekbang.org/resource/image/06/fe/068418bdc371b8a1b4b740428a3b3ffe.png)
 
 对账系统流程图
 
 对账系统的代码抽象之后，也很简单，核心代码如下，就是在一个单线程里面循环查询订单、派送单，然后执行对账，最后将写入差异库。
 
-```
-while(存在未对账订单){  // 查询未对账订单  pos = getPOrders();  // 查询派送单  dos = getDOrders();  // 执行对账操作  diff = check(pos, dos);  // 差异写入差异库  save(diff);}
+```java
+while(存在未对账订单){
+  // 查询未对账订单
+  pos = getPOrders();
+  // 查询派送单
+  dos = getDOrders();
+  // 执行对账操作
+  diff = check(pos, dos);
+  // 差异写入差异库
+  save(diff);
+} 
 ```
 
 利用并行优化对账系统
@@ -25,20 +30,38 @@ while(存在未对账订单){  // 查询未对账订单  pos = getPOrders();  //
 
 目前的对账系统，由于订单量和派送单量巨大，所以查询未对账订单 getPOrders() 和查询派送单 getDOrders() 相对较慢，那有没有办法快速优化一下呢？目前对账系统是单线程执行的，图形化后是下图这个样子。对于串行化的系统，优化性能首先想到的是能否**利用多线程并行处理**。
 
-[![](https://static001.geekbang.org/resource/image/cd/a5/cd997c259e4165c046e79e766abfe2a5.png)](https://static001.geekbang.org/resource/image/cd/a5/cd997c259e4165c046e79e766abfe2a5.png)
+[![](./image/19_CountDownLatch和CyclicBarrier：如何让多线程步调一致？/cd997c259e4165c046e79e766abfe2a5.png)](https://static001.geekbang.org/resource/image/cd/a5/cd997c259e4165c046e79e766abfe2a5.png)
 
 对账系统单线程执行示意图
 
 所以，这里你应该能够看出来这个对账系统里的瓶颈：查询未对账订单 getPOrders() 和查询派送单 getDOrders() 是否可以并行处理呢？显然是可以的，因为这两个操作并没有先后顺序的依赖。这两个最耗时的操作并行之后，执行过程如下图所示。对比一下单线程的执行示意图，你会发现同等时间里，并行执行的吞吐量近乎单线程的 2 倍，优化效果还是相对明显的。
 
-[![](https://static001.geekbang.org/resource/image/a5/3b/a563c39ece918578ad2ff33ab5f3743b.png)](https://static001.geekbang.org/resource/image/a5/3b/a563c39ece918578ad2ff33ab5f3743b.png)
+[![](./image/19_CountDownLatch和CyclicBarrier：如何让多线程步调一致？/a563c39ece918578ad2ff33ab5f3743b.png)](https://static001.geekbang.org/resource/image/a5/3b/a563c39ece918578ad2ff33ab5f3743b.png)
 
 对账系统并行执行示意图
 
 思路有了，下面我们再来看看如何用代码实现。在下面的代码中，我们创建了两个线程 T1 和 T2，并行执行查询未对账订单 getPOrders() 和查询派送单 getDOrders() 这两个操作。在主线程中执行对账操作 check() 和差异写入 save() 两个操作。不过需要注意的是：主线程需要等待线程 T1 和 T2 执行完才能执行 check() 和 save() 这两个操作，为此我们通过调用 T1.join() 和 T2.join() 来实现等待，当 T1 和 T2 线程退出时，调用 T1.join() 和 T2.join() 的主线程就会从阻塞态被唤醒，从而执行之后的 check() 和 save()。
 
-```
-while(存在未对账订单){  // 查询未对账订单  Thread T1 = new Thread(()->);  T1.start();  // 查询派送单  Thread T2 = new Thread(()->);  T2.start();  // 等待T1、T2结束  T1.join();  T2.join();  // 执行对账操作  diff = check(pos, dos);  // 差异写入差异库  save(diff);}
+```java
+while(存在未对账订单){
+  // 查询未对账订单
+  Thread T1 = new Thread(()->{
+    pos = getPOrders();
+  });
+  T1.start();
+  // 查询派送单
+  Thread T2 = new Thread(()->{
+    dos = getDOrders();
+  });
+  T2.start();
+  // 等待T1、T2结束
+  T1.join();
+  T2.join();
+  // 执行对账操作
+  diff = check(pos, dos);
+  // 差异写入差异库
+  save(diff);
+} 
 ```
 
 用 CountDownLatch 实现线程等待
@@ -48,16 +71,57 @@ while(存在未对账订单){  // 查询未对账订单  Thread T1 = new Thread(
 
 而下面的代码就是用线程池优化后的：我们首先创建了一个固定大小为 2 的线程池，之后在 while 循环里重复利用。一切看上去都很顺利，但是有个问题好像无解了，那就是主线程如何知道 getPOrders() 和 getDOrders() 这两个操作什么时候执行完。前面主线程通过调用线程 T1 和 T2 的 join() 方法来等待线程 T1 和 T2 退出，但是在线程池的方案里，线程根本就不会退出，所以 join() 方法已经失效了。
 
-```
-// 创建2个线程的线程池Executor executor =   Executors.newFixedThreadPool(2);while(存在未对账订单){  // 查询未对账订单  executor.execute(()-> );  // 查询派送单  executor.execute(()-> );    /* ？？如何实现等待？？*/    // 执行对账操作  diff = check(pos, dos);  // 差异写入差异库  save(diff);}
+```java
+// 创建2个线程的线程池
+Executor executor = Executors.newFixedThreadPool(2);
+while(存在未对账订单){
+  // 查询未对账订单
+  executor.execute(()-> {
+    pos = getPOrders();
+  });
+  // 查询派送单
+  executor.execute(()-> {
+    dos = getDOrders();
+  });
+  
+  /* ？？如何实现等待？？*/
+  
+  // 执行对账操作
+  diff = check(pos, dos);
+  // 差异写入差异库
+  save(diff);
+}   
 ```
 
 那如何解决这个问题呢？你可以开动脑筋想出很多办法，最直接的办法是弄一个计数器，初始值设置成 2，当执行完`pos = getPOrders();`这个操作之后将计数器减 1，执行完`dos = getDOrders();`之后也将计数器减 1，在主线程里，等待计数器等于 0；当计数器等于 0 时，说明这两个查询操作执行完了。等待计数器等于 0 其实就是一个条件变量，用管程实现起来也很简单。
 
 不过我并不建议你在实际项目中去实现上面的方案，因为 Java 并发包里已经提供了实现类似功能的工具类：**CountDownLatch**，我们直接使用就可以了。下面的代码示例中，在 while 循环里面，我们首先创建了一个 CountDownLatch，计数器的初始值等于 2，之后在`pos = getPOrders();`和`dos = getDOrders();`两条语句的后面对计数器执行减 1 操作，这个对计数器减 1 的操作是通过调用 `latch.countDown();` 来实现的。在主线程中，我们通过调用 `latch.await()` 来实现对计数器等于 0 的等待。
 
-```
-// 创建2个线程的线程池Executor executor =   Executors.newFixedThreadPool(2);while(存在未对账订单){  // 计数器初始化为2  CountDownLatch latch =     new CountDownLatch(2);  // 查询未对账订单  executor.execute(()-> {    pos = getPOrders();    latch.countDown();  });  // 查询派送单  executor.execute(()-> {    dos = getDOrders();    latch.countDown();  });    // 等待两个查询操作结束  latch.await();    // 执行对账操作  diff = check(pos, dos);  // 差异写入差异库  save(diff);}
+```java
+// 创建2个线程的线程池
+Executor executor =  Executors.newFixedThreadPool(2);
+while(存在未对账订单){
+  // 计数器初始化为2
+  CountDownLatch latch =   new CountDownLatch(2);
+  // 查询未对账订单
+  executor.execute(()-> {
+    pos = getPOrders();
+    latch.countDown();
+  });
+  // 查询派送单
+  executor.execute(()-> {
+    dos = getDOrders();
+    latch.countDown();
+  });
+  
+  // 等待两个查询操作结束
+  latch.await();
+  
+  // 执行对账操作
+  diff = check(pos, dos);
+  // 差异写入差异库
+  save(diff);
+}
 ```
 
 进一步优化性能
@@ -67,7 +131,7 @@ while(存在未对账订单){  // 查询未对账订单  Thread T1 = new Thread(
 
 前面我们将 getPOrders() 和 getDOrders() 这两个查询操作并行了，但这两个查询操作和对账操作 check()、save() 之间还是串行的。很显然，这两个查询操作和对账操作也是可以并行的，也就是说，在执行对账操作的时候，可以同时去执行下一轮的查询操作，这个过程可以形象化地表述为下面这幅示意图。
 
-[![](https://static001.geekbang.org/resource/image/e6/8b/e663d90f49d9666e618ac1370ccca58b.png)](https://static001.geekbang.org/resource/image/e6/8b/e663d90f49d9666e618ac1370ccca58b.png)
+[![](./image/19_CountDownLatch和CyclicBarrier：如何让多线程步调一致？/e663d90f49d9666e618ac1370ccca58b.png)](https://static001.geekbang.org/resource/image/e6/8b/e663d90f49d9666e618ac1370ccca58b.png)
 
 完全并行执行示意图
 
@@ -75,7 +139,7 @@ while(存在未对账订单){  // 查询未对账订单  Thread T1 = new Thread(
 
 不过针对对账这个项目，我设计了两个队列，并且两个队列的元素之间还有对应关系。具体如下图所示，订单查询操作将订单查询结果插入订单队列，派送单查询操作将派送单插入派送单队列，这两个队列的元素之间是有一一对应的关系的。两个队列的好处是，对账操作可以每次从订单队列出一个元素，从派送单队列出一个元素，然后对这两个元素执行对账操作，这样数据一定不会乱掉。
 
-[![](https://static001.geekbang.org/resource/image/22/da/22e8ba1c04a3bc2605b98376ed6832da.png)](https://static001.geekbang.org/resource/image/22/da/22e8ba1c04a3bc2605b98376ed6832da.png)
+[![](./image/19_CountDownLatch和CyclicBarrier：如何让多线程步调一致？/22e8ba1c04a3bc2605b98376ed6832da.png)](https://static001.geekbang.org/resource/image/22/da/22e8ba1c04a3bc2605b98376ed6832da.png)
 
 双队列示意图
 
@@ -83,7 +147,7 @@ while(存在未对账订单){  // 查询未对账订单  Thread T1 = new Thread(
 
 下面这幅图形象地描述了上面的意图：线程 T1 和线程 T2 只有都生产完 1 条数据的时候，才能一起向下执行，也就是说，线程 T1 和线程 T2 要互相等待，步调要一致；同时当线程 T1 和 T2 都生产完一条数据的时候，还要能够通知线程 T3 执行对账操作。
 
-[![](https://static001.geekbang.org/resource/image/65/ad/6593a10a393d9310a8f864730f7426ad.png)](https://static001.geekbang.org/resource/image/65/ad/6593a10a393d9310a8f864730f7426ad.png)
+[![](./image/19_CountDownLatch和CyclicBarrier：如何让多线程步调一致？/6593a10a393d9310a8f864730f7426ad.png)](https://static001.geekbang.org/resource/image/65/ad/6593a10a393d9310a8f864730f7426ad.png)
 
 同步执行示意图
 
@@ -100,8 +164,48 @@ while(存在未对账订单){  // 查询未对账订单  Thread T1 = new Thread(
 
 非常值得一提的是，CyclicBarrier 的计数器有自动重置的功能，当减到 0 的时候，会自动重置你设置的初始值。这个功能用起来实在是太方便了。
 
-```
-// 订单队列Vector<P> pos;// 派送单队列Vector<D> dos;// 执行回调的线程池 Executor executor =   Executors.newFixedThreadPool(1);final CyclicBarrier barrier =  new CyclicBarrier(2, ()->{    executor.execute(()->check());  });  void check(){  P p = pos.remove(0);  D d = dos.remove(0);  // 执行对账操作  diff = check(p, d);  // 差异写入差异库  save(diff);}  void checkAll(){  // 循环查询订单库  Thread T1 = new Thread(()->{    while(存在未对账订单){      // 查询订单库      pos.add(getPOrders());      // 等待      barrier.await();    }  });  T1.start();    // 循环查询运单库  Thread T2 = new Thread(()->{    while(存在未对账订单){      // 查询运单库      dos.add(getDOrders());      // 等待      barrier.await();    }  });  T2.start();}
+```java
+// 订单队列
+Vector<P> pos;
+// 派送单队列
+Vector<D> dos;
+// 执行回调的线程池 
+Executor executor =  Executors.newFixedThreadPool(1);
+final CyclicBarrier barrier =  new CyclicBarrier(2, ()->{
+    executor.execute(()->check());
+  });
+  
+void check(){
+  P p = pos.remove(0);
+  D d = dos.remove(0);
+  // 执行对账操作
+  diff = check(p, d);
+  // 差异写入差异库
+  save(diff);
+}
+  
+void checkAll(){
+  // 循环查询订单库
+  Thread T1 = new Thread(()->{
+    while(存在未对账订单){
+      // 查询订单库
+      pos.add(getPOrders());
+      // 等待
+      barrier.await();
+    }
+  });
+  T1.start();  
+  // 循环查询运单库
+  Thread T2 = new Thread(()->{
+    while(存在未对账订单){
+      // 查询运单库
+      dos.add(getDOrders());
+      // 等待
+      barrier.await();
+    }
+  });
+  T2.start();
+}
 ```
 
 总结
@@ -115,5 +219,13 @@ CountDownLatch 和 CyclicBarrier 是 Java 并发包提供的两个非常易用�
 ----
 
 本章最后的示例代码中，CyclicBarrier 的回调函数我们使用了一个固定大小的线程池，你觉得是否有必要呢？
+
+> 有，如果为线程池有多个线程，则由于check()函数里面的两个remove并不是原子操作，可能导致消费错乱。
+>
+> 假设订单队列中有P1，P2；派送队列中有D1,D2；
+>
+> 两个线程T1,T2同时执行check，可能出现T1消费到P1,D2，T2消费到P2，D1，就是T1先执行pos.remove(0), 而后T2执行pos.remove(0);dos.remov(0);
+>
+> 然后T1才执行dos.remove(0)的场景
 
 欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。

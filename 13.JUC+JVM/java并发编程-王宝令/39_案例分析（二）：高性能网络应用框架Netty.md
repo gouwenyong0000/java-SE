@@ -1,7 +1,5 @@
 > 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/97622)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除 Netty 是一个高性能网络应用框架，应用非常普遍，目前在 Java 领域里，Netty 基本上成为网络程序的标配了。
-
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 Netty 是一个高性能网络应用框架，应用非常普遍，目前在 Java 领域里，Netty 基本上成为网络程序的标配了。Netty 框架功能丰富，也非常复杂，今天我们主要分析 Netty 框架中的线程模型，而**线程模型直接影响着网络程序的性能**。
@@ -13,7 +11,7 @@ Netty 是一个高性能网络应用框架，应用非常普遍，目前在 Java
 
 在[《33 | Thread-Per-Message 模式：最简单实用的分工方法》](https://time.geekbang.org/column/article/95098)中，我们写过一个简单的网络程序 echo，采用的是阻塞式 I/O（BIO）。BIO 模型里，所有 read() 操作和 write() 操作都会阻塞当前线程的，如果客户端已经和服务端建立了一个连接，而迟迟不发送数据，那么服务端的 read() 操作会一直阻塞，所以**使用 BIO 模型，一般都会为每个 socket 分配一个独立的线程**，这样就不会因为线程阻塞在一个 socket 上而影响对其他 socket 的读写。BIO 的线程模型如下图所示，每一个 socket 都对应一个独立的线程；为了避免频繁创建、消耗线程，可以采用线程池，但是 socket 和线程之间的对应关系并不会变化。
 
-[![](https://static001.geekbang.org/resource/image/e7/e2/e712c37ea0483e9dde0d6efe76e687e2.png)](https://static001.geekbang.org/resource/image/e7/e2/e712c37ea0483e9dde0d6efe76e687e2.png)
+[![](./image/39_案例分析（二）：高性能网络应用框架Netty/e712c37ea0483e9dde0d6efe76e687e2-1677688659714-58.png)](https://static001.geekbang.org/resource/image/e7/e2/e712c37ea0483e9dde0d6efe76e687e2.png)
 
 BIO 的线程模型
 
@@ -21,7 +19,7 @@ BIO 这种线程模型适用于 socket 连接不是很多的场景；但是现�
 
 顺着这个思路，我们可以将线程模型优化为下图这个样子，可以用一个线程来处理多个连接，这样线程的利用率就上来了，同时所需的线程数量也跟着降下来了。这个思路很好，可是使用 BIO 相关的 API 是无法实现的，这是为什么呢？因为 BIO 相关的 socket 读写操作都是阻塞式的，而一旦调用了阻塞式 API，在 I/O 就绪前，调用线程会一直阻塞，也就无法处理其他的 socket 连接了。
 
-[![](https://static001.geekbang.org/resource/image/ea/1f/eafed0787b82b0b428e1ec0927029f1f.png)](https://static001.geekbang.org/resource/image/ea/1f/eafed0787b82b0b428e1ec0927029f1f.png)
+[![](./image/39_案例分析（二）：高性能网络应用框架Netty/eafed0787b82b0b428e1ec0927029f1f.png)](https://static001.geekbang.org/resource/image/ea/1f/eafed0787b82b0b428e1ec0927029f1f.png)
 
 理想的线程模型图
 
@@ -32,14 +30,27 @@ Reactor 模式
 
 下面是 Reactor 模式的类结构图，其中 Handle 指的是 I/O 句柄，在 Java 网络编程里，它本质上就是一个网络连接。Event Handler 很容易理解，就是一个事件处理器，其中 handle_event() 方法处理 I/O 事件，也就是每个 Event Handler 处理一个 I/O Handle；get_handle() 方法可以返回这个 I/O 的 Handle。Synchronous Event Demultiplexer 可以理解为操作系统提供的 I/O 多路复用 API，例如 POSIX 标准里的 select() 以及 Linux 里面的 epoll()。
 
-[![](https://static001.geekbang.org/resource/image/a7/40/a7ba3c8d6c49e50d9288baf0c03fa240.png)](https://static001.geekbang.org/resource/image/a7/40/a7ba3c8d6c49e50d9288baf0c03fa240.png)
+[![](./image/39_案例分析（二）：高性能网络应用框架Netty/a7ba3c8d6c49e50d9288baf0c03fa240.png)](https://static001.geekbang.org/resource/image/a7/40/a7ba3c8d6c49e50d9288baf0c03fa240.png)
 
 Reactor 模式类结构图
 
 Reactor 模式的核心自然是 **Reactor 这个类**，其中 register_handler() 和 remove_handler() 这两个方法可以注册和删除一个事件处理器；**handle_events() 方式是核心**，也是 Reactor 模式的发动机，这个方法的核心逻辑如下：首先通过同步事件多路选择器提供的 select() 方法监听网络事件，当有网络事件就绪后，就遍历事件处理器来处理该网络事件。由于网络事件是源源不断的，所以在主程序中启动 Reactor 模式，需要以 `while(true){}` 的方式调用 handle_events() 方法。
 
-```
-void Reactor::handle_events(){  //通过同步事件多路选择器提供的  //select()方法监听网络事件  select(handlers);  //处理网络事件  for(h in handlers){    h.handle_event();  }}// 在主程序中启动事件循环while (true) {  handle_events();
+```c++
+
+void Reactor::handle_events(){
+  //通过同步事件多路选择器提供的
+  //select()方法监听网络事件
+  select(handlers);
+  //处理网络事件
+  for(h in handlers){
+    h.handle_event();
+  }
+}
+// 在主程序中启动事件循环
+while (true) {
+  handle_events();
+
 ```
 
 Netty 中的线程模型
@@ -51,7 +62,7 @@ Netty 的实现虽然参考了 Reactor 模式，但是并没有完全照搬，**
 
 Netty 中的线程模型可以参考下图，这个图和前面我们提到的理想的线程模型图非常相似，核心目标都是用一个线程处理多个网络连接。
 
-[![](https://static001.geekbang.org/resource/image/03/04/034756f1d76bb3af09e125de9f3c2f04.png)](https://static001.geekbang.org/resource/image/03/04/034756f1d76bb3af09e125de9f3c2f04.png)
+[![](./image/39_案例分析（二）：高性能网络应用框架Netty/034756f1d76bb3af09e125de9f3c2f04.png)](https://static001.geekbang.org/resource/image/03/04/034756f1d76bb3af09e125de9f3c2f04.png)
 
 Netty 中的线程模型
 
@@ -72,8 +83,59 @@ Netty 中还有一个核心概念是 **EventLoopGroup**，顾名思义，一个 
 
 第二个，默认情况下，Netty 会创建 “2*CPU 核数” 个 EventLoop，由于网络连接与 EventLoop 有稳定的关系，所以事件处理器在处理网络事件的时候是不能有阻塞操作的，否则很容易导致请求大面积超时。如果实在无法避免使用阻塞操作，那可以通过线程池来异步处理。
 
-```
-//事件处理器final EchoServerHandler serverHandler   = new EchoServerHandler();//boss线程组  EventLoopGroup bossGroup   = new NioEventLoopGroup(1); //worker线程组  EventLoopGroup workerGroup   = new NioEventLoopGroup();try {  ServerBootstrap b = new ServerBootstrap();  b.group(bossGroup, workerGroup)   .channel(NioServerSocketChannel.class)   .childHandler(new ChannelInitializer<SocketChannel>() {     @Override     public void initChannel(SocketChannel ch){       ch.pipeline().addLast(serverHandler);     }    });  //bind服务端端口    ChannelFuture f = b.bind(9090).sync();  f.channel().closeFuture().sync();} finally {  //终止工作线程组  workerGroup.shutdownGracefully();  //终止boss线程组  bossGroup.shutdownGracefully();}//socket连接处理器class EchoServerHandler extends     ChannelInboundHandlerAdapter {  //处理读事件    @Override  public void channelRead(    ChannelHandlerContext ctx, Object msg){      ctx.write(msg);  }  //处理读完成事件  @Override  public void channelReadComplete(    ChannelHandlerContext ctx){      ctx.flush();  }  //处理异常事件  @Override  public void exceptionCaught(    ChannelHandlerContext ctx,  Throwable cause) {      cause.printStackTrace();      ctx.close();  }}
+```java
+//事件处理器
+final EchoServerHandler serverHandler 
+  = new EchoServerHandler();
+//boss线程组  
+EventLoopGroup bossGroup 
+  = new NioEventLoopGroup(1); 
+//worker线程组  
+EventLoopGroup workerGroup 
+  = new NioEventLoopGroup();
+try {
+  ServerBootstrap b = new ServerBootstrap();
+  b.group(bossGroup, workerGroup)
+   .channel(NioServerSocketChannel.class)
+   .childHandler(new ChannelInitializer<SocketChannel>() {
+     @Override
+     public void initChannel(SocketChannel ch){
+       ch.pipeline().addLast(serverHandler);
+     }
+    });
+  //bind服务端端口  
+  ChannelFuture f = b.bind(9090).sync();
+  f.channel().closeFuture().sync();
+} finally {
+  //终止工作线程组
+  workerGroup.shutdownGracefully();
+  //终止boss线程组
+  bossGroup.shutdownGracefully();
+}
+
+//socket连接处理器
+class EchoServerHandler extends 
+    ChannelInboundHandlerAdapter {
+  //处理读事件  
+  @Override
+  public void channelRead(
+    ChannelHandlerContext ctx, Object msg){
+      ctx.write(msg);
+  }
+  //处理读完成事件
+  @Override
+  public void channelReadComplete(
+    ChannelHandlerContext ctx){
+      ctx.flush();
+  }
+  //处理异常事件
+  @Override
+  public void exceptionCaught(
+    ChannelHandlerContext ctx,  Throwable cause) {
+      cause.printStackTrace();
+      ctx.close();
+  }
+}
 ```
 
 总结

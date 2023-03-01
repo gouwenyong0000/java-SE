@@ -1,6 +1,4 @@
-> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/93745)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除民国年间某山东省主席参加某大学校庆演讲，在篮球场看到十来个人穿着裤衩抢一个球，观之实在不雅，于是怒斥学校的总务处长贪污，并且发话：“多买几个球，一人发一个，省得你争我抢！” 小时候听到这个段子只是觉得好玩，今天再来看，却别有一番滋味。
 
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
@@ -17,16 +15,44 @@ ThreadLocal 的使用方法
 
 下面这个静态类 ThreadId 会为每个线程分配一个唯一的线程 Id，如果**一个线程**前后两次调用 ThreadId 的 get() 方法，两次 get() 方法的返回值是相同的。但如果是**两个线程**分别调用 ThreadId 的 get() 方法，那么两个线程看到的 get() 方法的返回值是不同的。若你是初次接触 ThreadLocal，可能会觉得奇怪，为什么相同线程调用 get() 方法结果就相同，而不同线程调用 get() 方法结果就不同呢？
 
-```
-static class ThreadId {  static final AtomicLong   nextId=new AtomicLong(0);  //定义ThreadLocal变量  static final ThreadLocal<Long>   tl=ThreadLocal.withInitial(    ()->nextId.getAndIncrement());  //此方法会为每个线程分配一个唯一的Id  static long get(){    return tl.get();  }}
+```java
+
+static class ThreadId {
+  static final AtomicLong 
+  nextId=new AtomicLong(0);
+  //定义ThreadLocal变量
+  static final ThreadLocal<Long> 
+  tl=ThreadLocal.withInitial(
+    ()->nextId.getAndIncrement());
+  //此方法会为每个线程分配一个唯一的Id
+  static long get(){
+    return tl.get();
+  }
+}
 ```
 
 能有这个奇怪的结果，都是 ThreadLocal 的杰作，不过在详细解释 ThreadLocal 的工作原理之前，我们再看一个实际工作中可能遇到的例子来加深一下对 ThreadLocal 的理解。你可能知道 SimpleDateFormat 不是线程安全的，那如果需要在并发场景下使用它，你该怎么办呢？
 
 其实有一个办法就是用 ThreadLocal 来解决，下面的示例代码就是 ThreadLocal 解决方案的具体实现，这段代码与前面 ThreadId 的代码高度相似，同样地，不同线程调用 SafeDateFormat 的 get() 方法将返回不同的 SimpleDateFormat 对象实例，由于不同线程并不共享 SimpleDateFormat，所以就像局部变量一样，是线程安全的。
 
-```
-static class SafeDateFormat {  //定义ThreadLocal变量  static final ThreadLocal<DateFormat>  tl=ThreadLocal.withInitial(    ()-> new SimpleDateFormat(      "yyyy-MM-dd HH:mm:ss"));        static DateFormat get(){    return tl.get();  }}//不同线程执行下面代码//返回的df是不同的DateFormat df =  SafeDateFormat.get()；
+```java
+
+static class SafeDateFormat {
+  //定义ThreadLocal变量
+  static final ThreadLocal<DateFormat>
+  tl=ThreadLocal.withInitial(
+    ()-> new SimpleDateFormat(
+      "yyyy-MM-dd HH:mm:ss"));
+      
+  static DateFormat get(){
+    return tl.get();
+  }
+}
+//不同线程执行下面代码
+//返回的df是不同的
+DateFormat df =
+  SafeDateFormat.get()；
+
 ```
 
 通过上面两个例子，相信你对 ThreadLocal 的用法以及应用场景都了解了，下面我们就来详细解释 ThreadLocal 的工作原理。
@@ -36,22 +62,69 @@ ThreadLocal 的工作原理
 
 在解释 ThreadLocal 的工作原理之前， 你先自己想想：如果让你来实现 ThreadLocal 的功能，你会怎么设计呢？ThreadLocal 的目标是让不同的线程有不同的变量 V，那最直接的方法就是创建一个 Map，它的 Key 是线程，Value 是每个线程拥有的变量 V，ThreadLocal 内部持有这样的一个 Map 就可以了。你可以参考下面的示意图和示例代码来理解。
 
-[![](https://static001.geekbang.org/resource/image/6a/34/6a93910f748ebc5b984ae7ac67283034.png)](https://static001.geekbang.org/resource/image/6a/34/6a93910f748ebc5b984ae7ac67283034.png)
+[![](./image/30_线程本地存储模式ThreadLocal：没有共享，就没有伤害/6a93910f748ebc5b984ae7ac67283034-1677168875507-70.png)](https://static001.geekbang.org/resource/image/6a/34/6a93910f748ebc5b984ae7ac67283034.png)
 
 ThreadLocal 持有 Map 的示意图
 
-```
-class MyThreadLocal<T> {  Map<Thread, T> locals =     new ConcurrentHashMap<>();  //获取线程变量    T get() {    return locals.get(      Thread.currentThread());  }  //设置线程变量  void set(T t) {    locals.put(      Thread.currentThread(), t);  }}
+```java
+
+class MyThreadLocal<T> {
+  Map<Thread, T> locals = 
+    new ConcurrentHashMap<>();
+  //获取线程变量  
+  T get() {
+    return locals.get(
+      Thread.currentThread());
+  }
+  //设置线程变量
+  void set(T t) {
+    locals.put(
+      Thread.currentThread(), t);
+  }
+}
+
 ```
 
 那 Java 的 ThreadLocal 是这么实现的吗？这一次我们的设计思路和 Java 的实现差异很大。Java 的实现里面也有一个 Map，叫做 ThreadLocalMap，不过持有 ThreadLocalMap 的不是 ThreadLocal，而是 Thread。Thread 这个类内部有一个私有属性 threadLocals，其类型就是 ThreadLocalMap，ThreadLocalMap 的 Key 是 ThreadLocal。你可以结合下面的示意图和精简之后的 Java 实现代码来理解。
 
-[![](https://static001.geekbang.org/resource/image/3c/02/3cb0a8f15104848dec63eab269bac302.png)](https://static001.geekbang.org/resource/image/3c/02/3cb0a8f15104848dec63eab269bac302.png)
+[![](./image/30_线程本地存储模式ThreadLocal：没有共享，就没有伤害/3cb0a8f15104848dec63eab269bac302.png)](https://static001.geekbang.org/resource/image/3c/02/3cb0a8f15104848dec63eab269bac302.png)
 
 Thread 持有 ThreadLocalMap 的示意图
 
-```
-class Thread {  //内部持有ThreadLocalMap  ThreadLocal.ThreadLocalMap     threadLocals;}class ThreadLocal<T>{  public T get() {    //首先获取线程持有的    //ThreadLocalMap    ThreadLocalMap map =      Thread.currentThread()        .threadLocals;    //在ThreadLocalMap中    //查找变量    Entry e =       map.getEntry(this);    return e.value;    }  static class ThreadLocalMap{    //内部是数组而不是Map    Entry[] table;    //根据ThreadLocal查找Entry    Entry getEntry(ThreadLocal key){      //省略查找逻辑    }    //Entry定义    static class Entry extends    WeakReference<ThreadLocal>{      Object value;    }  }}
+```java
+
+class Thread {
+  //内部持有ThreadLocalMap
+  ThreadLocal.ThreadLocalMap 
+    threadLocals;
+}
+class ThreadLocal<T>{
+  public T get() {
+    //首先获取线程持有的
+    //ThreadLocalMap
+    ThreadLocalMap map =
+      Thread.currentThread()
+        .threadLocals;
+    //在ThreadLocalMap中
+    //查找变量
+    Entry e = 
+      map.getEntry(this);
+    return e.value;  
+  }
+  static class ThreadLocalMap{
+    //内部是数组而不是Map
+    Entry[] table;
+    //根据ThreadLocal查找Entry
+    Entry getEntry(ThreadLocal key){
+      //省略查找逻辑
+    }
+    //Entry定义
+    static class Entry extends
+    WeakReference<ThreadLocal>{
+      Object value;
+    }
+  }
+}
 ```
 
 初看上去，我们的设计方案和 Java 的实现仅仅是 Map 的持有方不同而已，我们的设计里面 Map 属于 ThreadLocal，而 Java 的实现里面 ThreadLocalMap 则是属于 Thread。这两种方式哪种更合理呢？很显然 Java 的实现更合理一些。在 Java 的实现方案里面，ThreadLocal 仅仅是一个代理工具类，内部并不持有任何与线程相关的数据，所有和线程相关的数据都存储在 Thread 里面，这样的设计容易理解。而从数据的亲缘性上来讲，ThreadLocalMap 属于 Thread 也更加合理。
@@ -67,8 +140,21 @@ ThreadLocal 与内存泄露
 
 那在线程池中，我们该如何正确使用 ThreadLocal 呢？其实很简单，既然 JVM 不能做到自动释放对 Value 的强引用，那我们手动释放就可以了。如何能做到手动释放呢？估计你马上想到 **try{}finally{} 方案**了，这个简直就是**手动释放资源的利器**。示例的代码如下，你可以参考学习。
 
-```
-ExecutorService es;ThreadLocal tl;es.execute(()->{  //ThreadLocal增加变量  tl.set(obj);  try {    // 省略业务逻辑代码  }finally {    //手动清理ThreadLocal     tl.remove();  }});
+```java
+
+ExecutorService es;
+ThreadLocal tl;
+es.execute(()->{
+  //ThreadLocal增加变量
+  tl.set(obj);
+  try {
+    // 省略业务逻辑代码
+  }finally {
+    //手动清理ThreadLocal 
+    tl.remove();
+  }
+});
+
 ```
 
 InheritableThreadLocal 与继承性
@@ -92,4 +178,6 @@ InheritableThreadLocal 与继承性
 
 实际工作中，有很多平台型的技术方案都是采用 ThreadLocal 来传递一些上下文信息，例如 Spring 使用 ThreadLocal 来传递事务信息。我们曾经说过，异步编程已经很成熟了，那你觉得在异步场景中，是否可以使用 Spring 的事务管理器呢？
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> Spring 使用 ThreadLocal 来传递事务信息，因此这个事务信息是不能跨线程共享的。
+>
+> 实际工作中有很多类库都是用 ThreadLocal 传递上下文信息的，这种场景下如果有异步操作，一定要注意上下文信息是不能跨线程共享的。

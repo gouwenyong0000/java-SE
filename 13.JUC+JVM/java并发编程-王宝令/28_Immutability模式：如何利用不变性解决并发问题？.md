@@ -1,8 +1,4 @@
-> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/92856)
-
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除我们曾经说过，“多个线程同时读写同一共享变量存在并发问题”，这里的必要条件之一是读写，如果只有读，而没有写，是没有并发问题的。
-
-**转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
+> **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 我们曾经说过，“多个线程同时读写同一共享变量存在并发问题”，这里的必要条件之一是读写，如果只有读，而没有写，是没有并发问题的。
 
@@ -17,8 +13,48 @@ Java SDK 里很多类都具备不可变性，只是由于它们的使用太简�
 
 看到这里你可能会疑惑，Java 的 String 方法也有类似字符替换操作，怎么能说所有方法都是只读的呢？我们结合 String 的源代码来解释一下这个问题，下面的示例代码源自 Java 1.8 SDK，我略做了修改，仅保留了关键属性 value[] 和 replace() 方法，你会发现：String 这个类以及它的属性 value[] 都是 final 的；而 replace() 方法的实现，就的确没有修改 value[]，而是将替换后的字符串作为返回值返回了。
 
-```
-public final class String {  private final char value[];  // 字符替换  String replace(char oldChar,       char newChar) {    //无需替换，直接返回this      if (oldChar == newChar){      return this;    }    int len = value.length;    int i = -1;    /* avoid getfield opcode */    char[] val = value;     //定位到需要替换的字符位置    while (i < len) {      if (val[i] == oldChar) {        break;      }    }    //未找到oldChar，无需替换    if (i >= len) {      return this;    }     //创建一个buf[]，这是关键    //用来保存替换后的字符串    char buf[] = new char[len];    for (int j = 0; j < i; j) {      buf[j] = val[j];    }    while (i < len) {      char c = val[i];      buf[i] = (c == oldChar) ?         newChar : c;      i++;    }    //创建一个新的字符串返回    //原字符串不会发生任何变化    return new String(buf, true);  }}
+```java
+public final class String {
+  private final char value[];
+  // 字符替换
+  String replace(char oldChar, 
+      char newChar) {
+    //无需替换，直接返回this  
+    if (oldChar == newChar){
+      return this;
+    }
+
+    int len = value.length;
+    int i = -1;
+    /* avoid getfield opcode */
+    char[] val = value; 
+    //定位到需要替换的字符位置
+    while (++i < len) {
+      if (val[i] == oldChar) {
+        break;
+      }
+    }
+    //未找到oldChar，无需替换
+    if (i >= len) {
+      return this;
+    } 
+    //创建一个buf[]，这是关键
+    //用来保存替换后的字符串
+    char buf[] = new char[len];
+    for (int j = 0; j < i; j++) {
+      buf[j] = val[j];
+    }
+    while (i < len) {
+      char c = val[i];
+      buf[i] = (c == oldChar) ? 
+        newChar : c;
+      i++;
+    }
+    //创建一个新的字符串返回
+    //原字符串不会发生任何变化
+    return new String(buf, true);
+  }
+}
 ```
 
 通过分析 String 的实现，你可能已经发现了，如果具备不可变性的类，需要提供类似修改的功能，具体该怎么操作呢？做法很简单，那就是**创建一个新的不可变对象**，这是与可变对象的一个重要区别，可变对象往往是修改自己的属性。
@@ -36,14 +72,48 @@ public final class String {  private final char value[];  // 字符替换  Strin
 
 Long 这个类并没有照搬享元模式，Long 内部维护了一个静态的对象池，仅缓存了 [-128,127] 之间的数字，这个对象池在 JVM 启动的时候就创建好了，而且这个对象池一直都不会变化，也就是说它是静态的。之所以采用这样的设计，是因为 Long 这个对象的状态共有 264 种，实在太多，不宜全部缓存，而 [-128,127] 之间的数字利用率最高。下面的示例代码出自 Java 1.8，valueOf()方法就用到了 LongCache 这个缓存，你可以结合着来加深理解。
 
-```
-Long valueOf(long l) {  final int offset = 128;  // [-128,127]直接的数字做了缓存  if (l >= -128 && l <= 127) {     return LongCache      .cache[(int)l + offset];  }  return new Long(l);}//缓存，等价于对象池//仅缓存[-128,127]直接的数字static class LongCache {  static final Long cache[]     = new Long[-(-128) + 127 + 1];  static {    for(int i=0; i<cache.length; i++)      cache[i] = new Long(i-128);  }}
+```java
+Long valueOf(long l) {
+  final int offset = 128;
+  // [-128,127]直接的数字做了缓存
+  if (l >= -128 && l <= 127) { 
+    return LongCache
+      .cache[(int)l + offset];
+  }
+  return new Long(l);
+}
+//缓存，等价于对象池
+//仅缓存[-128,127]直接的数字
+static class LongCache {
+  static final Long cache[] 
+    = new Long[-(-128) + 127 + 1];
+
+  static {
+    for(int i=0; i<cache.length; i++)
+      cache[i] = new Long(i-128);
+  }
+}
 ```
 
 前面我们在[《13 | 理论基础模块热点问题答疑》](https://time.geekbang.org/column/article/87749)中提到 “Integer 和 String 类型的对象不适合做锁”，其实基本上所有的基础类型的包装类都不适合做锁，因为它们内部用到了享元模式，这会导致看上去私有的锁，其实是共有的。例如在下面代码中，本意是 A 用锁 al，B 用锁 bl，各自管理各自的，互不影响。但实际上 al 和 bl 是一个对象，结果 A 和 B 共用的是一把锁。
 
-```
-class A {  Long al=Long.valueOf(1);  public void setAX(){    synchronized (al) {      //省略代码无数    }  }}class B {  Long bl=Long.valueOf(1);  public void setBY(){    synchronized (bl) {      //省略代码无数    }  }}
+```java
+class A {
+  Long al=Long.valueOf(1);
+  public void setAX(){
+    synchronized (al) {
+      //省略代码无数
+    }
+  }
+}
+class B {
+  Long bl=Long.valueOf(1);
+  public void setBY(){
+    synchronized (bl) {
+      //省略代码无数
+    }
+  }
+}
 ```
 
 使用 Immutability 模式的注意事项
@@ -56,20 +126,67 @@ class A {  Long al=Long.valueOf(1);  public void setAX(){    synchronized (al) {
 
 在 Java 语言中，final 修饰的属性一旦被赋值，就不可以再修改，但是如果属性的类型是普通对象，那么这个普通对象的属性是可以被修改的。例如下面的代码中，Bar 的属性 foo 虽然是 final 的，依然可以通过 setAge() 方法来设置 foo 的属性 age。所以，**在使用 Immutability 模式的时候一定要确认保持不变性的边界在哪里，是否要求属性对象也具备不可变性**。
 
-```
-class Foofinal class Bar {  final Foo foo;  void setAge(int a)}
+```java
+class Foo{
+  int age=0;
+  int name="abc";
+}
+final class Bar {
+  final Foo foo;
+  void setAge(int a){
+    foo.age=a;
+  }
+}
 ```
 
 下面我们再看看如何正确地发布不可变对象。不可变对象虽然是线程安全的，但是并不意味着引用这些不可变对象的对象就是线程安全的。例如在下面的代码中，Foo 具备不可变性，线程安全，但是类 Bar 并不是线程安全的，类 Bar 中持有对 Foo 的引用 foo，对 foo 这个引用的修改在多线程中并不能保证可见性和原子性。
 
-```
-//Foo线程安全final class Foo//Bar线程不安全class Bar {  Foo foo;  void setFoo(Foo f)}
+```java
+//Foo线程安全
+final class Foo{
+  final int age=0;
+  final int name="abc";
+}
+//Bar线程不安全
+class Bar {
+  Foo foo;
+  void setFoo(Foo f){
+    this.foo=f;
+  }
+}
 ```
 
 如果你的程序仅仅需要 foo 保持可见性，无需保证原子性，那么可以将 foo 声明为 volatile 变量，这样就能保证可见性。如果你的程序需要保证原子性，那么可以通过原子类来实现。下面的示例代码是合理库存的原子化实现，你应该很熟悉了，其中就是用原子类解决了不可变对象引用的原子性问题。
 
-```
-public class SafeWM {  class WMRange{    final int upper;    final int lower;    WMRange(int upper,int lower){    //省略构造函数实现    }  }  final AtomicReference<WMRange>    rf = new AtomicReference<>(      new WMRange(0,0)    );  // 设置库存上限  void setUpper(int v){    while(true){      WMRange or = rf.get();      // 检查参数合法性      if(v < or.lower){        throw new IllegalArgumentException();      }      WMRange nr = new          WMRange(v, or.lower);      if(rf.compareAndSet(or, nr)){        return;      }    }  }}
+```java
+public class SafeWM {
+  class WMRange{
+    final int upper;
+    final int lower;
+    WMRange(int upper,int lower){
+    //省略构造函数实现
+    }
+  }
+  final AtomicReference<WMRange>
+    rf = new AtomicReference<>(
+      new WMRange(0,0)
+    );
+  // 设置库存上限
+  void setUpper(int v){
+    while(true){
+      WMRange or = rf.get();
+      // 检查参数合法性
+      if(v < or.lower){
+        throw new IllegalArgumentException();
+      }
+      WMRange nr = new
+          WMRange(v, or.lower);
+      if(rf.compareAndSet(or, nr)){
+        return;
+      }
+    }
+  }
+}
 ```
 
 总结
@@ -84,8 +201,23 @@ public class SafeWM {  class WMRange{    final int upper;    final int lower;   
 
 下面的示例代码中，Account 的属性是 final 的，并且只有 get 方法，那这个类是不是具备不可变性呢？
 
-```
-public final class Account{  private final     StringBuffer user;  public Account(String user){    this.user =       new StringBuffer(user);  }    public StringBuffer getUser(){    return this.user;  }  public String toString(){    return "user"+user;  }}
+```java
+public final class Account{
+  private final StringBuffer user;
+  public Account(String user){
+    this.user = new StringBuffer(user);
+  }
+  
+  public StringBuffer getUser(){
+    return this.user;
+  }
+  public String toString(){
+    return "user"+user;
+  }
+}
 ```
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> 这段代码应该是线程安全的，但它不是不可变模式。
+> StringBuffer只是字段引用不可变，值是可以调用StringBuffer的方法改变的，这个需要改成把字段改成String这样的不可变对象来解决。
+>
+> StingBuffer 是 引用 类型， 当我们说它final StingBuffer user 不可变时，实际上说的是它user指向堆内存的地址不可变， 但堆内存的user对象，通过sub append 方法实际是可变的……

@@ -1,7 +1,5 @@
 > 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/97231)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除从今天开始，我们就进入案例分析模块了。
-
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 从今天开始，我们就进入案例分析模块了。 这个模块我们将分析四个经典的开源框架，看看它们是如何处理并发问题的，通过这四个案例的学习，相信你会对如何解决并发问题有个更深入的认识。
@@ -12,8 +10,34 @@
 
 在向线程池提交任务之前，调用 `acquire()` 方法就能起到限流的作用。通过示例代码的执行结果，任务提交到线程池的时间间隔基本上稳定在 500 毫秒。
 
-```
-//限流器流速：2个请求/秒RateLimiter limiter =   RateLimiter.create(2.0);//执行任务的线程池ExecutorService es = Executors  .newFixedThreadPool(1);//记录上一次执行时间prev = System.nanoTime();//测试执行20次for (int i=0; i<20; i++){  //限流器限流  limiter.acquire();  //提交任务异步执行  es.execute(()->{    long cur=System.nanoTime();    //打印时间间隔：毫秒    System.out.println(      (cur-prev)/1000_000);    prev = cur;  });}输出结果：...500499499500499
+```java
+//限流器流速：2个请求/秒
+RateLimiter limiter = RateLimiter.create(2.0);
+//执行任务的线程池
+ExecutorService es = Executors.newFixedThreadPool(1);
+//记录上一次执行时间
+prev = System.nanoTime();
+//测试执行20次
+for (int i=0; i<20; i++){
+  //限流器限流
+  limiter.acquire();
+  //提交任务异步执行
+  es.execute(()->{
+    long cur=System.nanoTime();
+    //打印时间间隔：毫秒
+    System.out.println(
+      (cur-prev)/1000_000);
+    prev = cur;
+  });
+}
+
+输出结果：
+…
+500
+499
+499
+500
+499
 ```
 
 经典限流算法：令牌桶算法
@@ -38,50 +62,144 @@ Guava 如何实现令牌桶算法
 
 Guava 实现令牌桶算法，用了一个很简单的办法，其关键是**记录并动态计算下一令牌发放的时间**。下面我们以一个最简单的场景来介绍该算法的执行过程。假设令牌桶的容量为 b=1，限流速率 r = 1 个请求 / 秒，如下图所示，如果当前令牌桶中没有令牌，下一个令牌的发放时间是在第 3 秒，而在第 2 秒的时候有一个线程 T1 请求令牌，此时该如何处理呢？
 
-[![](https://static001.geekbang.org/resource/image/39/ce/391179821a55fc798c9c17a6991c1dce.png)](https://static001.geekbang.org/resource/image/39/ce/391179821a55fc798c9c17a6991c1dce.png)
+[![](./image/38_案例分析（一）：高性能限流器GuavaRateLimiter/391179821a55fc798c9c17a6991c1dce-1677688536274-40.png)](https://static001.geekbang.org/resource/image/39/ce/391179821a55fc798c9c17a6991c1dce.png)
 
 线程 T1 请求令牌示意图
 
 对于这个请求令牌的线程而言，很显然需要等待 1 秒，因为 1 秒以后（第 3 秒）它就能拿到令牌了。此时需要注意的是，下一个令牌发放的时间也要增加 1 秒，为什么呢？因为第 3 秒发放的令牌已经被线程 T1 预占了。处理之后如下图所示。
 
-[![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACbklEQVRoQ+2aMU4dMRCGZw6RC1CSSyQdLZJtKQ2REgoiRIpQkCYClCYpkgIESQFIpIlkW+IIcIC0gUNwiEFGz+hlmbG9b1nesvGW++zxfP7H4/H6IYzkwZFwQAUZmpJVkSeniFJKA8ASIi7MyfkrRPxjrT1JjZ8MLaXUDiJuzwngn2GJaNd7vyP5IoIYY94Q0fEQIKIPRGS8947zSQTRWh8CwLuBgZx479+2BTkHgBdDAgGAC+fcywoyIFWqInWN9BSONbTmFVp/AeA5o+rjKRJ2XwBYRsRXM4ZXgAg2LAPzOCDTJYQx5pSIVlrC3EI45y611osMTHuQUPUiYpiVooerg7TWRwDAlhSM0TuI+BsD0x4kGCuFSRVzSqkfiLiWmY17EALMbCAlMCmI6IwxZo+INgQYEYKBuW5da00PKikjhNNiiPGm01rrbwDwofGehQjjNcv1SZgddALhlJEgwgJFxDNr7acmjFLqCyJuTd6LEGFttpmkYC91Hrk3s1GZFERMmUT01Xv/sQljjPlMRMsxO6WULwnb2D8FEs4j680wScjO5f3vzrlNJszESWq2LYXJgTzjZm56MCHf3zVBxH1r7ftU1splxxKYHEgoUUpTo+grEf303rPH5hxENJqDKQEJtko2q9zGeeycWy3JhpKhWT8+NM/sufIhBwKI+Mta+7pkfxKMtd8Qtdbcx4dUQZcFCQ2I6DcAnLUpf6YMPxhIDDOuxC4C6djoQUE6+tKpewWZ1wlRkq0qUhXptKTlzv93aI3jWmE0Fz2TeujpX73F9TaKy9CeMk8vZusfBnqZ1g5GqyIdJq+XrqNR5AahKr9CCcxGSwAAAABJRU5ErkJggg==)](https://static001.geekbang.org/resource/image/1a/87/1a4069c830e18de087ba7f490aa78087.png)
+![img](./image/38_案例分析（一）：高性能限流器GuavaRateLimiter/1a4069c830e18de087ba7f490aa78087-1677688536272-39.png)
 
 线程 T1 请求结束示意图
 
 假设 T1 在预占了第 3 秒的令牌之后，马上又有一个线程 T2 请求令牌，如下图所示。
 
-[![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACbklEQVRoQ+2aMU4dMRCGZw6RC1CSSyQdLZJtKQ2REgoiRIpQkCYClCYpkgIESQFIpIlkW+IIcIC0gUNwiEFGz+hlmbG9b1nesvGW++zxfP7H4/H6IYzkwZFwQAUZmpJVkSeniFJKA8ASIi7MyfkrRPxjrT1JjZ8MLaXUDiJuzwngn2GJaNd7vyP5IoIYY94Q0fEQIKIPRGS8947zSQTRWh8CwLuBgZx479+2BTkHgBdDAgGAC+fcywoyIFWqInWN9BSONbTmFVp/AeA5o+rjKRJ2XwBYRsRXM4ZXgAg2LAPzOCDTJYQx5pSIVlrC3EI45y611osMTHuQUPUiYpiVooerg7TWRwDAlhSM0TuI+BsD0x4kGCuFSRVzSqkfiLiWmY17EALMbCAlMCmI6IwxZo+INgQYEYKBuW5da00PKikjhNNiiPGm01rrbwDwofGehQjjNcv1SZgddALhlJEgwgJFxDNr7acmjFLqCyJuTd6LEGFttpmkYC91Hrk3s1GZFERMmUT01Xv/sQljjPlMRMsxO6WULwnb2D8FEs4j680wScjO5f3vzrlNJszESWq2LYXJgTzjZm56MCHf3zVBxH1r7ftU1splxxKYHEgoUUpTo+grEf303rPH5hxENJqDKQEJtko2q9zGeeycWy3JhpKhWT8+NM/sufIhBwKI+Mta+7pkfxKMtd8Qtdbcx4dUQZcFCQ2I6DcAnLUpf6YMPxhIDDOuxC4C6djoQUE6+tKpewWZ1wlRkq0qUhXptKTlzv93aI3jWmE0Fz2TeujpX73F9TaKy9CeMk8vZusfBnqZ1g5GqyIdJq+XrqNR5AahKr9CCcxGSwAAAABJRU5ErkJggg==)](https://static001.geekbang.org/resource/image/2c/2e/2cf695d0888a93e1e2d020d9514f5a2e.png)
+![img](./image/38_案例分析（一）：高性能限流器GuavaRateLimiter/2cf695d0888a93e1e2d020d9514f5a2e-1677688536274-42.png)
 
 线程 T2 请求令牌示意图
 
 很显然，由于下一个令牌产生的时间是第 4 秒，所以线程 T2 要等待两秒的时间，才能获取到令牌，同时由于 T2 预占了第 4 秒的令牌，所以下一令牌产生时间还要增加 1 秒，完全处理之后，如下图所示。
 
-[![](https://static001.geekbang.org/resource/image/68/f7/68c09a96049aacda7936c52b801c22f7.png)](https://static001.geekbang.org/resource/image/68/f7/68c09a96049aacda7936c52b801c22f7.png)
+[![](./image/38_案例分析（一）：高性能限流器GuavaRateLimiter/68c09a96049aacda7936c52b801c22f7-1677688536275-44.png)](https://static001.geekbang.org/resource/image/68/f7/68c09a96049aacda7936c52b801c22f7.png)
 
 线程 T2 请求结束示意图
 
 上面线程 T1、T2 都是在**下一令牌产生时间之前**请求令牌，如果线程在**下一令牌产生时间之后**请求令牌会如何呢？假设在线程 T1 请求令牌之后的 5 秒，也就是第 7 秒，线程 T3 请求令牌，如下图所示。
 
-[![](https://static001.geekbang.org/resource/image/e3/5c/e3125d72eb3d84eabf6de6ab987e695c.png)](https://static001.geekbang.org/resource/image/e3/5c/e3125d72eb3d84eabf6de6ab987e695c.png)
+[![](./image/38_案例分析（一）：高性能限流器GuavaRateLimiter/e3125d72eb3d84eabf6de6ab987e695c-1677688536275-46.png)](https://static001.geekbang.org/resource/image/e3/5c/e3125d72eb3d84eabf6de6ab987e695c.png)
 
 线程 T3 请求令牌示意图
 
 由于在第 5 秒已经产生了一个令牌，所以此时线程 T3 可以直接拿到令牌，而无需等待。在第 7 秒，实际上限流器能够产生 3 个令牌，第 5、6、7 秒各产生一个令牌。由于我们假设令牌桶的容量是 1，所以第 6、7 秒产生的令牌就丢弃了，其实等价地你也可以认为是保留的第 7 秒的令牌，丢弃的第 5、6 秒的令牌，也就是说第 7 秒的令牌被线程 T3 占有了，于是下一令牌的的产生时间应该是第 8 秒，如下图所示。
 
-[![](https://static001.geekbang.org/resource/image/ba/fc/baf159d05b2abf650839e29a2399a4fc.png)](https://static001.geekbang.org/resource/image/ba/fc/baf159d05b2abf650839e29a2399a4fc.png)
+[![](./image/38_案例分析（一）：高性能限流器GuavaRateLimiter/baf159d05b2abf650839e29a2399a4fc-1677688536275-48.png)](https://static001.geekbang.org/resource/image/ba/fc/baf159d05b2abf650839e29a2399a4fc.png)
 
 线程 T3 请求结束示意图
 
 通过上面简要地分析，你会发现，我们**只需要记录一个下一令牌产生的时间，并动态更新它，就能够轻松完成限流功能**。我们可以将上面的这个算法代码化，示例代码如下所示，依然假设令牌桶的容量是 1。关键是 **reserve() 方法**，这个方法会为请求令牌的线程预分配令牌，同时返回该线程能够获取令牌的时间。其实现逻辑就是上面提到的：如果线程请求令牌的时间在下一令牌产生时间之后，那么该线程立刻就能够获取令牌；反之，如果请求时间在下一令牌产生时间之前，那么该线程是在下一令牌产生的时间获取令牌。由于此时下一令牌已经被该线程预占，所以下一令牌产生的时间需要加上 1 秒。
 
-```
-class SimpleLimiter {  //下一令牌产生时间  long next = System.nanoTime();  //发放令牌间隔：纳秒  long interval = 1000_000_000;  //预占令牌，返回能够获取令牌的时间  synchronized long reserve(long now){    //请求时间在下一令牌产生时间之后    //重新计算下一令牌产生时间    if (now > next){      //将下一令牌产生时间重置为当前时间      next = now;    }    //能够获取令牌的时间    long at=next;    //设置下一令牌产生时间    next += interval;    //返回线程需要等待的时间    return Math.max(at, 0L);  }  //申请令牌  void acquire() {    //申请令牌时的时间    long now = System.nanoTime();    //预占令牌    long at=reserve(now);    long waitTime=max(at-now, 0);    //按照条件等待    if(waitTime > 0) {      try catch(InterruptedException e){        e.printStackTrace();      }    }  }}
+```java
+class SimpleLimiter {
+  //下一令牌产生时间
+  long next = System.nanoTime();
+  //发放令牌间隔：纳秒
+  long interval = 1000_000_000;
+  //预占令牌，返回能够获取令牌的时间
+  synchronized long reserve(long now){
+    //请求时间在下一令牌产生时间之后
+    //重新计算下一令牌产生时间
+    if (now > next){
+      //将下一令牌产生时间重置为当前时间
+      next = now;
+    }
+    //能够获取令牌的时间
+    long at=next;
+    //设置下一令牌产生时间
+    next += interval;
+    //返回线程需要等待的时间
+    return Math.max(at, 0L);
+  }
+  //申请令牌
+  void acquire() {
+    //申请令牌时的时间
+    long now = System.nanoTime();
+    //预占令牌
+    long at=reserve(now);
+    long waitTime=max(at-now, 0);
+    //按照条件等待
+    if(waitTime > 0) {
+      try {
+        TimeUnit.NANOSECONDS
+          .sleep(waitTime);
+      }catch(InterruptedException e){
+        e.printStackTrace();
+      }
+    }
+  }
+}
 ```
 
 如果令牌桶的容量大于 1，又该如何处理呢？按照令牌桶算法，令牌要首先从令牌桶中出，所以我们需要按需计算令牌桶中的数量，当有线程请求令牌时，先从令牌桶中出。具体的代码实现如下所示。我们增加了一个 **resync() 方法**，在这个方法中，如果线程请求令牌的时间在下一令牌产生时间之后，会重新计算令牌桶中的令牌数，**新产生的令牌的计算公式是：(now-next)/interval**，你可对照上面的示意图来理解。reserve() 方法中，则增加了先从令牌桶中出令牌的逻辑，不过需要注意的是，如果令牌是从令牌桶中出的，那么 next 就无需增加一个 interval 了。
 
-```
-class SimpleLimiter {  //当前令牌桶中的令牌数量  long storedPermits = 0;  //令牌桶的容量  long maxPermits = 3;  //下一令牌产生时间  long next = System.nanoTime();  //发放令牌间隔：纳秒  long interval = 1000_000_000;    //请求时间在下一令牌产生时间之后,则  // 1.重新计算令牌桶中的令牌数  // 2.将下一个令牌发放时间重置为当前时间  void resync(long now) {    if (now > next) {      //新产生的令牌数      long newPermits=(now-next)/interval;      //新令牌增加到令牌桶      storedPermits=min(maxPermits,         storedPermits + newPermits);      //将下一个令牌发放时间重置为当前时间      next = now;    }  }  //预占令牌，返回能够获取令牌的时间  synchronized long reserve(long now){    resync(now);    //能够获取令牌的时间    long at = next;    //令牌桶中能提供的令牌    long fb=min(1, storedPermits);    //令牌净需求：首先减掉令牌桶中的令牌    long nr = 1 - fb;    //重新计算下一令牌产生时间    next = next + nr*interval;    //重新计算令牌桶中的令牌    this.storedPermits -= fb;    return at;  }  //申请令牌  void acquire() {    //申请令牌时的时间    long now = System.nanoTime();    //预占令牌    long at=reserve(now);    long waitTime=max(at-now, 0);    //按照条件等待    if(waitTime > 0) {      try catch(InterruptedException e){        e.printStackTrace();      }    }  }}
+```java
+class SimpleLimiter {
+  //当前令牌桶中的令牌数量
+  long storedPermits = 0;
+  //令牌桶的容量
+  long maxPermits = 3;
+  //下一令牌产生时间
+  long next = System.nanoTime();
+  //发放令牌间隔：纳秒
+  long interval = 1000_000_000;
+  
+  //请求时间在下一令牌产生时间之后,则
+  // 1.重新计算令牌桶中的令牌数
+  // 2.将下一个令牌发放时间重置为当前时间
+  void resync(long now) {
+    if (now > next) {
+      //新产生的令牌数
+      long newPermits=(now-next)/interval;
+      //新令牌增加到令牌桶
+      storedPermits=min(maxPermits, 
+        storedPermits + newPermits);
+      //将下一个令牌发放时间重置为当前时间
+      next = now;
+    }
+  }
+  //预占令牌，返回能够获取令牌的时间
+  synchronized long reserve(long now){
+    resync(now);
+    //能够获取令牌的时间
+    long at = next;
+    //令牌桶中能提供的令牌
+    long fb=min(1, storedPermits);
+    //令牌净需求：首先减掉令牌桶中的令牌
+    long nr = 1 - fb;
+    //重新计算下一令牌产生时间
+    next = next + nr*interval;
+    //重新计算令牌桶中的令牌
+    this.storedPermits -= fb;
+    return at;
+  }
+  //申请令牌
+  void acquire() {
+    //申请令牌时的时间
+    long now = System.nanoTime();
+    //预占令牌
+    long at=reserve(now);
+    long waitTime=max(at-now, 0);
+    //按照条件等待
+    if(waitTime > 0) {
+      try {
+        TimeUnit.NANOSECONDS
+          .sleep(waitTime);
+      }catch(InterruptedException e){
+        e.printStackTrace();
+      }
+    }
+  }
+}
+
 ```
 
 总结

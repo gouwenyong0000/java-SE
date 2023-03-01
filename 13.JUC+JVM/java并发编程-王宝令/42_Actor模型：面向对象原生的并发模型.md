@@ -1,7 +1,5 @@
 > 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/98903)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除上学的时候，有门计算机专业课叫做面向对象编程，学这门课的时候有个问题困扰了我很久，按照面向对象编程的理论，对象之间通信需要依靠消息，而实际上，像 C++、Java 这些面向对象的语言，对象之间通信，依靠的是对象方法。
-
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 上学的时候，有门计算机专业课叫做面向对象编程，学这门课的时候有个问题困扰了我很久，按照面向对象编程的理论，对象之间通信需要依靠**消息**，而实际上，像 C++、Java 这些面向对象的语言，对象之间通信，依靠的是**对象方法**。对象方法和过程语言里的函数本质上没有区别，有入参、有出参，思维方式很相似，使用起来都很简单。那面向对象理论里的消息是否就等价于面向对象语言里的对象方法呢？很长一段时间里，我都以为对象方法是面向对象理论中消息的一种实现，直到接触到 Actor 模型，才明白消息压根不是这个实现法。
@@ -17,8 +15,25 @@ Actor 模型本质上是一种计算模型，基本的计算单元称为 Actor�
 
 在下面的示例代码中，我们首先创建了一个 ActorSystem（Actor 不能脱离 ActorSystem 存在）；之后创建了一个 HelloActor，Akka 中创建 Actor 并不是 new 一个对象出来，而是通过调用 system.actorOf() 方法创建的，该方法返回的是 ActorRef，而不是 HelloActor；最后通过调用 ActorRef 的 tell() 方法给 HelloActor 发送了一条消息 “Actor” 。
 
-```
-//该Actor当收到消息message后，//会打印Hello messagestatic class HelloActor     extends UntypedActor {  @Override  public void onReceive(Object message) {    System.out.println("Hello " + message);  }}public static void main(String[] args) {  //创建Actor系统  ActorSystem system = ActorSystem.create("HelloSystem");  //创建HelloActor  ActorRef helloActor =     system.actorOf(Props.create(HelloActor.class));  //发送消息给HelloActor  helloActor.tell("Actor", ActorRef.noSender());}
+```java
+//该Actor当收到消息message后，
+//会打印Hello message
+static class HelloActor extends UntypedActor {
+  @Override
+  public void onReceive(Object message) {
+    System.out.println("Hello " + message);
+  }
+}
+
+public static void main(String[] args) {
+  //创建Actor系统
+  ActorSystem system = ActorSystem.create("HelloSystem");
+  //创建HelloActor
+  ActorRef helloActor = system.actorOf(Props.create(HelloActor.class));
+  //发送消息给HelloActor
+  helloActor.tell("Actor", ActorRef.noSender());
+}
+
 ```
 
 通过这个例子，你会发现 Actor 模型和面向对象编程契合度非常高，完全可以用 Actor 类比面向对象编程里面的对象，而且 Actor 之间的通信方式完美地遵守了消息机制，而不是通过对象方法来实现对象之间的通信。那 Actor 中的消息机制和面向对象语言里的对象方法有什么区别呢？
@@ -60,8 +75,47 @@ Actor 的规范化定义
 
 在下面的示例代码中，CounterActor 内部持有累计值 counter，当 CounterActor 接收到一个数值型的消息 message 时，就将累计值 counter += message；但如果是其他类型的消息，则打印当前累计值 counter。在 main() 方法中，我们启动了 4 个线程来执行累加操作。整个程序没有锁，也没有 CAS，但是程序是线程安全的。
 
-```
-//累加器static class CounterActor extends UntypedActor {  private int counter = 0;  @Override  public void onReceive(Object message){    //如果接收到的消息是数字类型，执行累加操作，    //否则打印counter的值    if (message instanceof Number) {      counter += ((Number) message).intValue();    } else {      System.out.println(counter);    }  }}public static void main(String[] args) throws InterruptedException {  //创建Actor系统  ActorSystem system = ActorSystem.create("HelloSystem");  //4个线程生产消息  ExecutorService es = Executors.newFixedThreadPool(4);  //创建CounterActor   ActorRef counterActor =     system.actorOf(Props.create(CounterActor.class));  //生产4*100000个消息   for (int i=0; i<4; i++) {    es.execute(()->{      for (int j=0; j<100000; j++) {        counterActor.tell(1, ActorRef.noSender());      }    });  }  //关闭线程池  es.shutdown();  //等待CounterActor处理完所有消息  Thread.sleep(1000);  //打印结果  counterActor.tell("", ActorRef.noSender());  //关闭Actor系统  system.shutdown();}
+```java
+//累加器
+static class CounterActor extends UntypedActor {
+  private int counter = 0;
+  @Override
+  public void onReceive(Object message){
+    //如果接收到的消息是数字类型，执行累加操作，
+    //否则打印counter的值
+    if (message instanceof Number) {
+      counter += ((Number) message).intValue();
+    } else {
+      System.out.println(counter);
+    }
+  }
+}
+
+public static void main(String[] args) throws InterruptedException {
+  //创建Actor系统
+  ActorSystem system = ActorSystem.create("HelloSystem");
+  //4个线程生产消息
+  ExecutorService es = Executors.newFixedThreadPool(4);
+  //创建CounterActor 
+  ActorRef counterActor = system.actorOf(Props.create(CounterActor.class));
+  //生产4*100000个消息 
+  for (int i=0; i<4; i++) {
+    es.execute(()->{
+      for (int j=0; j<100000; j++) {
+        counterActor.tell(1, ActorRef.noSender());
+      }
+    });
+  }
+  //关闭线程池
+  es.shutdown();
+  //等待CounterActor处理完所有消息
+  Thread.sleep(1000);
+  //打印结果
+  counterActor.tell("", ActorRef.noSender());
+  //关闭Actor系统
+  system.shutdown();
+}
+
 ```
 
 总结

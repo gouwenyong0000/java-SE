@@ -13,7 +13,7 @@ Worker Thread 模式及其实现
 
 Worker Thread 模式可以类比现实世界里车间的工作模式：车间里的工人，有活儿了，大家一起干，没活儿了就聊聊天等着。你可以参考下面的示意图来理解，Worker Thread 模式中 **Worker Thread 对应到现实世界里，其实指的就是车间里的工人**。不过这里需要注意的是，车间里的工人数量往往是确定的。
 
-[![](https://static001.geekbang.org/resource/image/9d/c3/9d0082376427a97644ad7219af6922c3.png)](https://static001.geekbang.org/resource/image/9d/c3/9d0082376427a97644ad7219af6922c3.png)
+[![](./image/34_WorkerThread模式：如何避免重复创建线程？/9d0082376427a97644ad7219af6922c3-1677687723688-5.png)](https://static001.geekbang.org/resource/image/9d/c3/9d0082376427a97644ad7219af6922c3.png)
 
 车间工作示意图
 
@@ -25,8 +25,41 @@ Worker Thread 模式可以类比现实世界里车间的工作模式：车间里
 
 下面的示例代码是用线程池实现的 echo 服务端，相比于 Thread-Per-Message 模式的实现，改动非常少，仅仅是创建了一个最多线程数为 500 的线程池 es，然后通过 es.execute() 方法将请求处理的任务提交给线程池处理。
 
-```
-ExecutorService es = Executors  .newFixedThreadPool(500);final ServerSocketChannel ssc =   ServerSocketChannel.open().bind(    new InetSocketAddress(8080));//处理请求    try {  while (true) {    // 接收请求    SocketChannel sc = ssc.accept();    // 将请求处理任务提交给线程池    es.execute(()->{      try {        // 读Socket        ByteBuffer rb = ByteBuffer          .allocateDirect(1024);        sc.read(rb);        //模拟处理请求        Thread.sleep(2000);        // 写Socket        ByteBuffer wb =           (ByteBuffer)rb.flip();        sc.write(wb);        // 关闭Socket        sc.close();      }catch(Exception e){        throw new UncheckedIOException(e);      }    });  }} finally {  ssc.close();  es.shutdown();}
+```java
+ExecutorService es = Executors.newFixedThreadPool(500);
+final ServerSocketChannel ssc = 
+  ServerSocketChannel.open().bind(
+    new InetSocketAddress(8080));
+//处理请求    
+try {
+  while (true) {
+    // 接收请求
+    SocketChannel sc = ssc.accept();
+    // 将请求处理任务提交给线程池
+    es.execute(()->{
+      try {
+        // 读Socket
+        ByteBuffer rb = ByteBuffer
+          .allocateDirect(1024);
+        sc.read(rb);
+        //模拟处理请求
+        Thread.sleep(2000);
+        // 写Socket
+        ByteBuffer wb = 
+          (ByteBuffer)rb.flip();
+        sc.write(wb);
+        // 关闭Socket
+        sc.close();
+      }catch(Exception e){
+        throw new UncheckedIOException(e);
+      }
+    });
+  }
+} finally {
+  ssc.close();
+  es.shutdown();
+}   
+
 ```
 
 正确地创建线程池
@@ -40,8 +73,20 @@ Java 的线程池既能够避免无限制地**创建线程**导致 OOM，也能�
 
 综合以上这三点建议，echo 程序中创建线程可以使用下面的示例代码。
 
-```
-ExecutorService es = new ThreadPoolExecutor(  50, 500,  60L, TimeUnit.SECONDS,  //注意要创建有界队列  new LinkedBlockingQueue<Runnable>(2000),  //建议根据业务需求实现ThreadFactory  r->{    return new Thread(r, "echo-"+ r.hashCode());  },  //建议根据业务需求实现RejectedExecutionHandler  new ThreadPoolExecutor.CallerRunsPolicy());
+```java
+
+ExecutorService es = new ThreadPoolExecutor(
+  50, 500,
+  60L, TimeUnit.SECONDS,
+  //注意要创建有界队列
+  new LinkedBlockingQueue<Runnable>(2000),
+  //建议根据业务需求实现ThreadFactory
+  r->{
+    return new Thread(r, "echo-"+ r.hashCode());
+  },
+  //建议根据业务需求实现RejectedExecutionHandler
+  new ThreadPoolExecutor.CallerRunsPolicy());
+
 ```
 
 避免线程死锁
@@ -51,19 +96,44 @@ ExecutorService es = new ThreadPoolExecutor(  50, 500,  60L, TimeUnit.SECONDS,  
 
 这个出问题的应用，相关的逻辑精简之后，如下图所示，该应用将一个大型的计算任务分成两个阶段，第一个阶段的任务会等待第二阶段的子任务完成。在这个应用里，每一个阶段都使用了线程池，而且两个阶段使用的还是同一个线程池。
 
-[![](https://static001.geekbang.org/resource/image/f8/b8/f807b0935133b315870d2d7db5477db8.png)](https://static001.geekbang.org/resource/image/f8/b8/f807b0935133b315870d2d7db5477db8.png)
+[![](./image/34_WorkerThread模式：如何避免重复创建线程？/f807b0935133b315870d2d7db5477db8.png)](https://static001.geekbang.org/resource/image/f8/b8/f807b0935133b315870d2d7db5477db8.png)
 
 应用业务逻辑示意图
 
 我们可以用下面的示例代码来模拟该应用，如果你执行下面的这段代码，会发现它永远执行不到最后一行。执行过程中没有任何异常，但是应用已经停止响应了。
 
-```
-//L1、L2阶段共用的线程池ExecutorService es = Executors.  newFixedThreadPool(2);//L1阶段的闭锁    CountDownLatch l1=new CountDownLatch(2);for (int i=0; i<2; i++){  System.out.println("L1");  //执行L1阶段任务  es.execute(()->{    //L2阶段的闭锁     CountDownLatch l2=new CountDownLatch(2);    //执行L2阶段子任务    for (int j=0; j<2; j++){      es.execute(()->{        System.out.println("L2");        l2.countDown();      });    }    //等待L2阶段任务执行完    l2.await();    l1.countDown();  });}//等着L1阶段任务执行完l1.await();System.out.println("end");
+```java
+//L1、L2阶段共用的线程池
+ExecutorService es = Executors.newFixedThreadPool(2);
+//L1阶段的闭锁    
+CountDownLatch l1=new CountDownLatch(2);
+for (int i=0; i<2; i++){
+  System.out.println("L1");
+  //执行L1阶段任务
+  es.execute(()->{
+    //L2阶段的闭锁 
+    CountDownLatch l2=new CountDownLatch(2);
+    //执行L2阶段子任务
+    for (int j=0; j<2; j++){
+      es.execute(()->{
+        System.out.println("L2");
+        l2.countDown();
+      });
+    }
+    //等待L2阶段任务执行完
+    l2.await();
+    l1.countDown();
+  });
+}
+//等着L1阶段任务执行完
+l1.await();
+System.out.println("end");
+
 ```
 
 当应用出现类似问题时，首选的诊断方法是查看线程栈。下图是上面示例代码停止响应后的线程栈，你会发现线程池中的两个线程全部都阻塞在 `l2.await();` 这行代码上了，也就是说，线程池里所有的线程都在等待 L2 阶段的任务执行完，那 L2 阶段的子任务什么时候能够执行完呢？永远都没那一天了，为什么呢？因为线程池里的线程都阻塞了，没有空闲的线程执行 L2 阶段的任务了。
 
-[![](https://static001.geekbang.org/resource/image/43/83/43c663eedd5b0b75b6c3022e26eb1583.png)](https://static001.geekbang.org/resource/image/43/83/43c663eedd5b0b75b6c3022e26eb1583.png)
+[![](./image/34_WorkerThread模式：如何避免重复创建线程？/43c663eedd5b0b75b6c3022e26eb1583.png)](https://static001.geekbang.org/resource/image/43/83/43c663eedd5b0b75b6c3022e26eb1583.png)
 
 原因找到了，那如何解决就简单了，最简单粗暴的办法就是将线程池的最大线程数调大，如果能够确定任务的数量不是非常多的话，这个办法也是可行的，否则这个办法就行不通了。其实**这种问题通用的解决方案是为不同的任务创建不同的线程池**。对于上面的这个应用，L1 阶段的任务和 L2 阶段的任务如果各自都有自己的线程池，就不会出现这种问题了。
 
@@ -85,8 +155,26 @@ Worker Thread 模式能避免线程频繁创建、销毁的问题，而且能够
 
 小灰同学写了如下的代码，本义是异步地打印字符串 “QQ”，请问他的实现是否有问题呢？
 
-```
-ExecutorService pool = Executors  .newSingleThreadExecutor();pool.submit(() -> {  try {    String qq=pool.submit(()->"QQ").get();    System.out.println(qq);  } catch (Exception e) {  }});
+```java
+
+ExecutorService pool = Executors
+  .newSingleThreadExecutor();
+pool.submit(() -> {
+  try {
+    String qq=pool.submit(()->"QQ").get();
+    System.out.println(qq);
+  } catch (Exception e) {
+  }
+});
+
 ```
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> 结论是：代码会被一直阻塞；
+>
+> 原因是：
+>
+> 1. 通过Executors.newSingleThreadExecutor()创建的线程池默认是1个核心线程 + 无界工作队列；
+> 2. 第一次submit时，会把池中唯一的一个核心线程给占用；
+> 3. 第二次submit时，由于没有空闲的线程，并且工作队列也没满，所以线程池会把提交的任务添加到工作队列，然后等待空闲线程来执行该任务；
+> 4. 在第二次submit时使用了.get()方法，这里会一直等到线程返回执行结果；
+> 5. 由于两次submit是嵌套执行的，并且此时线程池中也没有空闲线程，所以第二次submit的任务永远不会被执行，.get()方法会就被永远阻塞，从而导致第一次submit的线程也被永远阻塞。

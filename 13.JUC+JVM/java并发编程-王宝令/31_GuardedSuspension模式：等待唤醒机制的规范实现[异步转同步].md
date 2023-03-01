@@ -1,19 +1,41 @@
-> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/94097)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除前不久，同事小灰工作中遇到一个问题，他开发了一个 Web 项目：Web 版的文件浏览器，通过它用户可以在浏览器里查看服务器上的目录和文件。
 
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 前不久，同事小灰工作中遇到一个问题，他开发了一个 Web 项目：Web 版的文件浏览器，通过它用户可以在浏览器里查看服务器上的目录和文件。这个项目依赖运维部门提供的文件浏览服务，而这个文件浏览服务只支持消息队列（MQ）方式接入。消息队列在互联网大厂中用的非常多，主要用作流量削峰和系统解耦。在这种接入方式中，发送消息和消费结果这两个操作之间是异步的，你可以参考下面的示意图来理解。
 
-[![](https://static001.geekbang.org/resource/image/d1/21/d1ad5ce1df66d85698308c41e4e93a21.png)](https://static001.geekbang.org/resource/image/d1/21/d1ad5ce1df66d85698308c41e4e93a21.png)
+[![](./image/31_GuardedSuspension模式：等待唤醒机制的规范实现[异步转同步]/d1ad5ce1df66d85698308c41e4e93a21-1677169076166-76.png)](https://static001.geekbang.org/resource/image/d1/21/d1ad5ce1df66d85698308c41e4e93a21.png)
 
 消息队列（MQ）示意图
 
 在小灰的这个 Web 项目中，用户通过浏览器发过来一个请求，会被转换成一个异步消息发送给 MQ，等 MQ 返回结果后，再将这个结果返回至浏览器。小灰同学的问题是：给 MQ 发送消息的线程是处理 Web 请求的线程 T1，但消费 MQ 结果的线程并不是线程 T1，那线程 T1 如何等待 MQ 的返回结果呢？为了便于你理解这个场景，我将其代码化了，示例代码如下。
 
-```
-class Message{  String id;  String content;}//该方法可以发送消息void send(Message msg){  //省略相关代码}//MQ消息返回后会调用该方法//该方法的执行线程不同于//发送消息的线程void onMessage(Message msg){  //省略相关代码}//处理浏览器发来的请求Respond handleWebReq(){  //创建一消息  Message msg1 = new     Message("1","");  //发送消息  send(msg1);  //如何等待MQ返回的消息呢？  String result = ...;}
+```java
+
+class Message{
+  String id;
+  String content;
+}
+//该方法可以发送消息
+void send(Message msg){
+  //省略相关代码
+}
+//MQ消息返回后会调用该方法
+//该方法的执行线程不同于
+//发送消息的线程
+void onMessage(Message msg){
+  //省略相关代码
+}
+//处理浏览器发来的请求
+Respond handleWebReq(){
+  //创建一消息
+  Message msg1 = new 
+    Message("1","{...}");
+  //发送消息
+  send(msg1);
+  //如何等待MQ返回的消息呢？
+  String result = ...;
+}
 ```
 
 看到这里，相信你一定有点似曾相识的感觉，这不就是前面我们在[《15 | Lock 和 Condition（下）：Dubbo 如何用管程实现异步转同步？》](https://time.geekbang.org/column/article/88487)中曾介绍过的异步转同步问题吗？仔细分析，的确是这样，不过在那一篇文章中我们只是介绍了最终方案，让你知其然，但是并没有介绍这个方案是如何设计出来的，今天咱们再仔细聊聊这个问题，让你知其所以然，遇到类似问题也能自己设计出方案来。
@@ -29,14 +51,51 @@ Guarded Suspension 模式
 
 下图就是 Guarded Suspension 模式的结构图，非常简单，一个对象 GuardedObject，内部有一个成员变量——受保护的对象，以及两个成员方法——`get(Predicate<T> p)`和`onChanged(T obj)`方法。其中，对象 GuardedObject 就是我们前面提到的大堂经理，受保护对象就是餐厅里面的包间；受保护对象的 get() 方法对应的是我们的就餐，就餐的前提条件是包间已经收拾好了，参数 p 就是用来描述这个前提条件的；受保护对象的 onChanged() 方法对应的是服务员把包间收拾好了，通过 onChanged() 方法可以 fire 一个事件，而这个事件往往能改变前提条件 p 的计算结果。下图中，左侧的绿色线程就是需要就餐的顾客，而右侧的蓝色线程就是收拾包间的服务员。
 
-[![](https://static001.geekbang.org/resource/image/63/dc/630f3eda98a0e6a436953153c68464dc.png)](https://static001.geekbang.org/resource/image/63/dc/630f3eda98a0e6a436953153c68464dc.png)
+[![](./image/31_GuardedSuspension模式：等待唤醒机制的规范实现[异步转同步]/630f3eda98a0e6a436953153c68464dc.png)](https://static001.geekbang.org/resource/image/63/dc/630f3eda98a0e6a436953153c68464dc.png)
 
 Guarded Suspension 模式结构图
 
 GuardedObject 的内部实现非常简单，是管程的一个经典用法，你可以参考下面的示例代码，核心是：get() 方法通过条件变量的 await() 方法实现等待，onChanged() 方法通过条件变量的 signalAll() 方法实现唤醒功能。逻辑还是很简单的，所以这里就不再详细介绍了。
 
-```
-class GuardedObject<T>{  //受保护的对象  T obj;  final Lock lock =     new ReentrantLock();  final Condition done =    lock.newCondition();  final int timeout=1;  //获取受保护对象    T get(Predicate<T> p) {    lock.lock();    try {      //MESA管程推荐写法      while(!p.test(obj)){        done.await(timeout,           TimeUnit.SECONDS);      }    }catch(InterruptedException e){      throw new RuntimeException(e);    }finally{      lock.unlock();    }    //返回非空的受保护对象    return obj;  }  //事件通知方法  void onChanged(T obj) {    lock.lock();    try {      this.obj = obj;      done.signalAll();    } finally {      lock.unlock();    }  }}
+```java
+
+class GuardedObject<T>{
+  //受保护的对象
+  T obj;
+  final Lock lock = 
+    new ReentrantLock();
+  final Condition done =
+    lock.newCondition();
+  final int timeout=1;
+  //获取受保护对象  
+  T get(Predicate<T> p) {
+    lock.lock();
+    try {
+      //MESA管程推荐写法
+      while(!p.test(obj)){
+        done.await(timeout, 
+          TimeUnit.SECONDS);
+      }
+    }catch(InterruptedException e){
+      throw new RuntimeException(e);
+    }finally{
+      lock.unlock();
+    }
+    //返回非空的受保护对象
+    return obj;
+  }
+  //事件通知方法
+  void onChanged(T obj) {
+    lock.lock();
+    try {
+      this.obj = obj;
+      done.signalAll();
+    } finally {
+      lock.unlock();
+    }
+  }
+}
+
 ```
 
 扩展 Guarded Suspension 模式
@@ -46,8 +105,26 @@ class GuardedObject<T>{  //受保护的对象  T obj;  final Lock lock =     new
 
 Guarded Suspension 模式里 GuardedObject 有两个核心方法，一个是 get() 方法，一个是 onChanged() 方法。很显然，在处理 Web 请求的方法 handleWebReq() 中，可以调用 GuardedObject 的 get() 方法来实现等待；在 MQ 消息的消费方法 onMessage() 中，可以调用 GuardedObject 的 onChanged() 方法来实现唤醒。
 
-```
-//处理浏览器发来的请求Respond handleWebReq(){  //创建一消息  Message msg1 = new     Message("1","");  //发送消息  send(msg1);  //利用GuardedObject实现等待  GuardedObject<Message> go    =new GuardObjec<>();  Message r = go.get(    t->t != null);}void onMessage(Message msg){  //如何找到匹配的go？  GuardedObject<Message> go=???  go.onChanged(msg);}
+```java
+
+//处理浏览器发来的请求
+Respond handleWebReq(){
+  //创建一消息
+  Message msg1 = new 
+    Message("1","{...}");
+  //发送消息
+  send(msg1);
+  //利用GuardedObject实现等待
+  GuardedObject<Message> go
+    =new GuardObjec<>();
+  Message r = go.get(
+    t->t != null);
+}
+void onMessage(Message msg){
+  //如何找到匹配的go？
+  GuardedObject<Message> go=???
+  go.onChanged(msg);
+}
 ```
 
 但是在实现的时候会遇到一个问题，handleWebReq() 里面创建了 GuardedObject 对象的实例 go，并调用其 get() 方等待结果，那在 onMessage() 方法中，如何才能够找到匹配的 GuardedObject 对象呢？这个过程类似服务员告诉大堂经理某某包间已经收拾好了，大堂经理如何根据包间找到就餐的人。现实世界里，大堂经理的头脑中，有包间和就餐人之间的关系图，所以服务员说完之后大堂经理立刻就能把就餐人找出来。
@@ -56,14 +133,89 @@ Guarded Suspension 模式里 GuardedObject 有两个核心方法，一个是 get
 
 有了这个关系，我们来看看具体如何实现。下面的示例代码是扩展 Guarded Suspension 模式的实现，扩展后的 GuardedObject 内部维护了一个 Map，其 Key 是 MQ 消息 id，而 Value 是 GuardedObject 对象实例，同时增加了静态方法 create() 和 fireEvent()；create() 方法用来创建一个 GuardedObject 对象实例，并根据 key 值将其加入到 Map 中，而 fireEvent() 方法则是模拟的大堂经理根据包间找就餐人的逻辑。
 
-```
-class GuardedObject<T>{  //受保护的对象  T obj;  final Lock lock =     new ReentrantLock();  final Condition done =    lock.newCondition();  final int timeout=2;  //保存所有GuardedObject  final static Map<Object, GuardedObject>   gos=new ConcurrentHashMap<>();  //静态方法创建GuardedObject  static <K> GuardedObject       create(K key){    GuardedObject go=new GuardedObject();    gos.put(key, go);    return go;  }  static <K, T> void       fireEvent(K key, T obj){    GuardedObject go=gos.remove(key);    if (go != null){      go.onChanged(obj);    }  }  //获取受保护对象    T get(Predicate<T> p) {    lock.lock();    try {      //MESA管程推荐写法      while(!p.test(obj)){        done.await(timeout,           TimeUnit.SECONDS);      }    }catch(InterruptedException e){      throw new RuntimeException(e);    }finally{      lock.unlock();    }    //返回非空的受保护对象    return obj;  }  //事件通知方法  void onChanged(T obj) {    lock.lock();    try {      this.obj = obj;      done.signalAll();    } finally {      lock.unlock();    }  }}
+```java
+
+class GuardedObject<T>{
+  //受保护的对象
+  T obj;
+  final Lock lock = 
+    new ReentrantLock();
+  final Condition done =
+    lock.newCondition();
+  final int timeout=2;
+  //保存所有GuardedObject
+  final static Map<Object, GuardedObject> 
+  gos=new ConcurrentHashMap<>();
+  //静态方法创建GuardedObject
+  static <K> GuardedObject 
+      create(K key){
+    GuardedObject go=new GuardedObject();
+    gos.put(key, go);
+    return go;
+  }
+  static <K, T> void 
+      fireEvent(K key, T obj){
+    GuardedObject go=gos.remove(key);
+    if (go != null){
+      go.onChanged(obj);
+    }
+  }
+  //获取受保护对象  
+  T get(Predicate<T> p) {
+    lock.lock();
+    try {
+      //MESA管程推荐写法
+      while(!p.test(obj)){
+        done.await(timeout, 
+          TimeUnit.SECONDS);
+      }
+    }catch(InterruptedException e){
+      throw new RuntimeException(e);
+    }finally{
+      lock.unlock();
+    }
+    //返回非空的受保护对象
+    return obj;
+  }
+  //事件通知方法
+  void onChanged(T obj) {
+    lock.lock();
+    try {
+      this.obj = obj;
+      done.signalAll();
+    } finally {
+      lock.unlock();
+    }
+  }
+}
+
 ```
 
 这样利用扩展后的 GuardedObject 来解决小灰同学的问题就很简单了，具体代码如下所示。
 
-```
-//处理浏览器发来的请求Respond handleWebReq(){  int id=序号生成器.get();  //创建一消息  Message msg1 = new     Message(id,"");  //创建GuardedObject实例  GuardedObject<Message> go=    GuardedObject.create(id);    //发送消息  send(msg1);  //等待MQ消息  Message r = go.get(    t->t != null);  }void onMessage(Message msg){  //唤醒等待的线程  GuardedObject.fireEvent(    msg.id, msg);}
+```java
+
+//处理浏览器发来的请求
+Respond handleWebReq(){
+  int id=序号生成器.get();
+  //创建一消息
+  Message msg1 = new 
+    Message(id,"{...}");
+  //创建GuardedObject实例
+  GuardedObject<Message> go=
+    GuardedObject.create(id);  
+  //发送消息
+  send(msg1);
+  //等待MQ消息
+  Message r = go.get(
+    t->t != null);  
+}
+void onMessage(Message msg){
+  //唤醒等待的线程
+  GuardedObject.fireEvent(
+    msg.id, msg);
+}
+
 ```
 
 总结
@@ -78,8 +230,26 @@ Guarded Suspension 模式也常被称作 Guarded Wait 模式、Spin Lock 模式�
 
 有同学觉得用 done.await() 还要加锁，太啰嗦，还不如直接使用 sleep() 方法，下面是他的实现，你觉得他的写法正确吗？
 
-```
-//获取受保护对象  T get(Predicate<T> p) {  try {    while(!p.test(obj))  }catch(InterruptedException e){    throw new RuntimeException(e);  }  //返回非空的受保护对象  return obj;}//事件通知方法void onChanged(T obj)
+```java
+
+//获取受保护对象  
+T get(Predicate<T> p) {
+  try {
+    while(!p.test(obj)){
+      TimeUnit.SECONDS
+        .sleep(timeout);
+    }
+  }catch(InterruptedException e){
+    throw new RuntimeException(e);
+  }
+  //返回非空的受保护对象
+  return obj;
+}
+//事件通知方法
+void onChanged(T obj) {
+  this.obj = obj;
+}
+
 ```
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> sleep 无法被唤醒，只能时间到后自己恢复运行，当真正的条件满足了，时间未到，接着睡眠，无性能可言

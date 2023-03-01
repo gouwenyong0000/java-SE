@@ -10,7 +10,7 @@
 
 下面我用现实世界里的工作流程图描述了并发编程领域的简单并行任务、聚合任务和批量并行任务，辅以这些流程图，相信你一定能将你的思维模式转换到现实世界里来。
 
-[![](https://static001.geekbang.org/resource/image/47/2d/47f3e1e8834c99d9a1933fb496ffde2d.png)](https://static001.geekbang.org/resource/image/47/2d/47f3e1e8834c99d9a1933fb496ffde2d.png)
+[![](./image/26_Fork_Join：单机版的MapReduce/47f3e1e8834c99d9a1933fb496ffde2d-1677167526102-56.png)](https://static001.geekbang.org/resource/image/47/2d/47f3e1e8834c99d9a1933fb496ffde2d.png)
 
 从上到下，依次为简单并行任务、聚合任务和批量并行任务示意图
 
@@ -23,7 +23,7 @@
 
 这里你需要先深入了解一下分治任务模型，分治任务模型可分为两个阶段：一个阶段是**任务分解**，也就是将任务迭代地分解为子任务，直至子任务可以直接计算出结果；另一个阶段是**结果合并**，即逐层合并子任务的执行结果，直至获得最终结果。下图是一个简化的分治任务模型图，你可以对照着理解。
 
-[![](https://static001.geekbang.org/resource/image/d2/6a/d2649d8db8e5642703aa5563d76eb86a.png)](https://static001.geekbang.org/resource/image/d2/6a/d2649d8db8e5642703aa5563d76eb86a.png)
+[![](./image/26_Fork_Join：单机版的MapReduce/d2649d8db8e5642703aa5563d76eb86a.png)](https://static001.geekbang.org/resource/image/d2/6a/d2649d8db8e5642703aa5563d76eb86a.png)
 
 简版分治任务模型图
 
@@ -38,8 +38,39 @@ ForkJoinTask 是一个抽象类，它的方法有很多，最核心的是 fork()
 
 接下来我们就来实现一下，看看如何用 Fork/Join 这个并行计算框架计算斐波那契数列（下面的代码源自 Java 官方示例）。首先我们需要创建一个分治任务线程池以及计算斐波那契数列的分治任务，之后通过调用分治任务线程池的 invoke() 方法来启动分治任务。由于计算斐波那契数列需要有返回值，所以 Fibonacci 继承自 RecursiveTask。分治任务 Fibonacci 需要实现 compute() 方法，这个方法里面的逻辑和普通计算斐波那契数列非常类似，区别之处在于计算 `Fibonacci(n - 1)` 使用了异步子任务，这是通过 `f1.fork()` 这条语句实现的。
 
-```
-static void main(String[] args){  //创建分治任务线程池    ForkJoinPool fjp =     new ForkJoinPool(4);  //创建分治任务  Fibonacci fib =     new Fibonacci(30);     //启动分治任务    Integer result =     fjp.invoke(fib);  //输出结果    System.out.println(result);}//递归任务static class Fibonacci extends     RecursiveTask<Integer>{  final int n;  Fibonacci(int n)  protected Integer compute(){    if (n <= 1)      return n;    Fibonacci f1 =       new Fibonacci(n - 1);    //创建子任务      f1.fork();    Fibonacci f2 =       new Fibonacci(n - 2);    //等待子任务结果，并合并结果      return f2.compute() + f1.join();  }}
+```java
+
+static void main(String[] args){
+  //创建分治任务线程池  
+  ForkJoinPool fjp = 
+    new ForkJoinPool(4);
+  //创建分治任务
+  Fibonacci fib = 
+    new Fibonacci(30);   
+  //启动分治任务  
+  Integer result = 
+    fjp.invoke(fib);
+  //输出结果  
+  System.out.println(result);
+}
+//递归任务
+static class Fibonacci extends 
+    RecursiveTask<Integer>{
+  final int n;
+  Fibonacci(int n){this.n = n;}
+  protected Integer compute(){
+    if (n <= 1)
+      return n;
+    Fibonacci f1 = 
+      new Fibonacci(n - 1);
+    //创建子任务  
+    f1.fork();
+    Fibonacci f2 = 
+      new Fibonacci(n - 2);
+    //等待子任务结果，并合并结果  
+    return f2.compute() + f1.join();
+  }
+}
 ```
 
 ForkJoinPool 工作原理
@@ -55,7 +86,7 @@ ForkJoinPool 本质上也是一个生产者 - 消费者的实现，但是更加�
 
 ForkJoinPool 中的任务队列采用的是双端队列，工作线程正常获取任务和 “窃取任务” 分别是从任务队列不同的端消费，这样能避免很多不必要的数据竞争。我们这里介绍的仅仅是简化后的原理，ForkJoinPool 的实现远比我们这里介绍的复杂，如果你感兴趣，建议去看它的源码。
 
-[![](https://static001.geekbang.org/resource/image/e7/31/e75988bd5a79652d8325ca63fcd55131.png)](https://static001.geekbang.org/resource/image/e7/31/e75988bd5a79652d8325ca63fcd55131.png)
+[![](./image/26_Fork_Join：单机版的MapReduce/e75988bd5a79652d8325ca63fcd55131.png)](https://static001.geekbang.org/resource/image/e7/31/e75988bd5a79652d8325ca63fcd55131.png)
 
 ForkJoinPool 工作原理图
 
@@ -68,8 +99,87 @@ ForkJoinPool 工作原理图
 
 思路有了，我们马上来实现。下面的示例程序用一个字符串数组 `String[] fc` 来模拟文件内容，fc 里面的元素与文件里面的行数据一一对应。关键的代码在 `compute()` 这个方法里面，这是一个递归方法，前半部分数据 fork 一个递归任务去处理（关键代码 mr1.fork()），后半部分数据则在当前任务中递归处理（mr2.compute()）。
 
-```
-static void main(String[] args){  String[] fc = {"hello world",          "hello me",          "hello fork",          "hello join",          "fork join in world"};  //创建ForkJoin线程池      ForkJoinPool fjp =       new ForkJoinPool(3);  //创建任务      MR mr = new MR(      fc, 0, fc.length);    //启动任务      Map<String, Long> result =       fjp.invoke(mr);  //输出结果      result.forEach((k, v)->    System.out.println(k+":"+v));}//MR模拟类static class MR extends   RecursiveTask<Map<String, Long>> {  private String[] fc;  private int start, end;  //构造函数  MR(String[] fc, int fr, int to)  @Override protected   Map<String, Long> compute(){    if (end - start == 1) {      return calc(fc[start]);    } else {      int mid = (start+end)/2;      MR mr1 = new MR(          fc, start, mid);      mr1.fork();      MR mr2 = new MR(          fc, mid, end);      //计算子任务，并返回合并的结果          return merge(mr2.compute(),          mr1.join());    }  }  //合并结果  private Map<String, Long> merge(      Map<String, Long> r1,       Map<String, Long> r2) {    Map<String, Long> result =         new HashMap<>();    result.putAll(r1);    //合并结果    r2.forEach((k, v) -> {      Long c = result.get(k);      if (c != null)        result.put(k, c+v);      else         result.put(k, v);    });    return result;  }  //统计单词数量  private Map<String, Long>       calc(String line) {    Map<String, Long> result =        new HashMap<>();    //分割单词        String [] words =         line.split("s+");    //统计单词数量        for (String w : words) {      Long v = result.get(w);      if (v != null)         result.put(w, v+1);      else        result.put(w, 1L);    }    return result;  }}
+```java
+
+static void main(String[] args){
+  String[] fc = {"hello world",
+          "hello me",
+          "hello fork",
+          "hello join",
+          "fork join in world"};
+  //创建ForkJoin线程池    
+  ForkJoinPool fjp = 
+      new ForkJoinPool(3);
+  //创建任务    
+  MR mr = new MR(
+      fc, 0, fc.length);  
+  //启动任务    
+  Map<String, Long> result = 
+      fjp.invoke(mr);
+  //输出结果    
+  result.forEach((k, v)->
+    System.out.println(k+":"+v));
+}
+//MR模拟类
+static class MR extends 
+  RecursiveTask<Map<String, Long>> {
+  private String[] fc;
+  private int start, end;
+  //构造函数
+  MR(String[] fc, int fr, int to){
+    this.fc = fc;
+    this.start = fr;
+    this.end = to;
+  }
+  @Override 
+  protected Map<String, Long> compute(){
+    if (end - start == 1) {
+      return calc(fc[start]);
+    } else {
+      int mid = (start+end)/2;
+      MR mr1 = new MR(
+          fc, start, mid);
+      mr1.fork();
+      MR mr2 = new MR(
+          fc, mid, end);
+      //计算子任务，并返回合并的结果    
+      return merge(mr2.compute(),
+          mr1.join());
+    }
+  }
+  //合并结果
+  private Map<String, Long> merge(
+      Map<String, Long> r1, 
+      Map<String, Long> r2) {
+    Map<String, Long> result = 
+        new HashMap<>();
+    result.putAll(r1);
+    //合并结果
+    r2.forEach((k, v) -> {
+      Long c = result.get(k);
+      if (c != null)
+        result.put(k, c+v);
+      else 
+        result.put(k, v);
+    });
+    return result;
+  }
+  //统计单词数量
+  private Map<String, Long> calc(String line) {
+    Map<String, Long> result = new HashMap<>();
+    //分割单词    
+    String [] words = line.split("\\s+");
+    //统计单词数量    
+    for (String w : words) {
+      Long v = result.get(w);
+      if (v != null) 
+        result.put(w, v+1);
+      else
+        result.put(w, 1L);
+    }
+    return result;
+  }
+}
 ```
 
 总结
@@ -86,4 +196,8 @@ Fork/Join 并行计算框架的核心组件是 ForkJoinPool。ForkJoinPool 支�
 
 对于一个 CPU 密集型计算程序，在单核 CPU 上，使用 Fork/Join 并行计算框架是否能够提高性能呢？
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> CPU同一时间只能处理一个线程，所以理论上，纯cpu密集型计算任务单线程就够了。
+>
+> 多线程的话，线程上下文切换带来的线程现场保存和恢复也会带来额外开销。
+>
+> 但实际上可能要经过测试才知道

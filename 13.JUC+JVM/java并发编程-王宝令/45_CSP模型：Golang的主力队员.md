@@ -1,6 +1,6 @@
 > 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/100098)
 
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除 Golang 是一门号称从语言层面支持并发的编程语言，支持并发是 Golang 一个非常重要的特性。
+
 
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
@@ -19,8 +19,55 @@ Golang 是一门号称从语言层面支持并发的编程语言，支持并发�
 
 在下面的示例代码中，我们用了 4 个子协程来并行执行，这 4 个子协程分别计算 [1, 25 亿]、(25 亿, 50 亿]、(50 亿, 75 亿]、(75 亿, 100 亿]，最后再在主协程中汇总 4 个子协程的计算结果。主协程要汇总 4 个子协程的计算结果，势必要和 4 个子协程之间通信，**Golang 中协程之间通信推荐的是使用 channel**，channel 你可以形象地理解为现实世界里的管道。另外，calc() 方法的返回值是一个只能接收数据的 channel ch，它创建的子协程会把计算结果发送到这个 ch 中，而主协程也会将这个计算结果通过 ch 读取出来。
 
-```
-import (	"fmt"	"time")func main() {    // 变量声明	var result, i uint64    // 单个协程执行累加操作	start := time.Now()	for i = 1; i <= 10000000000; i++ {		result += i	}	// 统计计算耗时	elapsed := time.Since(start)	fmt.Printf("执行消耗的时间为:", elapsed)	fmt.Println(", result:", result)    // 4个协程共同执行累加操作	start = time.Now()	ch1 := calc(1, 2500000000)	ch2 := calc(2500000001, 5000000000)	ch3 := calc(5000000001, 7500000000)	ch4 := calc(7500000001, 10000000000)    // 汇总4个协程的累加结果	result = <-ch1 + <-ch2 + <-ch3 + <-ch4	// 统计计算耗时	elapsed = time.Since(start)	fmt.Printf("执行消耗的时间为:", elapsed)	fmt.Println(", result:", result)}// 在协程中异步执行累加操作，累加结果通过channel传递func calc(from uint64, to uint64) <-chan uint64 {    // channel用于协程间的通信	ch := make(chan uint64)    // 在协程中执行累加操作	go func() {		result := from		for i := from + 1; i <= to; i++ {			result += i		}        // 将结果写入channel		ch <- result	}()    // 返回结果是用于通信的channel	return ch}
+```go
+import (
+  "fmt"
+  "time"
+)
+
+func main() {
+    // 变量声明
+  var result, i uint64
+    // 单个协程执行累加操作
+  start := time.Now()
+  for i = 1; i <= 10000000000; i++ {
+    result += i
+  }
+  // 统计计算耗时
+  elapsed := time.Since(start)
+  fmt.Printf("执行消耗的时间为:", elapsed)
+  fmt.Println(", result:", result)
+
+    // 4个协程共同执行累加操作
+  start = time.Now()
+  ch1 := calc(1, 2500000000)
+  ch2 := calc(2500000001, 5000000000)
+  ch3 := calc(5000000001, 7500000000)
+  ch4 := calc(7500000001, 10000000000)
+    // 汇总4个协程的累加结果
+  result = <-ch1 + <-ch2 + <-ch3 + <-ch4
+  // 统计计算耗时
+  elapsed = time.Since(start)
+  fmt.Printf("执行消耗的时间为:", elapsed)
+  fmt.Println(", result:", result)
+}
+// 在协程中异步执行累加操作，累加结果通过channel传递
+func calc(from uint64, to uint64) <-chan uint64 {
+    // channel用于协程间的通信
+  ch := make(chan uint64)
+    // 在协程中执行累加操作
+  go func() {
+    result := from
+    for i := from + 1; i <= to; i++ {
+      result += i
+    }
+        // 将结果写入channel
+    ch <- result
+  }()
+    // 返回结果是用于通信的channel
+  return ch
+}
+
 ```
 
 CSP 模型与生产者 - 消费者模式
@@ -32,8 +79,23 @@ CSP 模型与生产者 - 消费者模式
 
 而创建一个有缓冲的 channel 也很简单，在下面的示例代码中，我们创建了一个容量为 4 的 channel，同时创建了 4 个协程作为生产者、4 个协程作为消费者。
 
-```
-// 创建一个容量为4的channel ch := make(chan int, 4)// 创建4个协程，作为生产者for i := 0; i < 4; i++ {	go func() {		ch <- 7	}()}// 创建4个协程，作为消费者for i := 0; i < 4; i++ {    go func() {    	o := <-ch    	fmt.Println("received:", o)    }()}
+```go
+// 创建一个容量为4的channel 
+ch := make(chan int, 4)
+// 创建4个协程，作为生产者
+for i := 0; i < 4; i++ {
+  go func() {
+    ch <- 7
+  }()
+}
+// 创建4个协程，作为消费者
+for i := 0; i < 4; i++ {
+    go func() {
+      o := <-ch
+      fmt.Println("received:", o)
+    }()
+}
+
 ```
 
 Golang 中的 channel 是语言层面支持的，所以可以使用一个左向箭头（<-）来完成向 channel 发送数据和读取数据的任务，使用上还是比较简单的。Golang 中的 channel 是支持双向传输的，所谓双向传输，指的是一个协程既可以通过它发送数据，也可以通过它接收数据。
@@ -53,8 +115,14 @@ CSP 模型与 Actor 模型的区别
 
 比如，下面这段代码就存在死锁问题，在主协程中，我们创建了一个无缓冲的 channel ch，然后从 ch 中接收数据，此时主协程阻塞，main() 方法中的主协程阻塞，整个应用就阻塞了。这就是 Golang 中最简单的一种死锁。
 
-```
-func main() {    // 创建一个无缓冲的channel      ch := make(chan int)    // 主协程会阻塞在此处，发生死锁    <- ch }
+```go
+func main() {
+    // 创建一个无缓冲的channel  
+    ch := make(chan int)
+    // 主协程会阻塞在此处，发生死锁
+    <- ch 
+}
+
 ```
 
 总结

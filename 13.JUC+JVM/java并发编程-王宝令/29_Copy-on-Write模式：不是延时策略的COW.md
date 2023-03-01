@@ -1,7 +1,3 @@
-> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [leeshengis.com](https://leeshengis.com/archives/93154)
-
-> 转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除在上一篇文章中我们讲到 Java 里 String 这个类在实现 replace() 方法的时候，并没有更改原字符串里面 value[] 数组的内容，而是创建了一个新字符串，这种方法在解决不可变对象的修改问题时经常用到。
-
 **转自极客时间，仅供非商业用途或交流学习使用，如有侵权请联系删除**
 
 在上一篇文章中我们讲到 Java 里 String 这个类在实现 replace() 方法的时候，并没有更改原字符串里面 value[] 数组的内容，而是创建了一个新字符串，这种方法在解决不可变对象的修改问题时经常用到。如果你深入地思考这个方法，你会发现它本质上是一种 **Copy-on-Write 方法**。所谓 Copy-on-Write，经常被缩写为 COW 或者 CoW，顾名思义就是**写时复制**。
@@ -32,13 +28,13 @@ CopyOnWriteArrayList 和 CopyOnWriteArraySet 这两个 Copy-on-Write 容器在�
 
 我曾经写过一个 RPC 框架，有点类似 Dubbo，服务提供方是多实例分布式部署的，所以服务的客户端在调用 RPC 的时候，会选定一个服务实例来调用，这个选定的过程本质上就是在做负载均衡，而做负载均衡的前提是客户端要有全部的路由信息。例如在下图中，A 服务的提供方有 3 个实例，分别是 192.168.1.1、192.168.1.2 和 192.168.1.3，客户端在调用目标服务 A 前，首先需要做的是负载均衡，也就是从这 3 个实例中选出 1 个来，然后再通过 RPC 把请求发送选中的目标实例。
 
-[![](https://static001.geekbang.org/resource/image/71/1e/713c0fb87154ee6fbb58f71b274b661e.png)](https://static001.geekbang.org/resource/image/71/1e/713c0fb87154ee6fbb58f71b274b661e.png)
+[![](./image/29_Copy-on-Write模式：不是延时策略的COW/713c0fb87154ee6fbb58f71b274b661e-1677168713302-64.png)](https://static001.geekbang.org/resource/image/71/1e/713c0fb87154ee6fbb58f71b274b661e.png)
 
 RPC 路由关系图
 
 RPC 框架的一个核心任务就是维护服务的路由关系，我们可以把服务的路由关系简化成下图所示的路由表。当服务提供方上线或者下线的时候，就需要更新客户端的这张路由表。
 
-[![](https://static001.geekbang.org/resource/image/dc/60/dca6c365d689f2316ca34de613b3fd60.png)](https://static001.geekbang.org/resource/image/dc/60/dca6c365d689f2316ca34de613b3fd60.png)
+[![](./image/29_Copy-on-Write模式：不是延时策略的COW/dca6c365d689f2316ca34de613b3fd60.png)](https://static001.geekbang.org/resource/image/dc/60/dca6c365d689f2316ca34de613b3fd60.png)
 
 我们首先来分析一下如何用程序来实现。每次 RPC 调用都需要通过负载均衡器来计算目标服务的 IP 和端口号，而负载均衡器需要通过路由表获取接口的所有路由信息，也就是说，每次 RPC 调用都需要访问路由表，所以访问路由表这个操作的性能要求是很高的。不过路由表对数据的一致性要求并不高，一个服务提供方从上线到反馈到客户端的路由表里，即便有 5 秒钟，很多时候也都是能接受的（5 秒钟，对于以纳秒作为时钟周期的 CPU 来说，那何止是一万年，所以路由表对一致性的要求并不高）。而且路由表是典型的读多写少类问题，写操作的量相比于读操作，可谓是沧海一粟，少得可怜。
 
@@ -48,8 +44,59 @@ RPC 框架的一个核心任务就是维护服务的路由关系，我们可以�
 
 Router 的实现代码如下所示，是一种典型 Immutability 模式的实现，需要你注意的是我们重写了 equals 方法，这样 CopyOnWriteArraySet 的 add() 和 remove() 方法才能正常工作。
 
-```
-//路由信息public final class Router{  private final String  ip;  private final Integer port;  private final String  iface;  //构造函数  public Router(String ip,       Integer port, String iface)  //重写equals方法  public boolean equals(Object obj){    if (obj instanceof Router) {      Router r = (Router)obj;      return iface.equals(r.iface) &&             ip.equals(r.ip) &&             port.equals(r.port);    }    return false;  }  public int hashCode() {    //省略hashCode相关代码  }}//路由表信息public class RouterTable {  //Key:接口名  //Value:路由集合  ConcurrentHashMap<String, CopyOnWriteArraySet<Router>>     rt = new ConcurrentHashMap<>();  //根据接口名获取路由表  public Set<Router> get(String iface){    return rt.get(iface);  }  //删除路由  public void remove(Router router) {    Set<Router> set=rt.get(router.iface);    if (set != null) {      set.remove(router);    }  }  //增加路由  public void add(Router router) {    Set<Router> set = rt.computeIfAbsent(      route.iface, r ->         new CopyOnWriteArraySet<>());    set.add(router);  }}
+```java
+
+//路由信息
+public final class Router{
+  private final String  ip;
+  private final Integer port;
+  private final String  iface;
+  //构造函数
+  public Router(String ip, 
+      Integer port, String iface){
+    this.ip = ip;
+    this.port = port;
+    this.iface = iface;
+  }
+  //重写equals方法
+  public boolean equals(Object obj){
+    if (obj instanceof Router) {
+      Router r = (Router)obj;
+      return iface.equals(r.iface) &&
+             ip.equals(r.ip) &&
+             port.equals(r.port);
+    }
+    return false;
+  }
+  public int hashCode() {
+    //省略hashCode相关代码
+  }
+}
+//路由表信息
+public class RouterTable {
+  //Key:接口名
+  //Value:路由集合
+  ConcurrentHashMap<String, CopyOnWriteArraySet<Router>> 
+    rt = new ConcurrentHashMap<>();
+  //根据接口名获取路由表
+  public Set<Router> get(String iface){
+    return rt.get(iface);
+  }
+  //删除路由
+  public void remove(Router router) {
+    Set<Router> set=rt.get(router.iface);
+    if (set != null) {
+      set.remove(router);
+    }
+  }
+  //增加路由
+  public void add(Router router) {
+    Set<Router> set = rt.computeIfAbsent(
+      route.iface, r -> 
+        new CopyOnWriteArraySet<>());
+    set.add(router);
+  }
+}
 ```
 
 总结
@@ -64,4 +111,8 @@ Copy-on-Write 是一项非常通用的技术方案，在很多领域都有着广
 
 Java 提供了 CopyOnWriteArrayList，为什么没有提供 CopyOnWriteLinkedList 呢？
 
-欢迎在留言区与我分享你的想法，也欢迎你在留言区记录你的思考过程。感谢阅读，如果你觉得这篇文章对你有帮助的话，也欢迎把它分享给更多的朋友。
+> **数组**存储在连续内存,连续内存更有利于CPU加载和缓存,特点是增删慢,读取快;
+>
+> **链表**数据结构存储在分散内存,特点是增删快,读取慢; 链表结构的设计初衷就是用于增删频繁,读取少的场景;
+>
+> CopyOnWrite使用场景:要求读取性能高,读取多,修改少; 二者设计理念相违背,所以存在CopyOnWriteArrayList,而不存在CopyOnWriteLinkedList
