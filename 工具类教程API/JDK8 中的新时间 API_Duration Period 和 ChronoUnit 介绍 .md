@@ -1,12 +1,219 @@
-> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [cloud.tencent.com](https://cloud.tencent.com/developer/article/1746121)
+# 时间差计算
 
-> 在 JDK8 中，引入了三个非常有用的时间相关的 API：Duration，Period 和 ChronoUnit。
+最近工作中遇到需要计算时间差，搜索了几种计算时间差的方法，这里总结一下
+
+1、java 7 中的日历类 [Calendar](https://so.csdn.net/so/search?q=Calendar&spm=1001.2101.3001.7020)
+-------------------------------------------------------------------------------------------
+
+Calendar 类使用其静态的 getInstance() 方法获取一个日历实例，该实例为当前的时间；如果想改变时间，可以通过其 setTime 方法传入一个 Date 对象，即可获得 Date 对象所表示时间的 Calendar 对象
+
+```java
+/**
+ *使用Calendar对象计算时间差，可以按照需求定制自己的计算逻辑
+ * @param strDate
+ * @throws ParseException
+ */
+public static void calculateTimeDifferenceByCalendar(String strDate) throws ParseException {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+    Date date = formatter.parse(strDate);
+
+    Calendar c1 = Calendar.getInstance();   //当前日期
+    Calendar c2 = Calendar.getInstance();
+    c2.setTime(date);   //设置为另一个时间
+
+    int year = c1.get(Calendar.YEAR);
+    int oldYear = c2.get(Calendar.YEAR);
+
+    //这里只是简单的对两个年份数字进行相减，而没有考虑月份的情况
+    System.out.println("传入的日期与今年的年份差为：" + (year - oldYear));
+}
+```
+
+输出为：
+
+```
+传入的日期与今年的年份差为：12
+```
+
+2、java 8 中的周期类 Period
+---------------------
+
+通过调用 Period 类的静态方法 between，传入两个待比较的 LocalDate 对象 today 与 oldDate，得到的 Period 的对象 p 中就包含了 today 与 oldDate 两个日期相差的年、月、日信息，可以通过 p.getYears() 等方法取出
+
+```java
+/**
+ * 使用java 8的Period的对象计算两个LocalDate对象的时间差，严格按照年、月、日计算，如：2018-03-12 与 2014-05-23 相差 3 年 9 个月 17 天
+ * @param year
+ * @param month
+ * @param dayOfMonth
+ */
+public static void calculateTimeDifferenceByPeriod(int year, Month month, int dayOfMonth) {
+    LocalDate today = LocalDate.now();
+    System.out.println("Today：" + today);
+    LocalDate oldDate = LocalDate.of(year, month, dayOfMonth);
+    System.out.println("OldDate：" + oldDate);
+
+    Period p = Period.between(oldDate, today);
+    System.out.printf("目标日期距离今天的时间差：%d 年 %d 个月 %d 天\n", p.getYears(), p.getMonths(), p.getDays());
+}
+```
+
+输出为：
+
+```
+Today：2018-03-13
+OldDate：2014-05-23
+目标日期距离今天的时间差：3 年 9 个月 18 天
+```
+
+3、java 8 中的 Duration 类
+----------------------
+
+Duration 与 Period 相对应，Period 用于处理日期，而 Duration 计算时间差还可以处理具体的时间，也是通过调用其静态的 between 方法，该方法的签名是 between(Temporal startInclusive, Temporal endExclusive)，因此可以传入两个 Instant 的实例（Instant 实现了 Temporal 接口），并可以以毫秒（toMillis）、秒（getSeconds）等多种形式表示得到的时间差
+
+```java
+public static void calculateTimeDifferenceByDuration() {
+    Instant inst1 = Instant.now();  //当前的时间
+    System.out.println("Inst1：" + inst1);
+    Instant inst2 = inst1.plus(Duration.ofSeconds(10));     //当前时间+10秒后的时间
+    System.out.println("Inst2：" + inst2);
+    Instant inst3 = inst1.plus(Duration.ofDays(125));       //当前时间+125天后的时间
+    System.out.println("inst3：" + inst3);
+
+    System.out.println("以毫秒计的时间差：" + Duration.between(inst1, inst2).toMillis());
+
+    System.out.println("以秒计的时间差：" + Duration.between(inst1, inst3).getSeconds());
+}
+```
+
+输出为：
+
+```
+Inst1：2018-03-13T09:06:00.691Z
+Inst2：2018-03-13T09:06:10.691Z
+inst3：2018-07-16T09:06:00.691Z
+以毫秒计的时间差：10000
+以秒计的时间差：10800000
+```
+
+4、java 8 中的 ChronoUnit 类
+------------------------
+
+ChronoUnit 的 between 方法签名为，between(Temporal temporal1Inclusive, Temporal temporal2Exclusive)，需要注意的是，如果要以不同的单位展示时间差，between 入参中的时间对象必须包含有对应的时间信息，否则会抛出 java.time.temporal.UnsupportedTemporalTypeException: Unsupported unit XXX 的异常
+
+```java
+/**
+ * 使用java 8的ChronoUnit，ChronoUnit可以以多种单位（基本涵盖了所有的，看源码发现竟然还有“FOREVER”这种单位。。）表示两个时间的时间差
+ */
+public static void calculateTimeDifferenceByChronoUnit() {
+    LocalDate startDate = LocalDate.of(2003, Month.MAY, 9);
+    System.out.println("开始时间：" + startDate);
+
+    LocalDate endDate = LocalDate.of(2015, Month.JANUARY, 26);
+    System.out.println("结束时间：" + endDate);
+
+    long daysDiff = ChronoUnit.DAYS.between(startDate, endDate);
+    System.out.println("两个时间之间的天数差为：" + daysDiff);
+//  long hoursDiff = ChronoUnit.HOURS.between(startDate, endDate);  //这句会抛出异常，因为LocalDate表示的时间中不包含时分秒等信息
+}
+```
+
+输出为：
+
+```
+开始时间：2003-05-09
+结束时间：2015-01-26
+两个时间之间的天数差为：4280
+```
+
+5、传统的 SimpleDateFormat 类
+------------------------
+
+用 SimpleDateFormat 计算时间差的方法，网上找了一份，自己跑了一遍，可以使用，贴在下面
+
+```java
+/**
+* 用SimpleDateFormat计算时间差
+* @throws ParseException 
+*/
+public static void calculateTimeDifferenceBySimpleDateFormat() throws ParseException {
+    SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    /*天数差*/
+    Date fromDate1 = simpleFormat.parse("2018-03-01 12:00");  
+    Date toDate1 = simpleFormat.parse("2018-03-12 12:00");  
+    long from1 = fromDate1.getTime();  
+    long to1 = toDate1.getTime();  
+    int days = (int) ((to1 - from1) / (1000 * 60 * 60 * 24));  
+    System.out.println("两个时间之间的天数差为：" + days);
+
+    /*小时差*/
+    Date fromDate2 = simpleFormat.parse("2018-03-01 12:00");  
+    Date toDate2 = simpleFormat.parse("2018-03-12 12:00");  
+    long from2 = fromDate2.getTime();  
+    long to2 = toDate2.getTime();  
+    int hours = (int) ((to2 - from2) / (1000 * 60 * 60));
+    System.out.println("两个时间之间的小时差为：" + hours);
+
+    /*分钟差*/
+    Date fromDate3 = simpleFormat.parse("2018-03-01 12:00");  
+    Date toDate3 = simpleFormat.parse("2018-03-12 12:00");  
+    long from3 = fromDate3.getTime();  
+    long to3 = toDate3.getTime();  
+    int minutes = (int) ((to3 - from3) / (1000 * 60));  
+    System.out.println("两个时间之间的分钟差为：" + minutes);
+}
+```
+
+输出为：
+
+```
+两个时间之间的天数差为：11
+两个时间之间的小时差为：264
+两个时间之间的分钟差为：15840
+```
+
+总结
+--
+
+传统的 SimpleDateFormat 和 Java 7 中的 Calendar 在使用的时候需要自己写一个计算时间差的逻辑，比较麻烦，但是却比较灵活，方便根据自己具体的需求来定制（比如，我想两个日期的天数差 15 天就算满一个月，不满 15 天不算一个月，如 2018-01-04 到 2018-02-20，算 2 个月的时间差）；而 Java 8 中的几个计算时间差的类更加方便、精确，可以以不同的单位表示得到的时间差，但要注意几个类所包含的时间信息的区别：
+
+```java
+System.out.println(LocalDate.now());        //只包含日期信息
+System.out.println(LocalTime.now());        //只包含时间信息
+System.out.println(LocalDateTime.now());        //包含日期、时间信息
+```
+
+输出为：
+
+```
+2018-03-13
+17:13:26.134
+2018-03-13T17:13:26.135
+```
+
+以上总结的几个方法只是个例子，具体使用的时候可能需要传入一个或者两个时间进行比较，可能会涉及到这些时间对象的相互转换，Instant、Date、LocalDate 等等。。。我就不列举了。。。  
+另外在使用 SimpleDateFormat 对 String 类型的日期进行 parse 的时候，如果传入的日期为：2017-08-60，这种错误的日期，Java 默认会按照日期的信息对其进行转换，`formatter.parse("2017-08-60");`，得到的日期为 2017-09-29，而如果不想进行这种转换，而直接将其判定为输入错误，则可以设置`formatter.setLenient(false);`，这时就会抛出 java.text.ParseException 异常了
+
+```java
+SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+formatter.setLenient(false);
+try {
+    Date date = formatter.parse("2017-08-60");  //抛出转换异常
+    System.out.println(date);
+} catch (ParseException e) {
+    e.printStackTrace();
+}
+```
+
+
+
+# 基础介绍
 
 在 JDK8 中，引入了三个非常有用的时间相关的 API：Duration，Period 和 ChronoUnit。
 
 他们都是用来对时间进行统计的，本文将会详细讲解一下这三个 API 的使用。
 
-# Duration
+## Duration
 
 Duration 主要用来衡量秒级和纳秒级的时间，使用于时间精度要求比较高的情况。
 
@@ -84,7 +291,7 @@ Duration fromDays = Duration.ofDays(1);
 Duration fromMinutes = Duration.ofMinutes(60);
 ```
 
-# Period 
+## Period 
 
 Period 的单位是 year, month 和 day 。
 
@@ -128,7 +335,7 @@ period.plusDays(50);
 period.minusMonths(2);
 ```
 
-# ChronoUnit 
+## ChronoUnit 
 
 ChronoUnit 是用来表示时间单位的，但是也提供了一些非常有用的 between 方法来计算两个时间的差值：
 
@@ -145,3 +352,8 @@ LocalDate startDate = LocalDate.of(2020, 2, 20);
         long milis = ChronoUnit.MILLIS.between(startDate, endDate);
         long nano = ChronoUnit.NANOS.between(startDate, endDate);
 ```
+
+
+
+
+
