@@ -9,12 +9,14 @@
 入门案例
 ====
 
-## Runtime.exec() 有四种调用方法
+## Runtime.exec() 入门
 
-*   `public Process exec(String command);`
-*   `public Process exec(String [] cmdArray);`
-*   `public Process exec(String command, String [] envp);`
-*   `public Process exec(String [] cmdArray, String [] envp);`
++ `public Process exec(String command)-`----在单独的进程中执行指定的字符串命令。
++ `public Process exec(String [] cmdArray)`---在单独的进程中执行指定命令和变量
++ `public Process exec(String command, String [] envp)-`---在指定环境的独立进程中执行指定命令和变量
++ `public Process exec(String [] cmdArray, String [] envp)`----在指定环境的独立进程中执行指定的命令和变量
++ `public Process exec(String command,String[] envp,File dir)`----在有指定环境和工作目录的独立进程中执行指定的字符串命令
++ `public Process exec(String[] cmdarray,String[] envp,File dir)`----在指定环境和工作目录的独立进程中执行指定的命令和变量
 
 
 
@@ -27,29 +29,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class RuntimeExecTest {
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        test();
-    }
 
-    private static void test() {
+	@Test
+    public  void test() {
 	//linux  cmd命令
 	Runtime.getRuntime().exec(new String[]{"/bin/sh","-c","javap -l xxx > output.txt"});//通过bin/sh  解释执行该命令
 
 		//Windows  cmd
 //        String[] cmd = new String[]{"shutdown" ,"-s" ,"-t" ,"3600"};//定时关机
         String[] cmd = new String[]{"cmd" ,"-s" ,"-t" ,"3600"};//定时关机
-
-//        String[] cmd = new String[]{"cmd.exe", "/C", "wmic process get name"};
+//        String[] cmd = new String[]{"cmd.exe", "/C", "wmic process get name"};//
 
         // 输出aaa到1.txt  然后 使用记事本打开该文件
         String command = "cmd /c echo aaa >> d:\\1.txt && notepad d:\\1.txt";// && 命令之间需连接符连接
         Process process=null;
         try {
             process = Runtime.getRuntime().exec(command，null); 
-            new Thread(new SerializeTask(process.getInputStream())).start();
+            new Thread(new SerializeTask(process.getInputStream())).start();//处理
             new Thread(new SerializeTask(process.getErrorStream())).start();
             process.getOutputStream().close();
             int exitValue = process.waitFor();
@@ -96,19 +92,14 @@ class SerializeTask implements Runnable {
 }
 ```
 
-注意事项
-----
+## 注意事项
 
-* 等待命令执行结束用 waitFor()，其返回值就是命令的返回值。
-
+* 等待命令执行结束用 `waitFor()`，其返回值就是命令的返回值。
 * 如果出现程序执行被挂起，没有任何反应的情况，是由于没有读取命令子进程的正常输出流或错误输出流导致缓冲区被占满，进程被锁住。这个时候需要把输出流中的内容给读出来。最好的做法是使用两个线程，分别同时读取正常输出流和错误输出流。
-
 * 执行 Windows 平台上的命令时使用`cmd.exe /C`，如`cmd.exe /C dir`。
-
+* `Process.getOutputStream()` 写入命令时需要以换行符结束`\n`
 * 记得关闭命令子进程的输出流，通过`Process.getOutputStream().close()`，这样不会导致命令子进程被锁住。
-
 * Runtime.exec() 不等同于直接执行 command line 命令。Runtime.exec() 很有局限性, 对有些命令不能直接把 command line 里的内容当作 String 参数传给 exec(). 比如重定向等命令。举个例子:`javap -l xxx > output.txt`。这时要用到 exec 的第二种重载，即 input 参数为`String[]:Process p = Runtime.getRuntime().exec(new String[]{"/bin/sh","-c","javap -l xxx > output.txt"});//通过bin/sh 解释执行该命令`
-
 * 多个命令需要组合执行时，可以使用 && 命令连接符，或者通过Proccess的outputstream输入执行，参考下一节工具类
 
   > 当我们需要一次执行多个命令的时候，命令之间需要用连接符连接，不同的连接符有不同的效果。下面我们总结一下，加以区分。
@@ -137,14 +128,22 @@ class SerializeTask implements Runnable {
 `/c` : 打开命令窗口执行完毕自动关闭  
 `/k`：打开命令窗口执行完毕不自动关闭
 
-> 可以通过 win+R 打开测试 notepad 类型的命令是在系统内存在`notepad d:\1.txt`  
+* `cmd /c dir` 是执行完dir命令后关闭命令窗口。
+* `cmd /k dir` 是执行完dir命令后不关闭命令窗口。
+* `cmd /c start dir` 会打开一个新窗口后执行dir指令，原窗口会关闭。
+* `cmd /k start dir` 会打开一个新窗口后执行dir指令，原窗口不会关闭。
+
+> 可以通过 win+R 运行窗口打开测试 notepad 类型的命令是在系统内存在`notepad d:\1.txt`  
 > ![](image/Runtime执行cmd&shell命令/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAamF2YV9tb25rZXlfMTEw,size_20,color_FFFFFF,t_70,g_se,x_16.png)  
 > ![](image/Runtime执行cmd&shell命令/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAamF2YV9tb25rZXlfMTEw,size_20,color_FFFFFF,t_70,g_se,x_16-1673195575008-3.png)  
 > ![](image/Runtime执行cmd&shell命令/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAamF2YV9tb25rZXlfMTEw,size_20,color_FFFFFF,t_70,g_se,x_16-1673195577052-6.png)
 
-## eg. java 利用控制台 与cmd输入交互
+## CMD - OutputStream连续输入命令模式
 
 ```java
+import java.io.*;
+import java.util.Scanner;
+
 public class Test1 {
 
     public static void main(String[] args) {
@@ -154,61 +153,21 @@ public class Test1 {
             String[] cmds = {"cmd", "/k"};//此处必须用/k参数
             Process exec = runtime.exec(cmds);
 
-            BufferedReader  ResultErrorBuff = new BufferedReader(new InputStreamReader(exec.getErrorStream(), "gbk"));
-            BufferedReader  ResultSuccessBuff = new BufferedReader(new InputStreamReader(exec.getInputStream(), "gbk"));
+            BufferedReader ResultErrorBuff = new BufferedReader(new InputStreamReader(exec.getErrorStream(), "gbk"));
+            BufferedReader ResultSuccessBuff = new BufferedReader(new InputStreamReader(exec.getInputStream(), "gbk"));
 
             //处理回显
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        String line = null;
-                        while ((line = ResultSuccessBuff.readLine()) != null) {
-                            System.out.println(line);
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }finally {
-                        if (ResultSuccessBuff != null) {
-                            try {
-                                ResultSuccessBuff.close();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }
-                }
-            }).start();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        String line = null;
-                        while ((line = ResultErrorBuff.readLine()) != null) {
-                            System.out.println(line);
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } finally {
-                        if (ResultErrorBuff != null) {
-                            try {
-                                ResultErrorBuff.close();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }
-                }
-            }).start();
+            new Thread(() -> processingReturnValues(ResultSuccessBuff)).start();
+            new Thread(() -> processingReturnValues(ResultErrorBuff)).start();
 
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(exec.getOutputStream(),"gbk"));
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(exec.getOutputStream(), "gbk"));
             Scanner scanner = new Scanner(System.in);
             while (true) {
                 System.out.print("输入需要执行的命令>>>");
                 String inCmd = scanner.nextLine();
 
-                if (inCmd.equals("break")){
+                if (inCmd.equals("break")) {
                     bufferedWriter.write("exit");
                     bufferedWriter.newLine();
                     bufferedWriter.flush();
@@ -217,14 +176,33 @@ public class Test1 {
                     break;
                 }
                 bufferedWriter.write(inCmd);
-                bufferedWriter.newLine();
+                bufferedWriter.newLine();//必须输入换行符  cmd默认按换行符 拆包
                 bufferedWriter.flush();
             }
             System.out.println("exec.waitFor() = " + exec.waitFor());
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
-        } 
+        }
+    }
+	//处理回显函数
+    private static void processingReturnValues(BufferedReader ResultErrorBuff) {
+        try {
+            String line = null;
+            while ((line = ResultErrorBuff.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (ResultErrorBuff != null) {
+                try {
+                    ResultErrorBuff.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }
 ```
@@ -421,7 +399,7 @@ public class JavaShellUtil {
 
 在上面的程序中，第一行的“p.exe”是要执行的程序名；Runtime.getRuntime()返回当前应用程序的Runtime对象，该对象的exec()方法指示Java虚拟机创建一个子进程执行指定的可执行程序，并返回与该子进程对应的Process对象实例。通过Process可以控制该子进程的执行或获取该子进程的信息。第二条语句的目的等待子进程完成再往下执行。但在windows平台上，如果处理不当，有时并不能得到预期的结果。下面是笔者在实际编程中总结的几种需要注意的情况：
 
-　　1、执行DOS的内部命令如果要执行一条DOS内部命令，有两种方法。一种方法是把命令解释器包含在exec()的参数中。例如，执行dir命令，在NT上，可写成exec ("cmd.exe /c dir")，在windows 95/98下，可写成“command.exe/c dir”，其中参数“/c”表示命令执行后关闭Dos立即关闭窗口。另一种方法是，把内部命令放在一个批命令my_dir.bat文件中，在Java程序中写成exec("my_dir.bat")。如果仅仅写成exec("dir")，Java虚拟机则会报运行时错误。前一种方法要保证程序的可移植性，需要在程序中读取运行的操作系统平台，以调用不同的命令解释器。后一种方法则不需要做更多的处理。
+　　1、执行DOS的内部命令如果要执行一条DOS内部命令，有两种方法。一种方法是把命令解释器包含在exec()的参数中。例如，执行dir命令，在NT上，可写成`exec ("cmd.exe /c dir")，`在windows 95/98下，可写成“command.exe/c dir”，**其中参数“/c”表示命令执行后关闭Dos立即关闭窗口**。另一种方法是，把内部命令放在一个批命令my_dir.bat文件中，在Java程序中写成exec("my_dir.bat")。如果仅仅写成exec("dir")，Java虚拟机则会报运行时错误。前一种方法要保证程序的可移植性，需要在程序中读取运行的操作系统平台，以调用不同的命令解释器。后一种方法则不需要做更多的处理。
 
 　　　2、打开一个不可执行的文件打开一个不可执行的文件，但该文件存在关联的应用程序，则可以有两种方式。以打开一个word文档a.doc文件为例，Java中可以有以下两种写法：
 
@@ -439,12 +417,9 @@ exec(" c:\\Program Files\\MicrosoftOffice\\office winword.exe a.doc");
 
 ```java
 String str;
-
 Process process =Runtime.getRuntime().exec("cmd /c dir windows");
-
 BufferedReader bufferedReader = newBufferedReader( new InputStreamReader(process.getInputStream()));
-
-while ( (str=bufferedReader.readLine()) !=null) System.out.println(str); 　
+while ( (str=bufferedReader.readLine()) !=null) { System.out.println(str); 　}
 
 process.waitfor(); 
 ```
@@ -454,39 +429,25 @@ process.waitfor();
 ```java
 public static boolean  resize(String   pic,String   picTo,int width,int height)  {
 
-       boolean result = true;
-
-        String cmd = "cmd /c  convert -sample " + width + "x" + height + "   "" + pic + """ +"   "" + picTo+""";
-
-        log.debug(cmd);
-
-       try {
-
-            Process process = Runtime.getRuntime().exec(cmd);
-
-           if (process.getErrorStream().read() != -1) {
-
-                 result = false;
-
-                 process.destroy();
-
-            }
-
-        } catch (IOException e) {
-
-            log.debug("creat icon pic fail!" + e);
-
-           result = false;
-
-       }
-
-       /*BufferedReader bufferedReader = new BufferedReader( newInputStreamReader(process.getInputStream());
-
-        while ( (str=bufferedReader.readLine()) != null)System.out.println(str); 　 */
-
-       return result;
-
+    boolean result = true;
+    String cmd = "cmd /c  convert -sample " + width + "x" + height + "   "" + pic + """ +"   "" + picTo+""";
+    log.debug(cmd);
+    try {
+        Process process = Runtime.getRuntime().exec(cmd);
+        if (process.getErrorStream().read() != -1) {
+            result = false;
+            process.destroy();
+        }
+    } catch (IOException e) {
+        log.debug("creat icon pic fail!" + e);
+        result = false;
     }
+
+    /*BufferedReader bufferedReader = new BufferedReader( newInputStreamReader(process.getInputStream());
+        while ( (str=bufferedReader.readLine()) != null)System.out.println(str); 　 */
+    return result;
+
+}
 ```
 
 我使用上面的程序处理不好使。然后通过搜索相关文章看到了如下内容。问题被解决。^-^
@@ -513,47 +474,28 @@ InputStream is = process.getErrorStream(); // 获取ffmpeg进程的输出流
 
 ```java
 ……
+Process p = Runtime.getRuntime().exec("php.exe test.php");
+//Process p = Runtime.getRuntime().exec("cmd.exe /c dir");
+final InputStream is1 = p.getInputStream();
 
-  Process p = Runtime.getRuntime().exec("php.exe test.php");
-
-      //Process p = Runtime.getRuntime().exec("cmd.exe /c dir");
-
-         final InputStream is1 = p.getInputStream();
-
-         new Thread(new Runnable() {
-
-             public void run() {
-
-                 BufferedReader br = new BufferedReader(new InputStreamReader(is1));
-
-                 try{
-
-                 while(br.readLine() != null) ;
-
-                 }
-
-                 catch(Exception e) {
-
+new Thread(new Runnable() {
+    public void run() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(is1));
+        try {
+            while (br.readLine() != null) ;
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
 
-                 }
+}).start(); // 启动单独的线程来清空p.getInputStream()的缓冲区
 
-             }
-
-         }).start(); // 启动单独的线程来清空p.getInputStream()的缓冲区
-
-         InputStream is2 = p.getErrorStream();
-
-         BufferedReader br2 = new BufferedReader(new InputStreamReader(is2)); 
-
-         StringBuilder buf = new StringBuilder(); // 保存输出结果流
-
-         String line = null;
-
-         while((line = br2.readLine()) != null) buf.append(line); // 
-
-         System.out.println("输出结果为：" + buf);
-
+InputStream is2 = p.getErrorStream();
+BufferedReader br2 = new BufferedReader(new InputStreamReader(is2));
+StringBuilder buf = new StringBuilder(); // 保存输出结果流
+String line = null;
+while ((line = br2.readLine()) != null) buf.append(line); //
+System.out.println("输出结果为：" + buf);
 ……
 ```
 
