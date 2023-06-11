@@ -826,9 +826,9 @@ line2 调用 set() 方法后新建一个 Entry，通过源码可知 Entry 对象
 
 + 若这个 key 引用是 **强引用** ，就会导致 key **指向的 ThreadLocal 对象及 v 指向的对象不能被 gc 回收，造成内存泄漏；**   
 
-+ 若这个 key 引用是 **弱引用** 就 大概率 会减少内存泄漏的问题 ( 还有一个 key 为 null 的雷 ) 。
++ 若这个 key 引用是 **弱引用** 就 大概率 会减少内存泄漏的问题 ( **还有一个 key 为 null 的雷** ) 。
 
-使用弱引用，就可以使 ThreadLocal 对象在方法执行完毕后顺利被回收且 Entry 的 key 引用指向为 null 。 
+弱引用还存在问题：**使用弱引用，就可以使 ThreadLocal 对象在方法执行完毕后顺利被回收且 Entry 的 key 引用指向为 null** 。 
 
 -- 下面这句话，我们后续聊，本节先忽略 
 
@@ -848,7 +848,7 @@ line2 调用 set() 方法后新建一个 Entry，通过源码可知 Entry 对象
 
 ![](image/9、聊聊ThreadLocal/d407ea8a11c64c79864e6a2dd6a8b17e.png)
 
-ThreadLocalMap 使用 ThreadLocal 的弱引用作为 key ，如果一个 ThreadLocal 没有外部强引用引用他，那么系统 gc 的时候，这个 ThreadLocal 势必会被回收，这样一来， ThreadLocalMap 中就会出现 key 为 null 的 Entry ，就没有办法访问这些 key 为 null 的 Entry 的 value ，如果当前线程再迟迟不结束的话 (比如正好用在线程池) ，这些 key 为 null 的 Entry 的 value 就会一直存在一条强引用链。   
+**ThreadLocalMap 使用 ThreadLocal 的弱引用作为 key ，如果一个 ThreadLocal 没有外部强引用引用他，那么系统 gc 的时候，这个 ThreadLocal 势必会被回收，这样一来， ThreadLocalMap 中就会出现 key 为 null 的 Entry ，就没有办法访问这些 key 为 null 的 Entry 的 value ，如果当前线程再迟迟不结束的话 (比如正好用在线程池) ，这些 key 为 null 的 Entry 的 value 就会一直存在一条强引用链。**   
 
 虽然弱引用，保证了 key 指向的 ThreadLocal 对象能被及时回收，但是 v 指向的 value 对象是需要 ThreadLocalMap 调用 get 、 set 时发现 key 为 null 时才会去回收整个 entry 、 value ， 因此弱引用不能 100% 保证内存不泄露。 **我们要在不使用某个** **ThreadLocal** **对象后，手动调用** **remove** **方法来删除它** ，尤其是在线程池中，不仅仅是内存泄露的问题，因为线程池中的线程是重复使用的，意味着这个线程的 ThreadLocalMap 对象也是重复使用的，如果我们不手动调用 remove 方法，那么后面的线程就有可能获取到上个线程遗留下来的 value 值，造成 bug 。   
 
