@@ -8128,7 +8128,7 @@ TIP
 
 ![images](./images/new/img016.4e398cba.png)
 
-![images](./images/new/imagesbcfb .png)
+![images](./images/new/imagesbcfb.png)
 
 ![images](./images/new/img018.b2e5347f.png)
 
