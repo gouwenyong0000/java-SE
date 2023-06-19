@@ -1,0 +1,89 @@
+声明周期
+
+mvn clean
+
+
+mvn compile
+mvn test-compile
+mvn test
+mvn package
+mvn install
+mvn deploy
+
+mvn site
+
+
+# clean 打包 跳过测试
+mvn clean package -Dmaven.test.skip=true
+
+
+# 查看当前 Web 工程所依赖的 jar 包的列表
+mvn dependency:list
+mvn dependency:tree
+
+
+# 查看有效 POM  【继承最终生效配置】
+> mvn help:effective-pom
+
+
+
+# 依赖的传递性
+①概念
+	A 依赖 B，B 依赖 C，那么在 A 没有配置对 C 的依赖的情况下，A 里面能不能直接使用 C？
+
+②传递的原则
+	在 A 依赖 B，B 依赖 C 的前提下，C 是否能够传递到 A，取决于 B 依赖 C 时使用的依赖范围。
+		- B 依赖 C 时使用 compile 范围：可以传递
+		- B 依赖 C 时使用 test 或 provided 范围：不能传递，所以需要这样的 jar 包时，就必须在需要的地方明确配置依赖才可以。
+
+
+
+# 依赖的范围
+1、compile
+	通常使用的第三方框架的 jar 包这样在项目实际运行时真正要用到的 jar 包都是以 compile 范围进行依赖的。比如 SSM 框架所需jar包。
+
+2、test
+	测试过程中使用的 jar 包，以 test 范围依赖进来。比如 junit。
+
+3、provided
+	在开发过程中需要用到的“服务器上的 jar 包”通常以 provided 范围依赖进来。比如 servlet-api、jsp-api。而这个范围的 jar 包之所以不参与部署、不放进 war 包，就是避免和服务器上已有的同类 jar 包产生冲突，同时减轻服务器的负担。说白了就是：“**服务器上已经有了，你就别带啦！**”
+
+4、 import
+	管理依赖最基本的办法是继承父工程，但是和 Java 类一样，Maven 也是单继承的。如果不同体系的依赖信息封装在不同 POM 中了，没办法继承多个父工程怎么办？这时就可以使用 import 依赖范围。
+
+	典型案例当然是在项目中引入 SpringBoot、SpringCloud 依赖：
+5、 system
+	以 Windows 系统环境下开发为例，假设现在 D:\tempare\atguigu-maven-test-aaa-1.0-SNAPSHOT.jar 想要引入到我们的项目中，
+6、 runtime
+	专门用于编译时不需要，但是运行时需要的 jar 包。比如：编译时我们根据接口调用方法，但是实际运行时需要的是接口的实现类。典型案例是：spring-boot-devtools
+
+maven  settings配置：
+
+	<mirror>
+		<id>nexus-aliyun</id>
+		<mirrorOf>central</mirrorOf>
+		<name>Nexus aliyun</name>
+		<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+	</mirror>
+	
+	
+		<profile>
+	  <id>jdk-1.8</id>
+	  <activation>
+		<activeByDefault>true</activeByDefault>
+		<jdk>1.8</jdk>
+	  </activation>
+	  <properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+	  </properties>
+	</profile>
+	
+
+
+<!-- 对构建过程进行自己的定制 -->
+    <build>
+        <!-- 当前工程在构建过程中使用的最终名称 -->
+        <finalName>demo-me</finalName>
+    </build>
