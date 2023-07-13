@@ -157,7 +157,7 @@ TCP 抓包分析
 
 在服务端（MacOS Big Sur11.3.1）启动监听程序：
 
-```
+```java
 public class Server {
     public static void main(String[] args) {
         ServerSocket serverSocket = new ServerSocket(8080);
@@ -182,7 +182,7 @@ public class Server {
 
 在客户端（MacOS Big Sur11.5.2 ）向服务端建立 TCP 通信、发送数据：
 
-```
+```java
 public class Client {
     public static void main(String[] args) throws IOException {
         Socket socket =null;
@@ -326,3 +326,8 @@ public class Client {
 上面的报文还可以看出，客户端是同时把第 5、第 6 行这两个报文发了出去，发出第一个报文后没有等待服务端的 ack，就紧接着吧第二个报文发出去了，实际情况下，客户端发送数据不用必须等接收到服务端上一个 ack 报文后才会发送，客户端会一次性发送多个报文，服务端接收到后会 ack 最后收到的报文。比如客户端同时发送了三个报文，每个报文 seq 分别为 1、2、3，假如服务端只收到 seq 为 1 的报文，回复的报文 ack 为 2（表示 2 之前的报文都收到了，请发送 seq 为 2 的报文吧）；假如服务端收到 seq 为 1、2 的报文，回复的报文 ack 为 3（表示 3 之前的报文都收到了，请发送 seq 为 3 的报文吧）；假如服务端短时间内都收到了，就只会回复一个 ack 为 4 的报文（表示 4 之前的报文都收到了，请发送 seq 为 4 的报文吧）。
 
 TCP 通信过程中可能遇到很多问题，还有很多复杂的场景，这里只是简单抓个包分析下，如果有不对的地方，希望包涵给予指正。
+
+
+
+
+
