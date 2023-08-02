@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>spring-secrity-learn-parent</artifactId>
+        <groupId>com.coderman.learn</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../spring-secrity-learn-parent/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.coderman.learn</groupId>
+    <artifactId>spring-security-app</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.coderman.learn</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${self.app.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
