@@ -2,7 +2,7 @@
 
 ## 1.1、Spring的能力
 
-![img](01、Spring与SpringBoot.assets/1602641710418-5123a24a-60df-4e26-8c23-1d93b8d998d9.png)
+![img](./images/01、Spring与SpringBoot/1602641710418-5123a24a-60df-4e26-8c23-1d93b8d998d9-1692197764545-2.png)
 
 
 
@@ -34,7 +34,7 @@ web开发
 
 ### 1.3.1、响应式编程
 
-![img](01、Spring与SpringBoot.assets/1602642309979-eac6fe50-dc84-49cc-8ab9-e45b13b90121.png)
+![img](./images/01、Spring与SpringBoot/1602642309979-eac6fe50-dc84-49cc-8ab9-e45b13b90121.png)
 
 ### 1.3.2、内部源码设计
 
@@ -112,7 +112,7 @@ Spring Boot makes it easy to create stand-alone, production-grade Spring based A
 
 ## 3.2、分布式
 
-![img](01、Spring与SpringBoot.assets/1599562347965-a617a866-4270-44e9-9c5b-ced552683eda.png)
+![img](./images/01、Spring与SpringBoot/1599562347965-a617a866-4270-44e9-9c5b-ced552683eda.png)
 
 
 
@@ -141,7 +141,7 @@ Spring Boot makes it easy to create stand-alone, production-grade Spring based A
 
 
 
-![img](01、Spring与SpringBoot.assets/1599799119457-841ef47a-6585-4ca4-8e3d-8298e796012c.png)
+![img](./images/01、Spring与SpringBoot/1599799119457-841ef47a-6585-4ca4-8e3d-8298e796012c.png)
 
 
 
@@ -164,7 +164,7 @@ Spring Boot makes it easy to create stand-alone, production-grade Spring based A
 
 ### 上云的解决
 
-![img](01、Spring与SpringBoot.assets/1599563498261-8b0b4d86-bd9b-49a3-aefc-89696a375dcb.png)
+![img](./images/01、Spring与SpringBoot/1599563498261-8b0b4d86-bd9b-49a3-aefc-89696a375dcb.png)
 
 
 
@@ -172,11 +172,11 @@ Spring Boot makes it easy to create stand-alone, production-grade Spring based A
 
 ## 4.1、官网文档架构
 
-![img](01、Spring与SpringBoot.assets/1602654700738-b6c50c90-0649-4d62-98d3-57658caf0fdb.png)
+![img](./images/01、Spring与SpringBoot/1602654700738-b6c50c90-0649-4d62-98d3-57658caf0fdb.png)
 
 
 
-![img](01、Spring与SpringBoot.assets/1602654837853-48916a4f-cb5a-422c-ba7a-83b027c5bf24.png)
+![img](./images/01、Spring与SpringBoot/1602654837853-48916a4f-cb5a-422c-ba7a-83b027c5bf24.png)
 
 
 
@@ -188,7 +188,7 @@ Spring Boot makes it easy to create stand-alone, production-grade Spring based A
 
 https://github.com/spring-projects/spring-boot/wiki#release-notes
 
-![img](01、Spring与SpringBoot.assets/1602730009896-1b651f2c-133c-4f62-b21c-92a002f09e73.png)
+![img](./images/01、Spring与SpringBoot/1602730009896-1b651f2c-133c-4f62-b21c-92a002f09e73.png)
 
 
 

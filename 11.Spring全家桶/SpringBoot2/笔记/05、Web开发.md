@@ -1,6 +1,6 @@
 # 05、Web开发
 
-![img](05、Web开发.assets/1608701608750-77d03c43-c254-4132-acdf-843958446b27.png)
+![img](./images/05、Web开发/1608701608750-77d03c43-c254-4132-acdf-843958446b27-1692198079218-20.png)
 
 # 1、SpringMVC自动配置概览
 
@@ -109,7 +109,7 @@ spring:
 >
 > /res是拦截前缀，实际的静态资源路径需要去掉res，就是对应在静态资源目录下的文件
 >
-> ![image-20220331234035669](05、Web开发.assets/image-20220331234035669.png)
+> ![image-20220331234035669](./images/05、Web开发/image-20220331234035669.png)
 
 
 
@@ -425,7 +425,7 @@ spring:
 
 ### 2、请求映射原理
 
-![img](05、Web开发.assets/1603181171918-b8acfb93-4914-4208-9943-b37610e93864.png)
+![img](./images/05、Web开发/1603181171918-b8acfb93-4914-4208-9943-b37610e93864.png)
 
 ```java
 //1. FrameworkServlet  重写doget、dopost等方法【org.springframework.web.servlet.FrameworkServlet#doGet】调用processRequest方法
@@ -462,11 +462,11 @@ spring:
                 //HandlerMapping：处理器映射。/xxx->>xxxx
 ```
 
-![img](05、Web开发.assets/1603181460034-ba25f3c0-9cfd-4432-8949-3d1dd88d8b12.png)
+![img](./images/05、Web开发/1603181460034-ba25f3c0-9cfd-4432-8949-3d1dd88d8b12.png)
 
 **RequestMappingHandlerMapping**：保存了所有@RequestMapping 和handler的映射规则。
 
-![img](05、Web开发.assets/1603181662070-9e526de8-fd78-4a02-9410-728f059d6aef.png)
+![img](./images/05、Web开发/1603181662070-9e526de8-fd78-4a02-9410-728f059d6aef.png)
 
 所有的请求映射都在HandlerMapping中。
 
@@ -684,11 +684,11 @@ request.getAttribute();
 
 **mavContainer**.getModel(); 获取到值的
 
-![img](05、Web开发.assets/1603271442869-63b4c3c7-c721-4074-987d-cbe5999273ae.png)
+![img](./images/05、Web开发/1603271442869-63b4c3c7-c721-4074-987d-cbe5999273ae.png)
 
-![img](05、Web开发.assets/1603271678813-d8e1a1e5-94fa-412c-a7f1-6f27174fd127.png)
+![img](./images/05、Web开发/1603271678813-d8e1a1e5-94fa-412c-a7f1-6f27174fd127.png)
 
-![img](05、Web开发.assets/1603271813894-037be041-92a5-49af-a49c-c350b3dd587a.png)
+![img](./images/05、Web开发/1603271813894-037be041-92a5-49af-a49c-c350b3dd587a.png)
 
 ### 1.4、自定义对象参数：
 
@@ -749,7 +749,7 @@ public class Pet {
 
 `org.springframework.web.servlet.DispatcherServlet#getHandlerAdapter`
 
-![img](05、Web开发.assets/1603262942726-107353bd-f8b7-44f6-93cf-2a3cad4093cf.png)
+![img](./images/05、Web开发/1603262942726-107353bd-f8b7-44f6-93cf-2a3cad4093cf.png)
 
 0 - 支持方法上标注@RequestMapping 
 
@@ -784,7 +784,7 @@ Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);//
     }
 ```
 
-![image-20220406005509700](05、Web开发.assets/image-20220406005509700.png)
+![image-20220406005509700](./images/05、Web开发/image-20220406005509700.png)
 
 ### 3、参数解析器-HandlerMethodArgumentResolver
 
@@ -792,11 +792,11 @@ Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);//
 
 SpringMVC目标方法能写多少种参数类型。取决于参数解析器。
 
-![img](05、Web开发.assets/1603263283504-85bbd4d5-a9af-4dbf-b6a2-30b409868774.png)
+![img](./images/05、Web开发/1603263283504-85bbd4d5-a9af-4dbf-b6a2-30b409868774.png)
 
 > 参数解析器接口设计：
 
-![img](05、Web开发.assets/1603263394724-33122714-9d06-42ec-bf45-e440e8b49c05.png)
+![img](./images/05、Web开发/1603263394724-33122714-9d06-42ec-bf45-e440e8b49c05.png)
 
 - 当前解析器是否支持解析这种参数
 - 支持就调用 resolveArgument
@@ -805,7 +805,7 @@ SpringMVC目标方法能写多少种参数类型。取决于参数解析器。
 
 ### 4、返回值处理器
 
-![img](05、Web开发.assets/1603263524227-386da4be-43b1-4b17-a2cc-8cf886346af9.png)
+![img](./images/05、Web开发/1603263524227-386da4be-43b1-4b17-a2cc-8cf886346af9.png)
 
 
 
@@ -985,13 +985,13 @@ public static boolean isSimpleValueType(Class<?> type) {
 
 @FunctionalInterface**public interface** Converter<S, T>
 
-![img](05、Web开发.assets/1603337871521-25fc1aa1-133a-4ce0-a146-d565633d7658.png)
+![img](./images/05、Web开发/1603337871521-25fc1aa1-133a-4ce0-a146-d565633d7658.png)
 
 
 
 
 
-![img](05、Web开发.assets/1603338486441-9bbd22a9-813f-49bd-b51b-e66c7f4b8598.png)
+![img](./images/05、Web开发/1603338486441-9bbd22a9-813f-49bd-b51b-e66c7f4b8598.png)
 
 
 
@@ -1048,7 +1048,7 @@ public static boolean isSimpleValueType(Class<?> type) {
 
 将所有的数据都放在 **ModelAndViewContainer**；包含要去的页面地址View。还包含Model数据。
 
-![img](05、Web开发.assets/1603272018605-1bce3142-bdd9-4834-a028-c753e91c52ac.png)
+![img](./images/05、Web开发/1603272018605-1bce3142-bdd9-4834-a028-c753e91c52ac.png)
 
 ### 7、处理派发结果
 
@@ -1132,7 +1132,7 @@ protected void exposeModelAsRequestAttributes(Map<String, Object> model,
 
 # 4、数据响应与内容协商
 
-![img](05、Web开发.assets/1606043749073-2573e24a-9ea9-459e-ad94-a433e1082624.png)
+![img](./images/05、Web开发/1606043749073-2573e24a-9ea9-459e-ad94-a433e1082624.png)
 
 
 
@@ -1198,7 +1198,7 @@ spring-boot-starter-web场景自动引入了json场景
     </dependency>
 ```
 
-![img](05、Web开发.assets/1605151090728-f7c60e6f-d0c0-4541-bfa3-8cc805dfd5d6.png)
+![img](./images/05、Web开发/1605151090728-f7c60e6f-d0c0-4541-bfa3-8cc805dfd5d6.png)
 
 
 
@@ -1208,9 +1208,9 @@ spring-boot-starter-web场景自动引入了json场景
 
 //org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite#selectHandler
 
-![image-20220410200731309](05、Web开发.assets/image-20220410200731309.png)
+![image-20220410200731309](./images/05、Web开发/image-20220410200731309.png)
 
-![img](05、Web开发.assets/1605151359370-01cd1fbe-628a-4eea-9430-d79a78f59125.png)
+![img](./images/05、Web开发/1605151359370-01cd1fbe-628a-4eea-9430-d79a78f59125.png)
 
 ```java
 //org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod#invokeAndHandle
@@ -1257,7 +1257,7 @@ RequestResponseBodyMethodProcessor  //处理ResponseBody注解的解析器，解
 
 #### 2、返回值解析器原理
 
-![img](05、Web开发.assets/1605151728659-68c8ce8a-1b2b-4ab0-b86d-c3a875184672.png)
+![img](./images/05、Web开发/1605151728659-68c8ce8a-1b2b-4ab0-b86d-c3a875184672.png)
 
 1、返回值处理器判断是否支持这种类型返回值 supportsReturnType
 
@@ -1281,7 +1281,7 @@ RequestResponseBodyMethodProcessor  //处理ResponseBody注解的解析器，解
 List<MediaType> acceptableTypes = getAcceptableMediaTypes(request);
 ```
 
-![img](05、Web开发.assets/1605163005521-a20d1d8e-0494-43d0-8135-308e7a22e896.png)
+![img](./images/05、Web开发/1605163005521-a20d1d8e-0494-43d0-8135-308e7a22e896.png)
 
 > q表示权重，【`*/*`表示所有类型。html表示网页。。。】
 
@@ -1309,7 +1309,7 @@ WebAsyncTask
 
 #### 1、MessageConverter规范
 
-![img](05、Web开发.assets/1605163447900-e2748217-0f31-4abb-9cce-546b4d790d0b.png)
+![img](./images/05、Web开发/1605163447900-e2748217-0f31-4abb-9cce-546b4d790d0b.png)
 
 HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaType类型的数据。
 
@@ -1319,7 +1319,7 @@ HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaT
 
 #### 2、默认的MessageConverter
 
-![img](05、Web开发.assets/1605163584708-e19770d6-6b35-4caa-bf21-266b73cb1ef1.png)
+![img](./images/05、Web开发/1605163584708-e19770d6-6b35-4caa-bf21-266b73cb1ef1.png)
 
 ```
 0 - 只支持Byte类型的
@@ -1340,7 +1340,7 @@ HttpMessageConverter: 看是否支持将 此 Class类型的对象，转为MediaT
 
 最终 MappingJackson2HttpMessageConverter  把对象转为JSON（利用底层的jackson的objectMapper转换的）
 
-![img](05、Web开发.assets/1605164243168-1a31e9af-54a4-463e-b65a-c28ca7a8a2fa.png)
+![img](./images/05、Web开发/1605164243168-1a31e9af-54a4-463e-b65a-c28ca7a8a2fa.png)
 
 
 
@@ -1381,7 +1381,7 @@ if (jackson2XmlPresent) {
 
 只需要改变请求头中`Accept字段`。Http协议中规定的，告诉服务器本客户端可以接收的数据类型。
 
-![img](05、Web开发.assets/1605173127653-8a06cd0f-b8e1-4e22-9728-069b942eba3f.png)
+![img](./images/05、Web开发/1605173127653-8a06cd0f-b8e1-4e22-9728-069b942eba3f.png)
 
 
 
@@ -1410,13 +1410,13 @@ private List<MediaType> getAcceptableMediaTypes(HttpServletRequest request)
 }
 ```
 
-![img](05、Web开发.assets/1605230907471-b0ed34bc-6782-40e7-84b7-615726312f01.png)
+![img](./images/05、Web开发/1605230907471-b0ed34bc-6782-40e7-84b7-615726312f01.png)
 
 确定客户端接收什么样的内容类型；
 
 1、Parameter策略优先确定是要返回json数据（获取请求头中的format的值）
 
-![img](05、Web开发.assets/1605231074299-25f5b062-2de1-4a09-91bf-11e018d6ec0e.png)
+![img](./images/05、Web开发/1605231074299-25f5b062-2de1-4a09-91bf-11e018d6ec0e.png)
 
 2、最终进行内容协商返回给客户端json即可。
 
@@ -1429,23 +1429,23 @@ private List<MediaType> getAcceptableMediaTypes(HttpServletRequest request)
 - **2、获取客户端（PostMan、浏览器）支持接收返回的内容类型。（获取客户端Accept请求头字段）【application/xml】**
 
   - **contentNegotiationManager 内容协商管理器 默认使用基于请求头的策略**
-  - ![img](05、Web开发.assets/1605230462280-ef98de47-6717-4e27-b4ec-3eb0690b55d0.png)
+  - ![img](./images/05、Web开发/1605230462280-ef98de47-6717-4e27-b4ec-3eb0690b55d0.png)
   - **HeaderContentNegotiationStrategy  确定客户端可以接收的内容类型** 
-  - ![img](05、Web开发.assets/1605230546376-65dcf657-7653-4a58-837a-f5657778201a.png)
+  - ![img](./images/05、Web开发/1605230546376-65dcf657-7653-4a58-837a-f5657778201a.png)
 
 - 3、遍历循环所有当前系统的 **MessageConverter**，看谁支持操作这个对象（Person）
 
 - 4、找到支持操作Person的converter，把converter支持的媒体类型统计出来。
 
-  ![img](05、Web开发.assets/1605173657818-73331882-6086-490c-973b-af46ccf07b32.png)
+  ![img](./images/05、Web开发/1605173657818-73331882-6086-490c-973b-af46ccf07b32.png)
 
 - 5、客户端需要【application/xml】。服务端能力【10种、json、xml】
 
-  ![img](05、Web开发.assets/1605173876646-f63575e2-50c8-44d5-9603-c2d11a78adae.png)
+  ![img](./images/05、Web开发/1605173876646-f63575e2-50c8-44d5-9603-c2d11a78adae.png)
 
 - 6、进行内容协商的最佳匹配媒体类型
 
-  ![image-20220410202035199](05、Web开发.assets/image-20220410202035199.png)
+  ![image-20220410202035199](./images/05、Web开发/image-20220410202035199.png)
 
 - 7、用 支持 将对象转为 最佳匹配媒体类型 的converter。调用它进行转化 。
 
@@ -1589,7 +1589,7 @@ public class WebConfig /*implements WebMvcConfigurer*/ {
 
 > 添加自定义消息转换器  和 自定义自定义内容协商策略的区别
 
-| <img src="05、Web开发.assets/1605260623995-8b1f7cec-9713-4f94-9cf1-8dbc496bd245.png" > | <img src="05、Web开发.assets/1605261062877-0a27cc41-51cb-4018-a9af-4e0338a247cd.png" > |
+| <img src="./images/05、Web开发/1605260623995-8b1f7cec-9713-4f94-9cf1-8dbc496bd245.png" > | <img src="./images/05、Web开发/1605261062877-0a27cc41-51cb-4018-a9af-4e0338a247cd.png" > |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 
@@ -1606,7 +1606,7 @@ public class WebConfig /*implements WebMvcConfigurer*/ {
 
 ## 1、视图解析
 
-![img](05、Web开发.assets/1606043749039-cefbf687-4feb-441d-bad8-c6d933248d3c.png)
+![img](./images/05、Web开发/1606043749039-cefbf687-4feb-441d-bad8-c6d933248d3c.png)
 
 ### 1、视图解析原理流程
 
@@ -1637,7 +1637,7 @@ public class WebConfig /*implements WebMvcConfigurer*/ {
 
 1、目标方法处理的过程中，所有数据都会被放在 **ModelAndViewContainer 里面。包括数据和视图地址**
 
-![image-20220414000752879](05、Web开发.assets/image-20220414000752879.png)
+![image-20220414000752879](./images/05、Web开发/image-20220414000752879.png)
 
 **2、方法的参数是一个自定义类型对象（从请求参数中确定的），把他重新放在ModelAndViewContainer** 
 
@@ -1651,19 +1651,19 @@ public class WebConfig /*implements WebMvcConfigurer*/ {
 
 - - - 1、所有的视图解析器尝试是否能根据当前返回值得到**View**对象
     
-      ![img](05、Web开发.assets/1605679471537-7db702dc-b165-4dc6-b64a-26459ee5fd6c.png)
+      ![img](./images/05、Web开发/1605679471537-7db702dc-b165-4dc6-b64a-26459ee5fd6c.png)
     
     - 2、得到了  **redirect:/main.html** --> Thymeleaf new **RedirectView**()
     
     - 3、`ContentNegotiationViewResolver` 里面包含了下面所有的视图解析器，内部还是利用下面所有视图解析器得到视图对象。
     
-      ![img](05、Web开发.assets/1605679913592-151a616a-c754-4da3-a2c1-91dc0230a48d.png)
+      ![img](./images/05、Web开发/1605679913592-151a616a-c754-4da3-a2c1-91dc0230a48d.png)
     
     - 4、`view.render(mv.getModelInternal(), request, response);`   视图对象调用自定义的<u>render</u>进行页面渲染工作
     
-      ![img](05、Web开发.assets/1605679959020-54b96fe7-f2fc-4b4d-a392-426e1d5413de.png)
+      ![img](./images/05、Web开发/1605679959020-54b96fe7-f2fc-4b4d-a392-426e1d5413de.png)
   
-  - - - 
+  - - -
   
     - + **RedirectView 如何渲染【重定向到一个页面】**
   
@@ -1845,7 +1845,7 @@ th:if="${not #lists.isEmpty(prod.comments)}">view</a>
 
 ### 6、属性优先级
 
-![](05、Web开发.assets/1605498132699-4fae6085-a207-456c-89fa-e571ff1663da.png)
+![](./images/05、Web开发/1605498132699-4fae6085-a207-456c-89fa-e571ff1663da.png)
 
 ### 7、行内写法
 
@@ -2025,7 +2025,7 @@ http://localhost:8080/atguigu
 
 网页源代码
 
-![image-20220411000904675](05、Web开发.assets/image-20220411000904675.png)
+![image-20220411000904675](./images/05、Web开发/image-20220411000904675.png)
 
 ## 4、构建后台管理系统
 
@@ -2296,7 +2296,7 @@ public class AdminWebConfig implements WebMvcConfigurer {
 
 - 2、如果当前拦截器返回为false。直接    **倒序执行**所有已经执行了的拦截器的  **afterCompletion**；
 
-  ![image-20220414012753148](05、Web开发.assets/image-20220414012753148.png)
+  ![image-20220414012753148](./images/05、Web开发/image-20220414012753148.png)
 
 **3、如果任何一个拦截器返回false。直接跳出不执行目标方法**
 
@@ -2310,11 +2310,11 @@ public class AdminWebConfig implements WebMvcConfigurer {
 
 
 
-![img](05、Web开发.assets/1605764129365-5b31a748-1541-4bee-9692-1917b3364bc6.png)
+![img](./images/05、Web开发/1605764129365-5b31a748-1541-4bee-9692-1917b3364bc6.png)
 
 
 
-![img](05、Web开发.assets/1605765121071-64cfc649-4892-49a3-ac08-88b52fb4286f.png)
+![img](./images/05、Web开发/1605765121071-64cfc649-4892-49a3-ac08-88b52fb4286f.png)
 
 ```java
 //org.springframework.web.servlet.DispatcherServlet#doDispatch  源码过程
@@ -2491,7 +2491,7 @@ spring.servlet.multipart.max-request-size=100MB
 
     - **2、参数解析器`RequestPartMethodArgumentResolver`来解析请求中的文件内容封装成MultipartFile**
 
-      ![img](05、Web开发.assets/1605847414866-32b6cc9c-5191-4052-92eb-069d652dfbf9.png)
+      ![img](./images/05、Web开发/1605847414866-32b6cc9c-5191-4052-92eb-069d652dfbf9.png)
 
     - **3、将request中文件流信息封装为一个Map；**`MultiValueMap<String, MultipartFile>`
 
@@ -2521,7 +2521,7 @@ spring.servlet.multipart.max-request-size=100MB
 
 - 对于机器客户端，它将生成JSON响应，其中包含错误，HTTP状态和异常消息的详细信息。对于浏览器客户端，响应一个“ whitelabel”错误视图，以HTML格式呈现相同的数据
 
-- ![img](05、Web开发.assets/1606024421363-77083c34-0b0e-4698-bb72-42da351d3944.png)![img](05、Web开发.assets/1606024616835-bc491bf0-c3b1-4ac3-b886-d4ff3c9874ce.png)
+- ![img](./images/05、Web开发/1606024421363-77083c34-0b0e-4698-bb72-42da351d3944.png)![img](./images/05、Web开发/1606024616835-bc491bf0-c3b1-4ac3-b886-d4ff3c9874ce.png)
 
 - **要对其进行自定义，添加**`View`**解析为**`error`
 
@@ -2529,7 +2529,7 @@ spring.servlet.multipart.max-request-size=100MB
 
 - error/下的4xx，5xx页面会被自动解析；
 
-  ![img](05、Web开发.assets/1606024592756-d4ab8a6b-ec37-426b-8b39-010463603d57.png)
+  ![img](./images/05、Web开发/1606024592756-d4ab8a6b-ec37-426b-8b39-010463603d57.png)
 
 #### 2、定制错误处理逻辑
 
@@ -2578,11 +2578,11 @@ spring.servlet.multipart.max-request-size=100MB
 
 - - response.sendError(HttpServletResponse.**SC_BAD_REQUEST**, ex.getMessage()); 
 
-    ![img](05、Web开发.assets/1606114118010-f4aaf5ee-2747-4402-bc82-08321b2490ed-16500392423711.png)
+    ![img](./images/05、Web开发/1606114118010-f4aaf5ee-2747-4402-bc82-08321b2490ed-16500392423711.png)
 
 - 5、自定义实现 HandlerExceptionResolver 处理异常；可以作为默认的全局异常处理规则
 
-- ![img](05、Web开发.assets/1606114688649-e6502134-88b3-48db-a463-04c23eddedc7-16500392423713.png)
+- ![img](./images/05、Web开发/1606114688649-e6502134-88b3-48db-a463-04c23eddedc7-16500392423713.png)
 
 - ```java
   @Order(value= Ordered.HIGHEST_PRECEDENCE)  //优先级，数字越小优先级越高
@@ -2625,23 +2625,23 @@ spring.servlet.multipart.max-request-size=100MB
 
   - **DefaultErrorAttributes**：定义错误页面中可以包含哪些数据。
 
-    ![img](05、Web开发.assets/1606044430037-8d599e30-1679-407c-96b7-4df345848fa4-16499544271891.png)
+    ![img](./images/05、Web开发/1606044430037-8d599e30-1679-407c-96b7-4df345848fa4-16499544271891.png)
 
-  - ![img](05、Web开发.assets/1606044487738-8cb1dcda-08c5-4104-a634-b2468512e60f-16499544271893.png)
+  - ![img](./images/05、Web开发/1606044487738-8cb1dcda-08c5-4104-a634-b2468512e60f-16499544271893.png)
 
 - **容器中的组件：类型：**BasicErrorController --> id：basicErrorController（json+白页 适配响应）
 
   + **处理默认** **/error 路径的请求；页面响应** `**new ModelAndView("error", model)；`
 
-    ![image-20220415233146345](05、Web开发.assets/image-20220415233146345.png)
+    ![image-20220415233146345](./images/05、Web开发/image-20220415233146345.png)
 
   - **容器中有组件 View**->**id是error**；（响应默认错误页）
 
-    ![image-20220415233303149](05、Web开发.assets/image-20220415233303149.png)
+    ![image-20220415233303149](./images/05、Web开发/image-20220415233303149.png)
 
   - 容器中放组件 **BeanNameViewResolver（视图解析器）；按照返回的视图名作为组件的id去容器中找View对象。**
 
-    ![image-20220415233418913](05、Web开发.assets/image-20220415233418913.png)
+    ![image-20220415233418913](./images/05、Web开发/image-20220415233418913.png)
 
 + **容器中的组件：**类型：**DefaultErrorViewResolver -> id：**conventionErrorViewResolver
 
@@ -2655,7 +2655,7 @@ spring.servlet.multipart.max-request-size=100MB
 
 
 
-![img](05、Web开发.assets/1606043870164-3770e116-344f-448e-8bff-8f32438edc9a-16499544271895.png)写出去json
+![img](./images/05、Web开发/1606043870164-3770e116-344f-448e-8bff-8f32438edc9a-16499544271895.png)写出去json
 
  错误页
 
@@ -2675,11 +2675,11 @@ spring.servlet.multipart.max-request-size=100MB
 
 - 1、遍历所有的 **handlerExceptionResolvers，看谁能处理当前异常【****HandlerExceptionResolver处理器异常解析器****】**
 
-  ![img](05、Web开发.assets/1606047252166-ce71c3a1-0e0e-4499-90f4-6d80014ca19f.png)
+  ![img](./images/05、Web开发/1606047252166-ce71c3a1-0e0e-4499-90f4-6d80014ca19f.png)
 
 - **2、系统默认的  异常解析器；**
 
-  ![img](05、Web开发.assets/1606047109161-c68a46c1-202a-4db1-bbeb-23fcae49bbe9.png)
+  ![img](./images/05、Web开发/1606047109161-c68a46c1-202a-4db1-bbeb-23fcae49bbe9.png)
 
   - **1、DefaultErrorAttributes先来处理异常。把异常信息保存到rrequest域，并且返回null；**
 
@@ -2689,7 +2689,7 @@ spring.servlet.multipart.max-request-size=100MB
 
     - **2、解析错误视图；遍历所有的**  **ErrorViewResolver  看谁能解析。**
 
-    ![img](05、Web开发.assets/1606047900473-e31c1dc3-7a5f-4f70-97de-5203429781fa.png)
+    ![img](./images/05、Web开发/1606047900473-e31c1dc3-7a5f-4f70-97de-5203429781fa.png)
 
     - **3、默认的** **DefaultErrorViewResolver [自动配置类配置],作用是把响应状态码作为错误页的地址，error/500.html** 
     - **4、模板引擎最终响应这个页面** **error/500.html** 
@@ -2823,9 +2823,9 @@ public class MyRegistConfig {
 
 - 默认映射的是 / 路径。
 
-  ![image-20220416152724548](05、Web开发.assets/image-20220416152724548.png)
+  ![image-20220416152724548](./images/05、Web开发/image-20220416152724548.png)
 
-![img](05、Web开发.assets/1606284869220-8b63d54b-39c4-40f6-b226-f5f095ef9304.png)
+![img](./images/05、Web开发/1606284869220-8b63d54b-39c4-40f6-b226-f5f095ef9304.png)
 
 只有经过DIspatchServlet的请求，才会经过拦截器等处理
 
@@ -2856,7 +2856,7 @@ public class MyRegistConfig {
 
 - 切换服务器
 
-![img](05、Web开发.assets/1606280937533-504d0889-b893-4a01-af68-2fc31ffce9fc.png)
+![img](./images/05、Web开发/1606280937533-504d0889-b893-4a01-af68-2fc31ffce9fc.png)
 
 ```xml
 先排除web-start中引入的tomcat
@@ -2961,7 +2961,7 @@ public class AdminWebConfig implements WebMvcConfigurer
 
   - - - 把所有系统中的 WebMvcConfigurer 拿过来。所有功能的定制都是这些 WebMvcConfigurer  合起来一起生效
 
-        ![image-20220416174741570](05、Web开发.assets/image-20220416174741570.png)
+        ![image-20220416174741570](./images/05、Web开发/image-20220416174741570.png)
 
       - 自动配置了一些非常底层的组件。**RequestMappingHandlerMapping**、这些组件依赖的组件都是从容器中获取
 
