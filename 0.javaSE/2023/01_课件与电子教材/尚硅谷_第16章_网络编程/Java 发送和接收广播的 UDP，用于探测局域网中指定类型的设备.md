@@ -1,135 +1,203 @@
-
-
-
-
-
-
 # 探测局域网内设备
 
 注意这是发的广播信息，同一网段中其它机器都会收到这个信息（只有特殊的监听这类消息的机器会做出回应）：
 
-> 1. 探测网元192.168.184.107:8888向广播地址192.168.184.255:9999发送报文，广播地址将该报文在局域网内广播192.168.184.107、110，监听
-> 2. 192.168.184.107、110 启动UDP监听 9999端口的UDP报文，收到后解析发送的packet.getSocketAddress()并响应
+```
+实现探测局域网内设备
 
-SendUDP.java
+探测方：
+1、发送端在192.168.64.5:8888 启动
+2、启动一个线程通过本地8888端口向广播地址192.168.64.255:9999发送报文，报文固定长度32字节，内容NESOFTECHOOHCETFOSEN【自定】
+3、广播消息在路由器内转发【广播消息不回跨路由器，否则会网络风暴】到该广播地址下的所有设备的9999端口，如192.168.64.3:9999
+3、启动另一个线程监听其他客户端发送到192.168.64.5:8888的UDP报文
+
+被发现方
+2、接收端192.168.64.3在9999监听UDP广播报文
+3、接收到消息后，解析广播源ip和端口packet.getSocketAddress()并响应，向192.168.64.5:8888单播回本机的ip
+```
+
+![image-20230822002618440](./images/image-20230822002618440.png)
+
+
+
+## SendUDP.java
 
 ```java
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
- 
-public class SendUDP {
-    public static void main(String[] args) throws Exception {
-        // Use this port to send broadcast packet
-        @SuppressWarnings("resource")
-        final DatagramSocket detectSocket = new DatagramSocket(8888);
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+
+public class SendUDP {
+    public static void main(String[] args) throws Exception {
+        // Use this port to send broadcast packet 使用此端口发送广播数据包
+        @SuppressWarnings("resource") final DatagramSocket detectSocket = new DatagramSocket(8888);
         detectSocket.setBroadcast(true);
- 
-        // Send packet thread
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Send thread started.");
-                while (true) {
-                    try {
-                        byte[] buf = new byte[1024];
-                        int packetPort = 9999;//需要与接收端ReceiveUDP监听端口一致 
- 
-                        // Broadcast address  129.9.255.255:1500
-                        InetAddress hostAddress = InetAddress.getByName("129.9.255.255");
-                        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-                        String outMessage = stdin.readLine();
- 
-                        if (outMessage.equals("bye"))
-                            break;
-                        outMessage="NESOFTECHOOHCETFOSEN";
-                        buf = outMessage.getBytes();
-                        System.out.println("Send " + outMessage + " to " + hostAddress);
-                        // Send packet to hostAddress:9999, server that listen
-                        // 9999 would reply this packet
+
+        // Send packet thread  192.168.64.5：8888  -->192.168.64.255:9999  暴露探测方，用于告知被探测设备上报的ip和端口
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Send thread started.");
+                while (true) {
+                    try {
+
+                        //获取报文内容
+                        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+                        String outMessage = stdin.readLine();
+
+                        if (outMessage.equals("bye"))
+                            break;
+                        outMessage = "NESOFTECHOOHCETFOSEN";//协议固定解析
+
+
+                        // Send packet to hostAddress:9999, server that listen
+                        // 9999 would reply this packet
                         // fix： 搜不到局域网IP 时排查报文长度必须大于一定值
-ByteBuff buff=ByteBuff.allocate(32);
-                        DatagramPacket out = new DatagramPacket(buf,buf.length, hostAddress, packetPort);
-                        detectSocket.send(out);
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-        
-        // Receive packet thread.
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Receive thread started.");
-                while(true) {
-                    byte[] buf = new byte[1024];
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                    try {
-                        detectSocket.settimeout(1000）
-                        detectSocket.receive(packet);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    String rcvd = "Received from " + packet.getSocketAddress() + ", Data="
-                            + new String(packet.getData(), 0, packet.getLength());
-                    System.out.println(rcvd);
-                }
-            }
-        }).start();
-    }
+                        int capacity = 32;
+                        ByteBuffer buff = ByteBuffer.allocate(capacity);
+                        buff.put(outMessage.getBytes());
+
+                        // Broadcast address  192.168.64.255:9999
+                        InetAddress hostAddress = InetAddress.getByName("192.168.64.255");
+                        int packetPort = 9999;//需要与接收端ReceiveUDP监听端口一致
+                        DatagramPacket out = new DatagramPacket(buff.array(), capacity, hostAddress, packetPort);
+                        detectSocket.send(out);//发送到192.168.64.255:9999 路由器内广播
+
+                        System.out.println("Send " + outMessage + " to " + hostAddress);
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+        // Receive packet thread.  192.168.64.255:9999  --》192.168.64.5：8888 接收
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Receive thread started.");
+                while (true) {
+                    byte[] buf = new byte[1024];
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                    try {
+                        //detectSocket.setSoTimeout(1000);//设置超时
+                        detectSocket.receive(packet);
+                        String rcvd = "Received from " + packet.getSocketAddress() + ", Data="
+                                + new String(packet.getData(), 0, packet.getLength());
+                        System.out.println(rcvd);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }).start();
+    }
 }
 ```
 
-ReceiveUDP.java
+## ReceiveUDP.java
 
 ```java
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
- 
-public class ReceiveUDP {
-    public static void main(String[] args) throws Exception {
-        int listenPort = 9999;
-        byte[] buf = new byte[1024];
-        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-        @SuppressWarnings("resource")
-        DatagramSocket responseSocket = new DatagramSocket(listenPort);
-        System.out.println("Server started, Listen port: " + listenPort);
-        while (true) {
-            responseSocket.receive(packet);
-            String rcvd = "Received "
-                    + new String(packet.getData(), 0, packet.getLength())
-                    + " from address: " + packet.getSocketAddress();
-            System.out.println(rcvd);
- 
-            // Send a response packet to sender
-            String backData = "DCBA";
-            byte[] data = backData.getBytes();
-            System.out.println("Send " + backData + " to " + packet.getSocketAddress());
-            DatagramPacket backPacket = new DatagramPacket(data, 0,
-                    data.length, packet.getSocketAddress());
-            responseSocket.send(backPacket);
-        }
-    }
+
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
+//接收端监听9999端口的UDP广播，接收到后判断是否满足协议
+//满足后获取发送端ip和端口，单播回ip地址列表
+public class ReceiveUDP {
+    public static void main(String[] args) throws Exception {
+
+        int listenPort = 9999;
+        @SuppressWarnings("resource")
+        DatagramSocket responseSocket = new DatagramSocket(listenPort);
+
+        byte[] buf = new byte[32];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);//按协议接受32个字节
+
+
+        System.out.println("Server  started,  Listen  port:  " + listenPort);
+        while (true) {
+            responseSocket.receive(packet);//接受广播消息
+            SocketAddress srcAddress = packet.getSocketAddress();//获取发送端 ip和端口
+
+            String rcvd = "Received  "
+                    + new String(packet.getData(), 0, packet.getLength())
+                    + "  from  address:  " + srcAddress;
+            System.out.println(rcvd);//打印广播源地址
+
+            //  Send  a  response  packet  to  sender  上报本机ip列表  按协议填充到1024
+            String backData = getIpAddress().toString();
+            byte[] data = backData.getBytes();
+            int receiveLen = 1024;
+            ByteBuffer buffer = ByteBuffer.allocate(receiveLen);
+            buffer.put(data);
+            System.out.println("Send  " + backData + "  to  " + srcAddress);
+            DatagramPacket backPacket = new DatagramPacket(buffer.array(), receiveLen, srcAddress);
+            responseSocket.send(backPacket);
+        }
+    }
+
+    public static List<String> getIpAddress() {
+        List<String> ips = new ArrayList<>();
+        try {
+            Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+            InetAddress ip = null;
+            while (allNetInterfaces.hasMoreElements()) {
+                NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
+                if (netInterface.isLoopback() || netInterface.isVirtual() || !netInterface.isUp()) {
+                    continue;
+                } else {
+                    Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        ip = addresses.nextElement();
+                        if (ip != null && ip instanceof Inet4Address ) {
+                            ips.add(ip.getHostName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("IP地址获取失败" + e.toString());
+        }
+        return ips;
+    }
 }
 ```
 
-下图是 SendUDP 端的执行截图，发送内容为 Message：
+## 测试
 
-![](http://static.oschina.net/uploads/space/2015/0409/125104_bllV_1434710.png)
+下图是 SendUDP 端【192.168.64.5】的执行截图，发送内容为 Message：
 
-在 SendUDP 端发送了消息后，UDP 端会立即显示收到消息，如下图：
+```java
+Send thread started.
+Receive thread started.
+kk
+Send NESOFTECHOOHCETFOSEN to /192.168.64.255
+Received from /192.168.64.3:9999, Data=[172.17.0.1, 192.168.64.3]     
+```
 
-![](http://static.oschina.net/uploads/space/2015/0409/125123_IWYr_1434710.png)
+在 SendUDP 端发送了消息后，ReceiveUDP端【192.168.64.3】会立即显示收到消息，如下图：
 
-正如第一幅图看到的，我在**同一子网下的两台机器上运行着 ReceiveUDP**，于是两台机器都做出了回应。
+```java
+Server  started,  Listen  port:  9999
+Received  NESOFTECHOOHCETFOSEN              from  address:  /192.168.64.5:8888
+Send  [172.17.0.1, 192.168.64.3]  to  /192.168.64.5:8888
+```
+
+
+
+在**同一子网下的两台机器上运行着 ReceiveUDP**，于是机器都做出了回应。
 
 如果将这种方式移植到 Android 手机上，可以用来探测同一 WiFi 下的其它设备（前提是这些设备上运行着类似 ReceiveUDP 的），以获取它们的 IP 地址。此后可以建立 TCP 连接，做其他的事情。有人说可以用 Ping 网段的方式来发现其它设备，但对于 Android 来说，这个方式并不可靠。因为判定消息不可达的时间难以确定。
 
@@ -225,72 +293,3 @@ public class ReceiveUDP {
 
 
 
-## java UDP协议实现
-
-### 什么是 UDP 协议。
-
-**UDP（即用户数据报协议）**它是除了 TCP 协议以外的另一种网络信息传输的形式，我们知道 TCP 和 UDP 协议的不同点在于：
-
-**TCP 协议是可靠而非安全的网络协议，它可以保证数据在从一端传输至另一端的时候可以准确的送达，并且送达的数据的排列顺序和送出时的顺序是相同的。**
-
-**UDP 协议的安全而非可靠的网络协议，基于 UDP 的信息传输快，但是不提供可靠的保证，**
-
-使用 UDP 协议进行数据传输时，用户无法知道数据能否到达主机，也不能确保到达目的地的顺序是否和发送的顺序相同，它就像是像一个广播站一样，将消息通过喇叭广播出去，然后人们可以听到这条消息，但是谁收了消息，谁没有收到消息，广播员是不知道的。即使如此，它也可以在较短时间内通知到听到消息的大部分人，所以说 UDP 协议是一种不可靠的协议，但是对于需要快速传输信息，并且能够容忍小的错误的通信，可以考虑使用 UDP 协议。
-
-**基于 UDP 通信的基本模式类似于 “收发快递” 的过程。**
-
-*   将数据打包（称为数据包），然后将数据包发往目的地。
-*   接收别人发来的数据包，然后查看数据包。
-
-**发送数据包的过程如下：**
-
-1.  使用 DatagramSocket() 创建一个数据包套接字，
-
-2.  使用 DatagramPacket(byte[] buf,int offset,int length,InetAddress address,int port) 创建要发送的数据包。
-
-3.  使用 DatagramSocket 类的 send() 方法发送数据包。
-
-**接收数据包的步骤如下：**
-
-1.  使用 DatagramSocket(int port) 创建数据包套接字，并绑定到指定的端口
-
-2.  使用 DatagramPocket(byte[] buf,int length) 创建字节数组来接收数据包。
-
-3.  使用 DatagramPacket 类的 receive() 方法来接收 UDP 包，
-
-**在这里需要注意的一点是：DatagramPacket 类的 receive() 方法开始接收数据时，如果还没有可以接收的数据，在正常情况下 DatagramPacket 类的 receive() 方法将会阻塞，一直等到网络上有数据传来，receive() 方法接收该数据并返回，**
-
-**如果网络上没有一个数据传来，receive() 方法也没有阻塞，肯定是程序有问题，一般是使用了一个已经被占用的端口。**
-
-
-
-### UDP 协议传输常用的两个类
-
-#### DatagramPacket 
-
-DatagramPacket 类位于 Java.net 包下，用来表示数据包。
-
-DatagramPacket 类的构造函数有：
-
-*   DatagramPocket(byte[] buf,int length)
-*   DatagramPacket(byte[] buf,int offset,int length,InetAddress address,int port)
-
-第一种构造函数用于接收数据包，它指定了数据包的内存空间和大小，可以形象的表示为接收快递的收件人，只需要获取到包裹就可以了。
-
-第二种构造函数用于发送数据包，它不仅指定了数据包的内存空间和大小，还指定了数据包的目标地址和端口，在发送数据时必须指定接收方的 Socket 地址和端口号，使用第二种构造函数可以创建发送数据的 DatagramPacket 对象，因此第二种构造函数也可以理解为快递员，他不仅需要获取到要发送的快递包裹，还需要知道发送的地址（ip 地址）和门牌号（端口号）。
-
-#### DatagramSocket 
-
-DatagramSocket 类位于 java.net 包中，它用于表示接收和发送数据包的套接字，该类有以下的构造函数：
-
-*   DatagramSocket()
-*   DatagramSocket(int port)
-*   DatagramSocket(int port,InetAddress addr)
-
-第一种构造函数创建 DatagramSocket 对象，构造数据报套接字，并将其绑定到本地主机任何可用的端口上，
-
-第二种构造函数创建 DatagramSocket 对象，创建数据报套接字，并将其绑定到本地主机的指定端口上，
-
-第三种构造函数创建 DatagramSocket 对象，创建数据报套接字，并将其绑定到指定的本地地址上，这一种构造函数适用于有多块网卡和多个 ip 地址的情况。
-
-在进行程序的接收时，必须指定一个端口号，不允许系统随机生成，此时可以使用第二种构造函数，就像你去发快递收货地址必须指定是一样的，在发送程序时通常使用第一种构造函数，不需要指定端口号，这就像发快递不管去哪一个快递公司都可以。
