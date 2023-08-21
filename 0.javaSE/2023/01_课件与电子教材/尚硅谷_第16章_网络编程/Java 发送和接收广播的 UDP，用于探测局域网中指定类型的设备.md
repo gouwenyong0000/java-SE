@@ -46,6 +46,7 @@ public class SendUDP {
  
                         if (outMessage.equals("bye"))
                             break;
+                        outMessage="NESOFTECHOOHCETFOSEN";
                         buf = outMessage.getBytes();
                         System.out.println("Send " + outMessage + " to " + hostAddress);
                         // Send packet to hostAddress:9999, server that listen
