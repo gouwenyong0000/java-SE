@@ -39,18 +39,20 @@ public class SendUDP {
                         byte[] buf = new byte[1024];
                         int packetPort = 9999;//需要与接收端ReceiveUDP监听端口一致 
  
-                        // Broadcast address  192.168.184.255:999
-                        InetAddress hostAddress = InetAddress.getByName("192.168.184.255");
+                        // Broadcast address  129.9.255.255:1500
+                        InetAddress hostAddress = InetAddress.getByName("129.9.255.255");
                         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
                         String outMessage = stdin.readLine();
  
                         if (outMessage.equals("bye"))
                             break;
+                        outMessage="NESOFTECHOOHCETFOSEN";
                         buf = outMessage.getBytes();
                         System.out.println("Send " + outMessage + " to " + hostAddress);
                         // Send packet to hostAddress:9999, server that listen
                         // 9999 would reply this packet
                         // fix： 搜不到局域网IP 时排查报文长度必须大于一定值
+ByteBuff buff=ByteBuff.allocate(32);
                         DatagramPacket out = new DatagramPacket(buf,buf.length, hostAddress, packetPort);
                         detectSocket.send(out);
                     } catch (UnknownHostException e) {
@@ -71,6 +73,7 @@ public class SendUDP {
                     byte[] buf = new byte[1024];
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
                     try {
+                        detectSocket.settimeout(1000）
                         detectSocket.receive(packet);
                     } catch (IOException e) {
                         e.printStackTrace();
