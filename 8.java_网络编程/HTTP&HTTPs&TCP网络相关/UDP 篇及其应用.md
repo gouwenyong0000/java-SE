@@ -76,21 +76,16 @@ truct udphdr {
 # 三、应用
 
 
---------
-
-### 
 
 ## 3.1 QUIC
 
 QUIC（全称 Quick UDP Internet Connections，快速 UDP 互联网连接）是 Google 提出的一种基于 UDP 改进的通信协议，其目的是降低网络通信的延迟，提供更好的用户互动体验。QUIC 在应用层上，会自己实现快速连接建立、减少重传时延，自适应拥塞控制。
 
-### 
-
 ## 3.2 流媒体
 
 现在直播比较火，直播协议多使用 RTMP，是基于 TCP 的，当网络不好的时候，TCP 协议会主动降低发送速度，这对本来当时就卡的看视频来讲是要命的，应该应用层马上重传，而不是主动让步。因而，很多直播应用，都基于 UDP 实现了自己的视频传输协议。
 
-### 
+
 
 ## 3.3 实时游戏
 
@@ -114,8 +109,6 @@ QUIC（全称 Quick UDP Internet Connections，快速 UDP 互联网连接）是 
 ## 4.1 ACK
 
 这个简单，类似 TCP 的消息确认和超时重传，当对端收到消息时返回对该消息的确认包，如果发送端等待确认包超时，就会重新发送该消息。
-
-### 
 
 ## 4.2 FEC
 
@@ -148,3 +141,74 @@ QUIC（全称 Quick UDP Internet Connections，快速 UDP 互联网连接）是 
 
 趣谈网络协议 - 极客时间 time.geekbang.org/column/intro/100007101?code=7gKtp1Bevx-jozIhDsBbEbYyR8V2P3JgMzL%2FwM47piY%3D&source=app_share
 
+
+
+# 六、UDP设备发现
+
+
+
+在Java中，UDP设备发现通常涉及到发送广播消息到本地网络中的所有设备，并等待它们的响应。这种方法常用于发现网络中的新设备或与特定设备通信。以下是一个基本的UDP设备发现示例，展示了如何在Java中实现此过程：
+
+首先，创建一个发送广播消息的客户端：
+
+```java
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+public class UDPDiscoveryClient {
+    private static final String DISCOVERY_MESSAGE = "Device Discovery Request";
+    private static final int DISCOVERY_PORT = 9999;
+
+    public static void main(String[] args) {
+        DatagramSocket socket = null;
+        try {
+            socket = new DatagramSocket();
+            InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
+            byte[] buffer = DISCOVERY_MESSAGE.getBytes();
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, broadcastAddress, DISCOVERY_PORT);
+            socket.send(packet);
+            System.out.println("Discovery message sent.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (socket != null) {
+                socket.close();
+            }
+        }
+    }
+}
+```
+
+接下来，创建一个接收广播消息的服务器：
+
+```java
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+public class UDPDiscoveryServer {
+    private static final int DISCOVERY_PORT = 9999;
+    private static final int BUFFER_SIZE = 1024;
+
+    public static void main(String[] args) {
+        DatagramSocket socket = null;
+        try {
+            socket = new DatagramSocket(DISCOVERY_PORT);
+            byte[] buffer = new byte[BUFFER_SIZE];
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            socket.receive(packet);
+            String message = new String(packet.getData(), 0, packet.getLength());
+            System.out.println("Received discovery message: " + message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (socket != null) {
+                socket.close();
+            }
+        }
+    }
+}
+```
+
+运行这两个示例时，首先运行服务器，然后运行客户端。客户端将发送一个广播消息到本地网络的255.255.255.255地址（广播地址），而服务器将在本地网络上监听指定端口，接收并处理接收到的消息。你可以根据需要修改DISCOVERY_MESSAGE、DISCOVERY_PORT等变量来适应你的应用场景。
