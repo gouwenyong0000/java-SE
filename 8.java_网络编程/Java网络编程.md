@@ -44,7 +44,7 @@ I/O 的全称是Input/Output。虽常谈及I/O，但想必你也一时不能给�
 
 
 
-![img](./image/Java网络编程/238f297a6ae34c998411cff3f23f6c85.png)
+![img](images/Java网络编程/238f297a6ae34c998411cff3f23f6c85-1696681474430-2.png)
 
 CPU 拷贝：由 CPU 直接处理数据的传送，数据拷贝时会一直占用 CPU 的资源。
 
@@ -66,7 +66,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 缓存 IO 的缺点：数据在传输过程中需要在应用程序地址空间和内核进行多次数据拷贝操作，这些数据拷贝操作所带来的 CPU 以及内存开销是非常大的。
 
-![img](./image/Java网络编程/44d7d87422d44a3695ebf8f5bc911209.png)
+![img](images/Java网络编程/44d7d87422d44a3695ebf8f5bc911209.png)
 
 ### 直接IO
 
@@ -76,7 +76,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 直接IO 的缺点：如果访问的数据在应用缓冲区中不存在，那么每次都会从磁盘/网卡中直接读取数据，这种方式读取数据会非常慢，因此直接IO通常和异步IO结合使用才会得到比较好的性能。
 
-![img](./image/Java网络编程/28fa712195ba4d21ac864e86886cc227.png)
+![img](images/Java网络编程/28fa712195ba4d21ac864e86886cc227.png)
 
 ## 3、同步/异步/阻塞/非阻塞
 
@@ -107,7 +107,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 ### 阻塞IO
 
-![img](./image/Java网络编程/542309628ad64ed7bf11e01f7dfd0397.png)
+![img](images/Java网络编程/542309628ad64ed7bf11e01f7dfd0397.png)
 
 （1）用户进程发起read，进行recvfrom系统调用。
 （2）内核开始准备数据（从网卡拷贝到缓冲区），进程请求的数据并不是一下就能准备好，准备数据是要消耗时间的。与此同时，用户进程阻塞，等待数据ing。
@@ -116,7 +116,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 ### 非阻塞IO
 
-![img](./image/Java网络编程/472de6f27a4e4c22adfbc37b5bb8801d.png)
+![img](images/Java网络编程/472de6f27a4e4c22adfbc37b5bb8801d.png)
 
 （1、3）用户进程发起read，进行recvfrom系统调用，如果数据还没准备好就直接返回。
 （2）内核收到用户进程的调用后，开始准备数据。
@@ -127,7 +127,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 ### IO多路复用
 
-![img](./image/Java网络编程/69fbf2725fa741c6b3db17a17698abcd.png)
+![img](images/Java网络编程/69fbf2725fa741c6b3db17a17698abcd.png)
 
 （1）当用户进程调用了select，用户进程会被阻塞。
 （2）内核会“监视”所有select负责的socket。
@@ -138,7 +138,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 ### 信号驱动式IO
 
-![img](./image/Java网络编程/f9b402d263fa4fe3b3128fd247dfed52.png)
+![img](images/Java网络编程/f9b402d263fa4fe3b3128fd247dfed52.png)
 
 所谓信号驱动式I/O(signal-driven I/O)，就是预先告知内核，当某个描述符准备发生某件事情的时候，让内核发送一个信号通知应用进程。
 （1、2、3）用户进程注册SIGIO信号处理函数，进行sigaction系统调用；内核开启信号驱动式IO并返回调用结果。
@@ -149,7 +149,7 @@ DMA 拷贝：由 CPU 向DMA控制器下达指令，让 DMA 控制器来处理数
 
 ### 异步IO
 
-![img](./image/Java网络编程/e616ec70188f404d85c27ff81e49386e.png)
+![img](images/Java网络编程/e616ec70188f404d85c27ff81e49386e.png)
 
 （1、2）用户进程进行aio_read系统调用之后，无论内核数据是否准备好，都会直接返回给用户进程，然后用户态进程可以去做别的事情。
 （3）内核开始准备数据。
@@ -274,7 +274,7 @@ Java [NIO](https://so.csdn.net/so/search?q=NIO&spm=1001.2101.3001.7020)（Java N
 
 Buffer顾名思义，缓冲区，类似于List、Set、Map，实际上它就是一个容器对象，对数组进行了封装，用数组来缓存数据，还定义了一些操作数组的API，如 put()、get()、flip()、compact()、mark() 等。在NIO中，无论读还是写，数据都必须经过Buffer缓冲区，如下图：
 
-![img](./image/Java网络编程/f8ad657123754ff1b6ec959482b35ad4.png)
+![img](images/Java网络编程/f8ad657123754ff1b6ec959482b35ad4.png)
 
 
 随便创建一个Buffer，再put两个字节：
@@ -287,11 +287,11 @@ byteBuffer.put((byte)'b');
 
 发现这两个字节是被存到Buffer中一个叫hb的数组中了：
 
-![img](./image/Java网络编程/cc4653c7419741e1bb8117fad81e06a4.png)
+![img](images/Java网络编程/cc4653c7419741e1bb8117fad81e06a4.png)
 
 Buffer是所有缓存类的父类，对应实现有ByteBuffer、CharBuffer、IntBuffer、LongBuffer等跟ava基本数据类型对应的几个实现类：
 
-![img](./image/Java网络编程/a1c0557f5b604d0e8b3cd6cea89bfd6c.png)
+![img](images/Java网络编程/a1c0557f5b604d0e8b3cd6cea89bfd6c.png)
 
 一般最长用的就是ByteBuffer，创建 ByteBuffer 有两种方式：HeapByteBuffer 和 DirectByteBuffer：
 
@@ -351,21 +351,21 @@ public class BufferTest {
 
 ① 初始化Buffer，先初始化一个长度为12的ByteBuffer，也就是创建了类型为byte一个长度为12的数组：
 
-![img](./image/Java网络编程/c67c800a81c04e908110ead346fa93e8.png)
+![img](images/Java网络编程/c67c800a81c04e908110ead346fa93e8.png)
 ② 写数据，写的过程中，每写入一个字节，position自增1，当写入8个字节数据后，position=8，如下图：
-![img](./image/Java网络编程/ec402f5c84f54b379defcecf67111ef8.png)
+![img](images/Java网络编程/ec402f5c84f54b379defcecf67111ef8.png)
 
 ③ **<span style="color:red;"> 写数据转读数据 </span >**，现在Buffer中一共有8个字节的数据。因为对Buffer的读/写，都是从position位置到limit位置进行读/写的。如果现在想读取Buffer中的数据，需要执行一下Buffer的flip()函数，把limit置为8（position的值），position重新置为0，这时候position到limit之间的数据才是有效的（我们想要读取的）数据。所以通常**将Buffer由写模式转化为读模式时需要执行flip()函数**：
 
-![img](./image/Java网络编程/bcde0905222041d28c05499933971e07.png)
+![img](images/Java网络编程/bcde0905222041d28c05499933971e07.png)
 
 ④ 读数据，如果依次读取了6个字节，那现在position就指向下标为6的位置，limit不变：
 
-![img](./image/Java网络编程/0ea208f7b0b141e5825850d1b0fcda59.png)
+![img](images/Java网络编程/0ea208f7b0b141e5825850d1b0fcda59.png)
 
 ⑤ 重置position，前面在position=3的时候，调用`byteBuffer.mark()`;标记了一下当时position的值（mark=3），当读取完6个字节后，position=6。这时调用一下`byteBuffer.reset()`可以把position重置为当时mark的值（position=mark），也就是3：
 
-![img](./image/Java网络编程/184c8e4aa0b7445d8a753f1edc3a5377.png)
+![img](images/Java网络编程/184c8e4aa0b7445d8a753f1edc3a5377.png)
 
 ByteBuffer中常用的的方法还有很多：
 
@@ -452,11 +452,11 @@ public class SocketChannelTest {
 
 一个Channel可以注册到多个不同的Selector上，多个Channel也可以注册到同一个Selector上。当某个Channel注册到Selector上时，会包装一个SelectionKey（包含一对一的Selector和Channel）放到该Selector中，这些后面看源码的时候再仔细画图分析。
 
-![img](./image/Java网络编程/3c02809bac254b28bbcb1d699219b1af.png)
+![img](images/Java网络编程/3c02809bac254b28bbcb1d699219b1af.png)
 
 根据理解画了一张Selector在整个服务端和客户端交互中的作用的图，大致如下：
 
-![img](./image/Java网络编程/89bbc534bb5e419eb0aa2661a639cccc.png)
+![img](images/Java网络编程/89bbc534bb5e419eb0aa2661a639cccc.png)
 
 Selector可以作为一个观察者，可以把已知的Channel（无论是服务端用来监听客户端连接的ServerSocketChannel，还是服务端和客户端用来读写数据的SocketChannel）及其感兴趣的事件（READ、WRITE、CONNECT、ACCEPT）包装成一个SelectionKey，注册到Selector上，Selector就会监听这些Channel注册的事件（监听的时候如果没有事件就绪，Selector所在线程会被阻塞），一旦有事件就绪，就会返回这些事件的列表，继而服务端线程可以依次处理这些事件。
 
@@ -566,11 +566,11 @@ receive message from client. client:/127.0.0.1:63618 message:��
 再分别以Debug模式启动服务端、客户端来分析：
 当客户端运行到`log.info("client send finished");`时，可以发现“你”转化为UTF-8的字节数组为`[-28, -67, -96] `，“好”转化为UTF-8的字节数组为其中“你”转化为`[-27, -91, -67] `，先后两次分别向服务端发送了3个字节的数据：
 
-![img](./image/Java网络编程/afad6209869245998f1157ab9a6a11f1.png)
+![img](images/Java网络编程/afad6209869245998f1157ab9a6a11f1.png)
 
 服务端读数据的Buffer大小为4字节，所以得分两次读取，第一次读取了前4个字节`[-28, -67, -96, -27] `：
 
-![img](./image/Java网络编程/55ca40ad9d5b4d44af862b522a71734b.png)
+![img](images/Java网络编程/55ca40ad9d5b4d44af862b522a71734b.png)
 
 在第一次读取到前4个字节并根据UTF-8规则解析为汉字时，前3个字节是完整的，可以转换为“你”，但第4个字节只是“好”对应的UTF-8字节数组的一部分，是不完整的，所以在解析的时候失败了，就显示出了乱码符号。
 同理，在第二次读取的后2个字节也是不完整的，解析也不会成功，也显示了2个乱码符号。
@@ -583,7 +583,7 @@ receive message from client. client:/127.0.0.1:63618 message:��
 当客户端发送了若干个较短的数据包时，在发送端可能会拼接成一个较大的数据包来发送，在接收端也可能会合并成一个较大的数据包来接收。用一句话总结就是，客户端发送的多段数据包到服务端接收后可能会合并分为一个数据包。
 在之前的文章 [《TCP协议学习笔记、报文分析》 ](https://blog.csdn.net/huyuyang6688/article/details/119975253)中也遇到了粘包的情况，客户端先后向服务端分别发送了长度为20、30、40的字符串，但是通过tcpdump抓包分析的结果是客户端向服务端只发送了一条length=90的TCP报文。
 
-![img](./image/Java网络编程/063038ba721f444db5a77794a5ebb915.png)
+![img](images/Java网络编程/063038ba721f444db5a77794a5ebb915.png)
 
 如上图所示：
 从逻辑上来说，客户端先后向服务端发送了两段数据包：“你”和“好”对应的字节数组。实际上可能会发生很多种情况：
@@ -601,7 +601,7 @@ receive message from client. client:/127.0.0.1:63618 message:��
 
 可以用特定的分隔符来分隔消息，比如当发送“你好”（[-28, -67, -96, -27, -91, -67]）时，需要让“你”对应的字节数组（[-28, -67, -96]）作为一个整体被服务端解析，让“好”对应的字节数组（[-27, -91, -67]）作为一个整体被服务端解析，所以就可以在发送的时候，在“你”和“好”后面加一个分隔符（比如 “\n”），当服务端解析到“\n”就表示一个完整的数据包结束了。
 
-![img](./image/Java网络编程/6a4639e2e76a45f0be8f57cbe6854604.png)
+![img](images/Java网络编程/6a4639e2e76a45f0be8f57cbe6854604.png)
 
 当发生粘包时，服务端把“\n”之前的数据当成一个完整的数据包来处理，然后继续读取数据直到再遇到“\n”时，说明又读取到了一个完整的数据包，…… 直到把数据读完。需要注意的是，在最后一段数据最后也需要加分隔符，因为不加的话服务端可能会认为还有数据没发送完，就不会把最后一段数据当作一个完整的数据包。
 在发生拆包①时，服务端读取到第一个数据包（[-28, -67, -96, 10, -27]）后，只会把 [-28, -67, -96] 当成一个完整的数据包来处理，然后把剩余的 [-27] 缓存起来，到了后面遇到“\n”后，再把 [-27] 和“\n”前面的 [-91, -67] 拼接起来当成一个完整的数据包，就可以解析成“好”。拆包②也一样。
@@ -723,7 +723,7 @@ public class NIOClient {
 
 让每个具有意义的数据包占用固定长度的空间进行传送，当实际数据长度小于固定长度时用某种无意义的数据填充（比如空格）。假设固定长度为4，用空格填充无效数据，当发送“你好”（[-28, -67, -96, -27, -91, -67]）时，需要把“你”对应的字节数组（[-28, -67, -96]）放到一个固定长度为4的数组里（[-28, -67, -96, 32]），因为“你”对应字节数组只占3位，所以剩余的一位用空格（32）来填充。同理，“好”也放到一个长度为4的字节数组中（[-27, -91, -67, 32]）。
 
-![img](./image/Java网络编程/76a020b3f59d4b67aed59147bc56e487.png)
+![img](images/Java网络编程/76a020b3f59d4b67aed59147bc56e487.png)
 
 当发生粘包时，服务端会依次把每4（约定的固定长度）个字节当成一个完整的数据包来处理，如果收到的数据包长度不是4的倍数，说明有拆包的情况，会把剩余数据缓存起来，等后面读取到新的数据包，会把加上之前剩余未处理的数据再次每4个字节、4个字节地读取。
 
@@ -834,7 +834,7 @@ public class NIOClient {
 TLV（Type Length Value），Type表示数据类型，Length表示数据长度，Value表示数据本身。类似于常见的网络协议（如TCP协议规定一个TCP报文由TCP首部和数据部分组成，TCP首部存放了源主机和目标主机的ip地址、端口号等信息，数据部分存放真正要传输的数据；还有HTTP协议，也是由HTTP头部和body两部分组成），把消息分成消息头和消息体（还可以有消息尾部，比如数据链路层的数据帧尾部就有4个字节校验位，用于保证数据包的完整性）。
 为了防止粘包/拆包造成数据不可读的情况，可以约定把消息分为两部分：消息长度+消息内容，客户端发送数据之前，先把数据长度放到数据包的开头，接着再加上真正的数据内容，服务端读取的时候，可以先获取到消息的长度（比如是n），然后再依次读取n个字节数据，就是这个数据包的有效部分。
 
-![img](./image/Java网络编程/c134796cf91946689e7e3c430dd543bd.png)
+![img](images/Java网络编程/c134796cf91946689e7e3c430dd543bd.png)
 
 代码实现
 服务端

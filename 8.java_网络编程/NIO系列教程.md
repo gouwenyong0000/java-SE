@@ -34,7 +34,7 @@ Java NIO 由以下几个核心部分组成：
 
 基本上，所有的 IO 在NIO 中都从一个Channel 开始。Channel 有点象流。 数据可以从Channel读到Buffer中，也可以从Buffer 写到Channel中。这里有个图示：
 
-![img](./image/NIO系列教程/overview-channels-buffers1.png)
+![img](images/NIO系列教程/overview-channels-buffers1-1696681575873-2.png)
 
 Channel和Buffer有好几种类型。下面是JAVA NIO中的一些主要Channel的实现：
 
@@ -67,7 +67,7 @@ Selector允许单线程处理多个 Channel。如果你的应用打开了多个�
 
 这是在一个单线程中使用一个Selector处理3个Channel的图示：
 
-![img](./image/NIO系列教程/overview-selectors.png)
+![img](images/NIO系列教程/overview-selectors.png)
 
 要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。
 
@@ -83,7 +83,7 @@ Java NIO的通道类似流，但又有些不同：
 
 正如上面所说，从通道读取数据到缓冲区，从缓冲区写入数据到通道。如下图所示：
 
-![image-20230208225627929](./image/NIO系列教程/image-20230208225627929-1676818852094-18.png)
+![image-20230208225627929](images/NIO系列教程/image-20230208225627929-1676818852094-18.png)
 
 ## Channel的实现
 
@@ -209,7 +209,7 @@ public static ByteBuffer allocate(int capacity) {
 
 详细两种不同类型的Buffer这里不展开讨论，但是大多数情况下，如果对性能没有太大要求的话，一般默认使用HeapByteBuffer。当我们执行初始化操作后： ByteBuffer.allocate(缓冲区大小);.
 
-![bytebuffer_action_init](./image/NIO系列教程/bytebuffer_action_init-1676818852082-5.png)
+![bytebuffer_action_init](images/NIO系列教程/bytebuffer_action_init-1676818852082-5.png)
 
 其中初始化的值，分别为position=0,limit和capacity等于我们指定的缓冲区大小，mark默认为-1。网上有一些教程的图示默认显示了mark为起始点，其实是一种低级错误，让别人误以为mark就等于起始位置。
 
@@ -217,7 +217,7 @@ public static ByteBuffer allocate(int capacity) {
 
 顾名思义，put操作就是就是将数据放入缓冲区中，每一次put操作，都会position加上put进去的数据长度.position每加一，代表缓冲区内增加了一个字节的数据，具体put的操作原理如下：
 
-![bytebuffer_action_put](./image/NIO系列教程/bytebuffer_action_put-1676818852082-6.png)
+![bytebuffer_action_put](images/NIO系列教程/bytebuffer_action_put-1676818852082-6.png)
 
 如果送入的数据大小大于缓冲区剩余容量，则会抛出异常:java.nio.BufferOverflowException,虽然可能有实际部分数据被写入缓冲区，但是flip之后，limit位置还是最后一次正确写入缓冲区的位置。
 
@@ -225,13 +225,13 @@ public static ByteBuffer allocate(int capacity) {
 
 Flip，从英文的直译为：翻转。但是，这并不是将数据翻转的意思，而其实是让limit指向当前position的位置,position指向起始位置，此时position=0,进行这一部操作之后，就可以确定了当前缓冲区的有效数据。并且为数据读取做准备。
 
-![bytebuffer_action_flip](./image/NIO系列教程/bytebuffer_action_flip.png)
+![bytebuffer_action_flip](images/NIO系列教程/bytebuffer_action_flip.png)
 
 ### Get操作
 
 Get操作，就是按照position当前位置，取出缓冲区的数据，每一次取操作之后，position都会get出的数据长度。同样，position每加一，代表从缓冲区内读取到了一个字节的数据，不过数据并不会被删除，只是单纯的读取操作。
 
-![bytebuffer_action_flip](./image/NIO系列教程/bytebuffer_action_get.png)
+![bytebuffer_action_flip](images/NIO系列教程/bytebuffer_action_get.png)
 
 如果，get之后，position值大于limit值，则抛出异常：java.nio.BufferUnderflowException
 
@@ -239,11 +239,11 @@ Get操作，就是按照position当前位置，取出缓冲区的数据，每一
 
 mark，就是标记当前的位置，一旦后续进行reset操作之后，可以快速地定位到mark的位置。在某一些应用场合中，配合reset，这是一个非常方便的操作函数。
 
-![bytebuffer_action_mark](./image/NIO系列教程/bytebuffer_action_mark.png)
+![bytebuffer_action_mark](images/NIO系列教程/bytebuffer_action_mark.png)
 
 一旦进行过mark操作之后，后续读取操作中，如果再执行reset操作，就可以快速定位到标记位上:
 
-![bytebuffer_action_mark](./image/NIO系列教程/bytebuffer_action_reset.png)
+![bytebuffer_action_mark](images/NIO系列教程/bytebuffer_action_reset.png)
 
 ### Clear操作
 
@@ -260,13 +260,13 @@ public final Buffer clear() {
 
 
 
-![bytebuffer_action_clear](./image/NIO系列教程/bytebuffer_action_clear.png)
+![bytebuffer_action_clear](images/NIO系列教程/bytebuffer_action_clear.png)
 
 ### Slice操作
 
 slice方法的作用，就是做数据分割，将当前的position到limit之间的数据分割出来，返回一个新的ByteBuffer,同时,mark标记重置为-1。不过这里注意，分割出来的数据的容量刚好就是数据长度，而不是被分割之前的长度。
 
-![bytebuffer_action_slice](./image/NIO系列教程/bytebuffer_action_slice.png)
+![bytebuffer_action_slice](images/NIO系列教程/bytebuffer_action_slice.png)
 
 ### 快速清除已读取的数据
 
@@ -376,7 +376,7 @@ position和limit的含义取决于Buffer处在读模式还是写模式。不管B
 
 这里有一个关于capacity，position和limit在读写模式中的说明，详细的解释在插图后面。
 
-![img](./image/NIO系列教程/buffers-modes.png)
+![img](images/NIO系列教程/buffers-modes.png)
 
 #### capacity
 
@@ -402,7 +402,7 @@ flip方法将Buffer从写模式切换到读模式。调用flip()方法会将posi
 
 换句话说，position现在用于标记读的位置，limit表示之前写进了多少个byte、char等 —— 现在能读取多少个byte、char等。
 
-![image-20230208230054710](./image/NIO系列教程/image-20230208230054710-1676818852095-19.png)
+![image-20230208230054710](images/NIO系列教程/image-20230208230054710-1676818852095-19.png)
 
 
 
@@ -484,7 +484,7 @@ scatter / gather经常用于需要将传输的数据分开处理的场合，例�
 ## Scattering Reads
 
 Scattering Reads是指数据从一个channel读取到多个buffer中。如下图描述：
-![Java NIO: Scattering Read](./image/NIO系列教程/20200414155625553.png)
+![Java NIO: Scattering Read](images/NIO系列教程/20200414155625553.png)
 
 代码示例如下：
 
@@ -501,7 +501,7 @@ Scattering Reads在移动下一个buffer前，必须填满当前的buffer，这�
 ## Gathering Writes
 
 Gathering Writes是指数据从多个buffer写入到同一个channel。如下图描述：
-![Java NIO: Gathering Write](./image/NIO系列教程/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzMzI3NjM5,size_16,color_FFFFFF,t_70.png)
+![Java NIO: Gathering Write](images/NIO系列教程/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMzMzI3NjM5,size_16,color_FFFFFF,t_70.png)
 
 代码示例如下：
 

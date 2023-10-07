@@ -20,13 +20,13 @@
 
 
 
-![image-20210703164010783](./image/netty/image-20210703164010783-1676895534766-2.png)
+![image-20210703164010783](images/netty/image-20210703164010783-1676895534766-2-1696681499620-2.png)
 
 3）Netty主要针对在TCP协议下，面向Clients端的高并发应用，或者Peer-to-Peer场景下的大量数据持续传输的应用。
 
 4）Netty本质是一个NIO框架，适用于服务器通讯相关的多种应用场景
 
-![image-20210703164046708](./image/netty/image-20210703164046708.png)
+![image-20210703164046708](images/netty/image-20210703164046708.png)
 
 5）要透彻理解Netty，需要先学习NIO，这样我们才能阅读Netty的源码。
 
@@ -50,7 +50,7 @@
 
 2）它的Netty Service基于Netty框架二次封装实现。
 
-![image-20210703164324217](./image/netty/image-20210703164324217.png)
+![image-20210703164324217](images/netty/image-20210703164324217.png)
 
 ## 1.3.4其它开源项目使用到Netty
 
@@ -58,7 +58,7 @@ https://netty.io/wiki/related-projects.html
 
 ## 1.4Netty的学习参考资料
 
-![image-20210703164434121](./image/netty/image-20210703164434121.png)
+![image-20210703164434121](images/netty/image-20210703164434121.png)
 
 # BIO编程
 
@@ -70,12 +70,12 @@ https://netty.io/wiki/related-projects.html
 2) Java共支持3种网络编程模型/IO模式：BIO、NIO、AIO
 3) Java `BIO` ： 同步并阻塞(**传统阻塞型**)，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销 【简单示意图】
 
-![image-20210703164839412](./image/netty/image-20210703164839412.png)
+![image-20210703164839412](images/netty/image-20210703164839412.png)
 
 4) Java `NIO` ： **同步非阻塞**，服务器实现模式为一个线程处理多个请求(连接)，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有I/O请求就进行处理
 【简单示意图】
 
-![image-20210703170633989](./image/netty/image-20210703170633989.png)
+![image-20210703170633989](images/netty/image-20210703170633989.png)
 
 5) Java `AIO`(NIO.2) ： **异步非阻塞**，AIO 引入异步通道的概念，采用了 Proactor 模式，简化了程序编写，对于有效的请求才启动线程，它的特点是先由操作系统完成后才通知服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用
 
@@ -100,7 +100,7 @@ https://netty.io/wiki/related-projects.html
 
 ### Java BIO 工作机制
 
-![image-20210703171002549](./image/netty/image-20210703171002549.png)
+![image-20210703171002549](images/netty/image-20210703171002549.png)
 
 
 
@@ -255,7 +255,7 @@ Selector(选择器)用于监听多个通道的事件（比如：连接请求，�
 
 ## NIO 三大核心原理示意图
 
-![image-20210703194038009](./image/netty/image-20210703194038009.png)
+![image-20210703194038009](images/netty/image-20210703194038009.png)
 
 
 
@@ -282,17 +282,17 @@ Selector 、 Channel 和 Buffer 的关系图(简单版)关系图的说明:
 
 缓冲区（Buffer）：缓冲区本质上是一个可以读写数据的内存块，可以理解成是一个**容器对象(含数组)**，该对象提供了**一组方法**，可以更轻松地使用内存块，，缓冲区对象内置了一些机制，能够跟踪和记录缓冲区的状态变化情况。Channel 提供从文件、网络读取数据的渠道，但是读取或写入的数据都必须经由 Buffer，如图: 
 
-![image-20210703202142050](./image/netty/image-20210703202142050.png)
+![image-20210703202142050](images/netty/image-20210703202142050.png)
 
 ### Buffer 类及其子类
 
 1) 在 NIO 中，Buffer 是一个顶层父类，它是一个抽象类, 类的层级关系图:
 
-![image-20210703202322176](./image/netty/image-20210703202322176.png)
+![image-20210703202322176](images/netty/image-20210703202322176.png)
 
 2) Buffer类定义了所有的缓冲区都具有的四个属性来提供关于其所包含的数据元素的信息:
 
-![image-20210703202750149](./image/netty/image-20210703202750149.png)
+![image-20210703202750149](images/netty/image-20210703202750149.png)
 
 
 
@@ -352,7 +352,7 @@ public abstract class ByteBuffer {
 	• 通道可以实现异步读写数据
 	• 通道可以从缓冲读数据，也可以写数据到缓冲:
 
-![image-20210703204354045](./image/netty/image-20210703204354045.png)
+![image-20210703204354045](images/netty/image-20210703204354045.png)
 
 2) BIO 中的 stream 是单向的，例如 FileInputStream 对象只能进行读取数据的操作，而 NIO 中的通道(Channel)是双向的，可以读操作，也可以写操作。
 
@@ -451,7 +451,7 @@ public class NIOFileChannel01 {
 1) 使用 FileChannel(通道) 和 方法 read , write，完成文件的拷贝
 2) 拷贝一个文本文件 1.txt , 放在项目下即可
 
-![image-20210704014024950](./image/netty/image-20210704014024950.png)
+![image-20210704014024950](images/netty/image-20210704014024950.png)
 
 ```java
 public class NIOFileChannel03 {
@@ -690,7 +690,7 @@ public class ScatteringAndGatheringTest {
 
 2) **Selector 能够检测多个注册的通道上是否有事件发生(注意:多个Channel以事件的方式可以注册到同一个Selector)**，如果有事件发生，便获取事件然后针对每个事件进行相应的处理。这样就可以只用一个单线程去管理多个通道，也就是管理多个连接和请求。【示意图】
 
-![image-20210704130036567](./image/netty/image-20210704130036567.png)
+![image-20210704130036567](images/netty/image-20210704130036567.png)
 
 3) 只有在 连接/通道 真正有读写事件发生时，才会进行读写，就大大地减少了系统开销，并且不必为每个连接都创建一个线程，不用去维护多个线程
 
@@ -698,11 +698,11 @@ public class ScatteringAndGatheringTest {
 
 
 
-![image-20210704125911766](./image/netty/image-20210704125911766.png)
+![image-20210704125911766](images/netty/image-20210704125911766.png)
 
 ### Selector类相关方法
 
-![image-20210704125955008](./image/netty/image-20210704125955008.png)
+![image-20210704125955008](images/netty/image-20210704125955008.png)
 
 注意事项
 1) NIO中的 ServerSocketChannel功能类似ServerSocket，SocketChannel功能类似Socket
@@ -716,7 +716,7 @@ public class ScatteringAndGatheringTest {
 
 NIO 非阻塞 网络编程相关的(Selector、SelectionKey、ServerScoketChannel和SocketChannel) 关系梳理图
 
-![image-20210704132022274](./image/netty/image-20210704132022274.png)
+![image-20210704132022274](images/netty/image-20210704132022274.png)
 
 
 
@@ -939,7 +939,7 @@ NetworkChannel{
 4) 客户端：通过channel 可以无阻塞发送消息给其它所有用户，同时可以接受其它用户发送的消息(有服务器转发得到)
 5) 目的：进一步理解NIO非阻塞网络编程机制
 
-![image-20210704180023273](./image/netty/image-20210704180023273.png)
+![image-20210704180023273](images/netty/image-20210704180023273.png)
 
 服务端
 
@@ -1218,14 +1218,14 @@ socket.getOutputStream().write(arr);
 
 ### 传统IO模型
 
-![image-20210704180346134](./image/netty/image-20210704180346134.png)
+![image-20210704180346134](images/netty/image-20210704180346134.png)
 
 ### mmap优化
 
 1) mmap 通过内存映射，将文件映射到内核缓冲区，同时，用户空间可以共享内核空间的数据。这样，在进行网络传输时，就可以减少内核空间到用户空间的拷贝次数。如下图
 2) mmap示意图
 
-![image-20210704180903825](./image/netty/image-20210704180903825.png)
+![image-20210704180903825](images/netty/image-20210704180903825.png)
 
 
 
@@ -1236,14 +1236,14 @@ socket.getOutputStream().write(arr);
 2) 示意图和小结
 提示：零拷贝从操作系统角度，是没有cpu 拷贝
 
-![image-20210704181128610](./image/netty/image-20210704181128610.png)
+![image-20210704181128610](images/netty/image-20210704181128610.png)
 
 3) Linux 在 2.4 版本中，做了一些修改，避免了从内核缓冲区拷贝到 Socketbuffer 的操作，直接拷贝到协议栈，从而再一次减少了数据拷贝。
 
 具体如下图和小结：
 这里其实有 一次cpu 拷贝kernel buffer -> socket buffer但是，拷贝的信息很少，比如length , offset , 消耗低，可以忽略
 
-![image-20210704181211466](./image/netty/image-20210704181211466.png)
+![image-20210704181211466](images/netty/image-20210704181211466.png)
 
 ### 零拷贝的再次理解
 
@@ -1345,7 +1345,7 @@ public class NewIOZeroCopyClient {
 
 ## BIO、NIO、AIO对比表
 
-![image-20210704210030804](./image/netty/image-20210704210030804.png)
+![image-20210704210030804](images/netty/image-20210704210030804.png)
 
 举例说明
 1) 同步阻塞：到理发店理发，就一直等理发师，直到轮到自己理发。
@@ -1367,7 +1367,7 @@ public class NewIOZeroCopyClient {
 
 Netty is an asynchronous event-driven network application frameworkfor rapid development of maintainable high performance protocol servers & clients
 
-![image-20210704210334603](./image/netty/image-20210704210334603.png)
+![image-20210704210334603](images/netty/image-20210704210334603.png)
 
 1) Netty 是由 JBOSS 提供的一个 Java 开源框架。Netty 提供异步的、基于事件驱动的网络应用程序框架，用以快速开发高性能、高可靠性的网络 IO 程序
 
@@ -1421,7 +1421,7 @@ Netty 对 JDK 自带的 NIO 的 API 进行了封装，解决了上述问题。
 工作原理图
 黄色的框表示对象		蓝色的框表示线程		白色的框表示方法(API)
 
-![image-20210704211832756](./image/netty/image-20210704211832756.png)
+![image-20210704211832756](images/netty/image-20210704211832756.png)
 
 
 
@@ -1445,7 +1445,7 @@ Reactor 对应的叫法: 1. 反应器模式 2. 分发者模式(Dispatcher) 3. �
 
 ### I/O 复用结合线程池，就是Reactor 模式基本设计思想，如图：
 
-![image-20210704214140833](./image/netty/image-20210704214140833.png)
+![image-20210704214140833](images/netty/image-20210704214140833.png)
 
 说明:
 1) Reactor 模式，通过一个或多个输入同时传递给服务处理器的模式(基于事件驱动)
@@ -1473,7 +1473,7 @@ Reactor 对应的叫法: 1. 反应器模式 2. 分发者模式(Dispatcher) 3. �
 
 
 
-![image-20210704231800644](./image/netty/image-20210704231800644.png)
+![image-20210704231800644](images/netty/image-20210704231800644.png)
 
 方案说明：
 1) Select 是前面 I/O 复用模型介绍的标准网络编程 API，可以实现应用程序通过一个阻塞对象监听多路连接请求
@@ -1500,7 +1500,7 @@ Reactor 对应的叫法: 1. 反应器模式 2. 分发者模式(Dispatcher) 3. �
 
 工作原理示意图：
 
-![image-20210704232636503](./image/netty/image-20210704232636503.png)方案说明
+![image-20210704232636503](images/netty/image-20210704232636503.png)方案说明
 1) Reactor 对象通过select 监控客户端请求事件, 收到事件后，通过dispatch进行分发
 
 2) 如果建立连接请求, 则右Acceptor 通过accept 处理连接请求, 然后创建一个Handler对象处理完成连接后的各种事件
@@ -1527,7 +1527,7 @@ Reactor 对应的叫法: 1. 反应器模式 2. 分发者模式(Dispatcher) 3. �
 
 
 
-![image-20210704234121117](./image/netty/image-20210704234121117.png)
+![image-20210704234121117](images/netty/image-20210704234121117.png)
 
 方案说明
 1) Reactor主线程 MainReactor 对象通过select 监听连接事件, 收到事件后，通过Acceptor 处理连接事件
@@ -1543,7 +1543,7 @@ Reactor 对应的叫法: 1. 反应器模式 2. 分发者模式(Dispatcher) 3. �
 
 Scalable IO in Java 对 Multiple Reactors 的原理图解：
 
-![image-20210704235804089](./image/netty/image-20210704235804089.png)
+![image-20210704235804089](images/netty/image-20210704235804089.png)
 
 
 
@@ -1579,7 +1579,7 @@ Reactor 模式具有如下的优点：
 
 Netty 主要基于主从 Reactors 多线程模型（如图）做了一定的改进，其中主从 Reactor 多线程模型有多个 Reactor
 
-![image-20210705001833516](./image/netty/image-20210705001833516.png)
+![image-20210705001833516](images/netty/image-20210705001833516.png)
 
 1) BossGroup 线程维护Selector , 只关注Accecpt
 2) 当接收到Accept事件，获取到对应的SocketChannel, 封装成 NIOScoketChannel并注册到Worker 线程(事件循环), 并进行维护
@@ -1591,11 +1591,11 @@ Netty 主要基于主从 Reactors 多线程模型（如图）做了一定的改�
 
 Netty 主要基于主从Reactors 多线程模型（如图）做了一定的改进，其中主从 Reactor 多线程模型有多个 Reactor
 
-![image-20210705002145704](./image/netty/image-20210705002145704.png)
+![image-20210705002145704](images/netty/image-20210705002145704.png)
 
 ### 工作原理示意图-详细版
 
-![image-20210705002422404](./image/netty/image-20210705002422404.png)
+![image-20210705002422404](images/netty/image-20210705002422404.png)
 
 
 
@@ -1637,7 +1637,7 @@ Netty 主要基于主从Reactors 多线程模型（如图）做了一定的改�
 - Channel
   数据传输流，与channel相关的概念有以下四个，上一张图让你了解netty里面的Channel。
 
-  ![img](./image/netty/webp.webp)
+  ![img](images/netty/webp.webp)
 
   Channel一览
 
@@ -1649,7 +1649,7 @@ Netty 主要基于主从Reactors 多线程模型（如图）做了一定的改�
 - ByteBuf
   ByteBuf是一个存储字节的容器，最大特点就是使用方便，它既有自己的读索引和写索引，方便你对整段字节缓存进行读写，也支持get/set，方便你对其中每一个字节进行读写，他的数据结构如下图所示：
 
-![img](./image/netty/webp-1676895534771-3.webp)
+![img](images/netty/webp-1676895534771-3.webp)
 
 ByteBuf数据结构
 
@@ -1898,7 +1898,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 例如在**推送系统**的业务线程里面，根据用户的标识，找到**对应的 Channel 引用**，然后调用 Write 类方法向该用户推送消息，就会进入到这种场景。最终的 Write 会提交到任务队列中后被**异步消费**
 
-![image-20210706002725717](./image/netty/image-20210706002725717.png)
+![image-20210706002725717](images/netty/image-20210706002725717.png)
 
 
 
@@ -2042,12 +2042,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
 ### 工作原理示意图
 
-![image-20210706003955591](./image/netty/image-20210706003955591.png)
+![image-20210706003955591](images/netty/image-20210706003955591.png)
 
 说明:
 1) 在使用 Netty 进行编程时，拦截操作和转换出入站数据只需要您提供 callback 或利用future 即可。这使得**链式操作简单**、高效, 并有利于编写可重用的、通用的代码。
 
-![image-20210708010733613](./image/netty/image-20210708010733613.png)2) Netty 框架的目标就是让你的业务逻辑从网络基础应用编码中分离出来、解脱出来
+![image-20210708010733613](images/netty/image-20210708010733613.png)2) Netty 框架的目标就是让你的业务逻辑从网络基础应用编码中分离出来、解脱出来
 
 ### Future-Listener 机制
 
@@ -2252,7 +2252,7 @@ ChannelFuture sync()//等待异步操作执行完毕
 2) ChannelHandler 本身并没有提供很多方法，因为这个接口有许多的方法需要实现，方r便使用期间，可以继承它的子类
 3) ChannelHandler 及其实现类一览图(后)
 
-![image-20210708225408599](./image/netty/image-20210708225408599.png)
+![image-20210708225408599](images/netty/image-20210708225408599.png)
 
 4) 我们经常需要自定义一个 Handler 类去继承ChannelInboundHandlerAdapter，然后通过重写相应方法实现业务逻辑，我们接下来看看一般都需要重写哪些方法
 
@@ -2306,7 +2306,7 @@ ChannelPipeline 是一个重点：
 
 3) 在 Netty 中每个 Channel 都有且仅有一个 ChannelPipeline 与之对应，它们的组成关系如下
 
-![image-20210708231721912](./image/netty/image-20210708231721912.png)
+![image-20210708231721912](images/netty/image-20210708231721912.png)
 
 • 一个 Channel 包含了一个 ChannelPipeline，而 **ChannelPipeline 中又维护了一个由 ChannelHandlerContext组成的双向链表，并且每个 ChannelHandlerContext 中又关联着一个 ChannelHandle**r
 • 入站事件和出站事件在一个双向链表中，入站事件会从链表 head 往后传递到最后一个入站的 handler，出站事件会从链表 tail 往前传递到最前一个出站的 handler，两种类型的 handler 互不干扰
@@ -2344,7 +2344,7 @@ EventLoopGroup，例如：BossEventLoopGroup 和 WorkerEventLoopGroup。
 3) 通常一个服务端口即一个 ServerSocketChannel对应一个Selector 和一个EventLoop线程。BossEventLoop 负责接收客户端的连接并将 SocketChannel 交给
 WorkerEventLoopGroup 来进行 IO 处理，如下图所示
 
-![image-20210708233206958](./image/netty/image-20210708233206958.png)
+![image-20210708233206958](images/netty/image-20210708233206958.png)
 
 4) 常用方法
 • `public NioEventLoopGroup()`，构造方法
@@ -2362,7 +2362,7 @@ public static ByteBuf copiedBuffer(CharSequence string, Charset charset)
 
 3) 举例说明Unpooled 获取 Netty的数据容器ByteBuf 的基本使用 【案例演示】
 
-![image-20210708233321977](./image/netty/image-20210708233321977.png)
+![image-20210708233321977](images/netty/image-20210708233321977.png)
 
 ```java
 package com.g.netty.buf;
@@ -2446,7 +2446,7 @@ public class NettyByteBuffer02 {
 户发送的消息(有服务器转发得到)
 5) 目的：进一步理解Netty非阻塞网络编程机制
 
-![image-20210711235040780](./image/netty/image-20210711235040780.png)
+![image-20210711235040780](images/netty/image-20210711235040780.png)
 
 ```java
 package com.g.netty.groupchat;
@@ -2688,7 +2688,7 @@ public class GroupChatClientHandler extends SimpleChannelInboundHandler<String> 
 
 使用HashMap替代ChannelGroup进行管理channel
 
-![image-20210711204438554](./image/netty/image-20210711204438554.png)
+![image-20210711204438554](images/netty/image-20210711204438554.png)
 
 
 
@@ -2817,7 +2817,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
 3) 改变Http协议多次请求的约束，实现长连接了， 服务器可以发送消息给浏览器
 4) 客户端浏览器和服务器端会相互感知，比如服务器关闭了，浏览器会感知，同样浏览器关闭了，服务器会感知
 
-![image-20210711235105055](./image/netty/image-20210711235105055.png)
+![image-20210711235105055](images/netty/image-20210711235105055.png)
 
 ```java
 package com.g.netty.websocket;
@@ -3006,7 +3006,7 @@ public class MyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWeb
 1) 编写网络应用程序时，因为数据在网络中传输的都是二进制字节码数据，在发送数据时就需要编码，接收数据时就需要解码 [示意图]
 2) codec(编解码器) 的组成部分有两个：decoder(解码器)和 encoder(编码器)。encoder 负责把业务数据转换成字节码数据，decoder 负责把字节码数据转换成业务数据
 
-![image-20210711235607353](./image/netty/image-20210711235607353.png)
+![image-20210711235607353](images/netty/image-20210711235607353.png)
 
 ### Netty 本身的编码解码的机制和问题分析
 
@@ -3049,7 +3049,7 @@ public class MyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWeb
 7) 然后通过 protoc.exe 编译器根据.proto 自动生成.java 文件
 8) protobuf 使用示意图
 
-![image-20210713220753531](./image/netty/image-20210713220753531.png)
+![image-20210713220753531](images/netty/image-20210713220753531.png)
 
 ### Protobuf快速入门实例
 
@@ -3087,7 +3087,7 @@ message Student{//会在studentP0J0外部类生成一个内部类student，他�
 
 编译语句  `protoc.exe --java_out=. Student.proto`
 
-![image-20210713224000008](./image/netty/image-20210713224000008.png)
+![image-20210713224000008](images/netty/image-20210713224000008.png)
 
 ```java
 package com.g.netty.codec;
@@ -3578,7 +3578,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 
 
-![image-20210714000258498](./image/netty/image-20210714000258498.png)
+![image-20210714000258498](images/netty/image-20210714000258498.png)
 
 ## 编码解码器
 
@@ -3591,9 +3591,9 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 ### 解码器-ByteToMessageDecoder
 
-![image-20210722211637407](./image/netty/image-20210722211637407.png)
+![image-20210722211637407](images/netty/image-20210722211637407.png)
 
-![image-20210722212424939](./image/netty/image-20210722212424939.png)
+![image-20210722212424939](images/netty/image-20210722212424939.png)
 
 ```
 具体参考io.netty.channel.ChannelPipeline
@@ -3642,7 +3642,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 #### 自定义ByteToMessageDecoder
 
-![image-20210723005723848](./image/netty/image-20210723005723848.png)
+![image-20210723005723848](images/netty/image-20210723005723848.png)
 
 ##### 服务器
 
@@ -3962,7 +3962,7 @@ public class MyByteToLongDecoder2 extends ReplayingDecoder<Void> {
 
 ### 其它编码器
 
-![image-20210723005529687](./image/netty/image-20210723005529687.png)
+![image-20210723005529687](images/netty/image-20210723005529687.png)
 
 
 
@@ -4010,7 +4010,7 @@ log4j.appender.stdout.layout.ConversionPattern=[%p] %C{1} - %m%n
 
 3) 演示整合
 
-![image-20210723010433355](./image/netty/image-20210723010433355.png)
+![image-20210723010433355](images/netty/image-20210723010433355.png)
 
 
 
@@ -4026,7 +4026,7 @@ log4j.appender.stdout.layout.ConversionPattern=[%p] %C{1} - %m%n
 
 3) TCP粘包、拆包图解
 
-![image-20210723014228972](./image/netty/image-20210723014228972.png)
+![image-20210723014228972](images/netty/image-20210723014228972.png)
 
 假设客户端分别发送了两个数据包D1和D2给服务端，由于服务端一次读取到字节数是不定的，故可能存在以下四种情况：
 1) 服务端分两次读取到了两个独立的数据分别是D1和D2，没有粘包和拆包
@@ -4489,7 +4489,7 @@ public class MyMessageDecoder extends ByteToMessageDecoder {
 1. 源码需要剖析到 `Netty` 调用 `doBind` 方法，追踪到 `NioServerSocketChannel` 的 `doBind`。
 2. 并且要 `Debug` 程序到 `NioEventLoop` 类的 `run` 代码，无限循环，在服务器端运行。
 
-![img](./image/netty/chapter10_01.png)
+![img](images/netty/chapter10_01.png)
 
 ### [10.2.3 源码剖析过程](https://dongzl.github.io/netty-handbook/#/_content/chapter10?id=_1023-源码剖析过程)
 
@@ -5336,7 +5336,7 @@ protected void doBeginRead() throws Exception {
 
 4)他们一起组成了双向链表，这些 `Context` 用于包装我们调用 `addLast` 方法时添加的 `ChannelHandler`（以下简称 `handler`）
 
-![img](./image/netty/chapter10_02.png)
+![img](images/netty/chapter10_02.png)
 
 1)上图中：`ChannelSocket` 和 `ChannelPipeline` 是一对一的关联关系，而 `pipeline` 内部的多个 `Context` 形成了链表，`Context` 只是对 `Handler` 的封装。 2)当一个请求进来的时候，会进入 `Socket` 对应的 `pipeline`，并经过 `pipeline` 所有的 `handler`，对，就是设计模式中的过滤器模式。
 
@@ -5344,17 +5344,17 @@ protected void doBeginRead() throws Exception {
 
 1)`pipeline` 的接口设计
 
-![img](./image/netty/chapter10_03.png)
+![img](images/netty/chapter10_03.png)
 
 部分源码
 
-![img](./image/netty/chapter10_04.png)
+![img](images/netty/chapter10_04.png)
 
 可以看到该接口继承了 `inBound`，`outBound`，`Iterable` 接口，表示他可以调用数据出站的方法和入站的方法，同时也能遍历内部的链表，看看他的几个代表性的方法，基本上都是针对 `handler` 链表的插入，追加，删除，替换操作，类似是一个 `LinkedList`。同时，也能返回 `channel`（也就是 `socket`）
 
 1)在 `pipeline` 的接口文档上，提供了一幅图
 
-![img](./image/netty/chapter10_05.png)
+![img](images/netty/chapter10_05.png)
 
 对上图的解释说明： *这是一个 `handler` 的 `list`，`handler` 用于处理或拦截入站事件和出站事件，`pipeline` 实现了过滤器的高级形式，以便用户控制事件如何处理以及 `handler` 在 `pipeline` 中如何交互。
 
@@ -5392,7 +5392,7 @@ public interface ChannelHandler {
 
 2)`ChannelInboundHandler` 入站事件接口
 
-![img](./image/netty/chapter10_06.png)
+![img](images/netty/chapter10_06.png)
 
 *`channelActive` 用于当 `Channel` 处于活动状态时被调用；
 
@@ -5402,7 +5402,7 @@ public interface ChannelHandler {
 
 3)`ChannelOutboundHandler 出站事件接口
 
-![img](./image/netty/chapter10_07.png)
+![img](images/netty/chapter10_07.png)
 
 *`bind` 方法，当请求将 `Channel` 绑定到本地地址时调用
 
@@ -5412,7 +5412,7 @@ public interface ChannelHandler {
 
 4)`ChannelDuplexHandler` 处理出站和入站事件
 
-![img](./image/netty/chapter10_08.png)
+![img](images/netty/chapter10_08.png)
 
 *`ChannelDuplexHandler` 间接实现了入站接口并直接实现了出站接口。
 
@@ -5422,21 +5422,21 @@ public interface ChannelHandler {
 
 1)`ChannelHandlerContext` `UML` 图
 
-![img](./image/netty/chapter10_09.png)
+![img](images/netty/chapter10_09.png)
 
 `ChannelHandlerContext` 继承了出站方法调用接口和入站方法调用接口
 
 1)`ChannelOutboundInvoker` 和 `ChannelInboundInvoker` 部分源码
 
-![img](./image/netty/chapter10_10.png)
+![img](images/netty/chapter10_10.png)
 
-![img](./image/netty/chapter10_11.png)
+![img](images/netty/chapter10_11.png)
 
 *这两个 `invoker` 就是针对入站或出站方法来的，就是在入站或出站 `handler` 的外层再包装一层，达到在方法前后拦截并做一些特定操作的目的
 
 2)`ChannelHandlerContext` 部分源码
 
-![img](./image/netty/chapter10_12.png)
+![img](images/netty/chapter10_12.png)
 
 *`ChannelHandlerContext` 不仅仅时继承了他们两个的方法，同时也定义了一些自己的方法
 
@@ -5709,7 +5709,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
 4.关于如何调度，用一张图来表示:
 
-![img](./image/netty/chapter10_13.png)
+![img](images/netty/chapter10_13.png)
 
 说明： 1)`pipeline` 首先会调用 `Context` 的静态方法 `fireXXX`，并传入 `Context`
 
@@ -5734,7 +5734,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
 如图
 
-![img](./image/netty/chapter10_14.png)
+![img](images/netty/chapter10_14.png)
 
 源码剖析：
 
@@ -5744,7 +5744,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
 2)如图
 
-![img](./image/netty/chapter10_15.png)
+![img](images/netty/chapter10_15.png)
 
 3)`ReadTimeout` 事件和 `WriteTimeout` 事件都会自动关闭连接，而且，属于异常处理，所以，这里只是介绍以下，我们重点看 `IdleStateHandler`。
 
@@ -5800,7 +5800,7 @@ private void initialize(ChannelHandlerContext ctx) {
 
 6.3该类内部的 `3` 个定时任务类
 
-![img](./image/netty/chapter10_16.png)
+![img](images/netty/chapter10_16.png)
 
 1)这 `3` 个定时任务分别对应读，写，读或者写事件。共有一个父类（`AbstractIdleTask`）。这个父类提供了一个模板方法
 
@@ -5987,7 +5987,7 @@ if(!reading) {
 
 1.`EventLoop`介绍 1.1首先看看 `NioEventLoop` 的继承图
 
-![img](./image/netty/chapter10_17.png)
+![img](images/netty/chapter10_17.png)
 
 说明重点： 1)`ScheduledExecutorService` 接口表示是一个定时任务接口，`EventLoop` 可以接受定时任务。
 
@@ -6001,7 +6001,7 @@ if(!reading) {
 
 2.1 `execute` 源码剖析
 
-![img](./image/netty/chapter10_18.png)
+![img](images/netty/chapter10_18.png)
 
 在 `EventLoop` 的使用，一般就是 `eventloop.execute(task);` 看下 `execute` 方法的实现(在 `SingleThreadEventExecutor` 类中)
 
@@ -6363,7 +6363,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 11.2这样处理之后，整个程序的逻辑如图
 
-![img](./image/netty/chapter10_19.png)
+![img](images/netty/chapter10_19.png)
 
 说明：
 
@@ -6484,11 +6484,11 @@ static void invokeChannelRead(final AbstractChannelHandlerContext next, Object m
 
 3) 常见的 RPC 框架有: 比较知名的如阿里的Dubbo、google的gRPC、Go语言的rpcx、Apache的thrift， Spring 旗下的 Spring Cloud。
 
-![image-20210727224308987](./image/netty/image-20210727224308987.png)
+![image-20210727224308987](images/netty/image-20210727224308987.png)
 
 ## RPC调用流程
 
-![image-20210727224341576](./image/netty/image-20210727224341576.png)
+![image-20210727224341576](images/netty/image-20210727224341576.png)
 
 1) **服务消费方(client)**以本地调用方式调用服务
 2) client stub 接收到调用后负责将方法、参数等封装成能够进行网络传输的消息体
@@ -6516,11 +6516,11 @@ static void invokeChannelRead(final AbstractChannelHandlerContext next, Object m
 
 
 
-![image-20210727225936410](./image/netty/image-20210727225936410.png)
+![image-20210727225936410](images/netty/image-20210727225936410.png)
 
 
 
-![image-20210730020131096](./image/netty/image-20210730020131096.png)
+![image-20210730020131096](images/netty/image-20210730020131096.png)
 
 公共接口：
 
@@ -7057,7 +7057,7 @@ while(true){
 
 　　对于多线程模式，也就说来了client，服务器就会新建一个线程来处理该client的读写事件，如下图所示：
 
-![img](./image/netty/172148504055625.jpg)
+![img](images/netty/172148504055625.jpg)
 
 　　这种模式虽然处理起来简单方便，但是由于服务器为每个client的连接都采用一个线程去处理，使得资源占用非常大。因此，当连接数量达到上限时，再有用户请求连接，直接会导致资源瓶颈，严重的可能会直接导致服务器崩溃。
 
@@ -7069,7 +7069,7 @@ while(true){
 
 　　在Reactor模式中，会先对每个client注册感兴趣的事件，然后有一个线程专门去轮询每个client是否有事件发生，当有事件发生时，便顺序处理每个事件，当所有事件处理完之后，便再转去继续轮询，如下图所示：
 
-![img](./image/netty/180940159566985.jpg)
+![img](images/netty/180940159566985.jpg)
 
 　　从这里可以看出，上面的五种IO模型中的多路复用IO就是采用Reactor模式。注意，上面的图中展示的 是顺序处理每个事件，当然为了提高事件处理速度，可以通过多线程或者线程池的方式来处理事件。
 

@@ -16,7 +16,7 @@
 3、接收到消息后，解析广播源ip和端口packet.getSocketAddress()并响应，向192.168.64.5:8888单播回本机的ip
 ```
 
-![image-20230822002618440](./images/image-20230822002618440.png)
+![image-20230822002618440](images/Java 发送和接收广播的 UDP，用于探测局域网中指定类型的设备/image-20230822002618440-1696681425509-1-1696681438643-7.png)
 
 
 
@@ -232,7 +232,7 @@ Send  [172.17.0.1, 192.168.64.3]  to  /192.168.64.5:8888
 *   **① 网络地址 : 表示当前设备处于哪个网络 ;**
 *   **② 主机地址 : 表示当前设备是网络中的哪一台主机 ;**
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190830220038687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9oYW5zaHVsaWFuZy5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](images/Java 发送和接收广播的 UDP，用于探测局域网中指定类型的设备/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9oYW5zaHVsaWFuZy5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70.png)
 
 **IP 地址分类 :**
 
@@ -242,7 +242,7 @@ Send  [172.17.0.1, 192.168.64.3]  to  /192.168.64.5:8888
 *   **④ D 类 IP 地址 : 该类地址 , 专门为多播预留 , 多播比广播优越 , 也是因为有这些预留的多播地址 , 可以被所有的路由器所感知的 ;**
 *   **E 类 IP 地址 : 该类地址是用于研究的实验型地址 ;**
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190830220225957.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9oYW5zaHVsaWFuZy5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](images/Java 发送和接收广播的 UDP，用于探测局域网中指定类型的设备/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9oYW5zaHVsaWFuZy5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70-1696681438642-3.png)
 
 #### III 广播地址
 
@@ -257,7 +257,7 @@ Send  [172.17.0.1, 192.168.64.3]  to  /192.168.64.5:8888
 * * *
 
 **在 Windows 上的命令行中 , 执行 ipconfig 命令 , 会打印出相关网络的配置信息 ;**  
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2019083111595014.png)
+![在这里插入图片描述](images/Java 发送和接收广播的 UDP，用于探测局域网中指定类型的设备/2019083111595014.png)
 
 *   **① IPv4 地址是 : 192.168.1.6 ;**
 *   **② 路由器地址 (网关地址) : 192.168.1.1 ;**
