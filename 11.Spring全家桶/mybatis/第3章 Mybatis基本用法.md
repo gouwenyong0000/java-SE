@@ -1035,7 +1035,59 @@ public void testQueryEmpNameAndSalary() {
 [00:33:41.505] [INFO ] [main] [TestUsrMapperInterface] [员工工资=5000.0]
 ```
 
+④ `@MapKey`
 
+`@MapKey`：供返回值为 Map 的方法使用的注解。它使用对象的某个属性作为 key，将对象 List 转化为 Map。属性：`value`，指定作为 Map 的 key 值的对象属性名。
+
+
+
+测试
+
+```java
+@MapKey("empId") // 指定每一行记录以列名作为Map的key
+Map<Integer, Object> selectAllOutMap();
+```
+
+```xml
+<select id="selectAllOutMap" resultType="com.atguigu.mybatis.entity.Employee">
+        select emp_id empId, emp_name empName, emp_salary empSalary
+        from t_emp
+ </select>
+```
+
+单元测试
+
+```java
+    @Test
+    public void selectAllOutMap() {
+
+        EmployeeMapper employeeMapper = session.getMapper(EmployeeMapper.class);
+
+        Map<Integer, Object> resultMap = employeeMapper.selectAllOutMap();
+
+        Set<Map.Entry<Integer, Object>> entrySet = resultMap.entrySet();
+        for (Map.Entry<Integer, Object> entry : entrySet) {
+            Integer key = entry.getKey();
+            Object value = entry.getValue();
+            log.info(key + "=" + value);
+        }
+    }
+
+[01:07:50.260] [INFO ] [main] [TestUsrMapperInterface] [16=Employee(empId=16, empName=testname, empSalary=300.0)]
+[01:07:50.261] [INFO ] [main] [TestUsrMapperInterface] [1=Employee(empId=1, empName=tom, empSalary=500.0)]
+[01:07:50.261] [INFO ] [main] [TestUsrMapperInterface] [17=Employee(empId=17, empName=jack-update, empSalary=5000.0)]
+[01:07:50.261] [INFO ] [main] [TestUsrMapperInterface] [2=Employee(empId=2, empName=jerry, empSalary=666.66)]
+[01:07:50.261] [INFO ] [main] [TestUsrMapperInterface] [3=Employee(empId=3, empName=andy, empSalary=777.77)]
+[01:07:50.261] [INFO ] [main] [TestUsrMapperInterface] [19=Employee(empId=19, empName=john, empSalary=666.66)]
+```
+
+
+
+
+
+
+
+mapper接口的方法定义为List<Map<String,Object>>类型时，会出现@MapKey is required的提示，意思是要在该方法的签名前加上@MapKey注解，指定Map的key
 
 ## 4、返回List类型
 
@@ -1046,8 +1098,6 @@ public void testQueryEmpNameAndSalary() {
 ```Java
 List<Employee> selectAll();
 ```
-
-
 
 ### ②SQL语句
 
@@ -1060,8 +1110,6 @@ List<Employee> selectAll();
 
 </select>
 ```
-
-
 
 ### ③junit测试
 
@@ -1242,3 +1290,11 @@ SQL语句中可以不使用别名
   select emp_id,emp_name,emp_salary from t_emp where emp_id=#{empId}
 </select>
 ```
+
+
+
+# 第六节  官方文档
+
+
+
+https://mybatis.org/mybatis-3/zh/getting-started.html
