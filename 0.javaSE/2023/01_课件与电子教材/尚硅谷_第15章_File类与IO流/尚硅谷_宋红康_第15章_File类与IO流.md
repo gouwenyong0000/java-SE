@@ -2576,6 +2576,183 @@ public class TestScanner {
 }
 ```
 
+### 8.4 随机存取文件流RandomAccessFile 
+
+RandomAccessFile 是随机访问文件(包括读/写)的类。它支持对文件随机访问的读取和写入，即我们可以从指定的位置读取/写入文件数据
+
++ RandomAccessFile 声明在java.io包下，但**直接继承于java.lang.Object类**。并且它实现了DataInput、DataOutput这两个接口，也就意味着**这个类既可以读也可以写。**
++ **RandomAccessFile** 类支持 “随机访问” 的方式，**程序可以直接跳到文件的任意地方来读、写文件**
+  + 支持只访问文件的部分内容
+  + 可以向已存在的文件后追加内容
++ RandomAccessFile 对象包含一个`记录指针`，用以标示当前读写处的位置。 RandomAccessFile 类对象可以自由移动记录指针：
+  + `long getFilePointer()`：获取文件记录指针的当前位置
+  + `void seek(long pos)`：将文件记录指针定位到 pos 位置
+
+应用：我们可以用RandomAccessFile这个类，来实现一个**`多线程断点下载`**的功能，用过下载工具的朋友们都知道，下载前都会建立`两个临时文件`，一个是与被下载文件大小相同的空文件，另一个是记录文件指针的位置文件，每次暂停的时候，都会保存上一次的指针，然后断点下载的时候，会继续从上一次的地方下载，从而实现断点下载或上传的功能
+
+**构造器**
+
+```java
+RandomAccessFile(File file, String mode)
+RandomAccessFile(String fileName, String mode)
+```
+
+RandomAccessFile共有4种模式："r", "rw", "rws"和"rwd"。
+
+```
+"r"    以只读方式打开。调用结果对象的任何 write 方法都将导致抛出 IOException。  
+"rw"   打开以便读取和写入。
+"rws"  打开以便读取和写入。相对于 "rw"，"rws" 还要求对“文件的内容”或“元数据”的每个更新都同步写入到基础存储设备。  
+"rwd"  打开以便读取和写入，相对于 "rw"，"rwd" 还要求对“文件的内容”的每个更新都同步写入到基础存储设备。  
+```
+
+**说明**：
+**(01) 什么是“元数据”，即metadata？**
+英文解释如下：
+
+```
+The definition of metadata is "data about other data." With a file system, the data is contained in its files and directories, and the metadata tracks information about each of these objects: Is it a regular file, a directory, or a link? What is its size, creation date, last modified date, file owner, group owner, and access permissions?
+```
+
+**大致意思**是：
+metadata是“关于数据的数据”。在文件系统中，数据被包含在文件和文件夹中；metadata信息包括：“数据是一个文件，一个目录还是一个链接”，“数据的创建时间(简称ctime)”，“最后一次修改时间(简称mtime)”，“数据拥有者”，“数据拥有群组”，“访问权限”等等。
+
+**(02) "rw", "rws", "rwd" 的区别。**
+当操作的文件是存储在本地的基础存储设备上时(如硬盘, NandFlash等)，"rws" 或 "rwd", "rw" 才有区别。
+当模式是 "rws" 并且 操作的是基础存储设备上的文件；那么，每次“更改文件内容[如write()写入数据]” 或 “修改文件元数据(如文件的mtime)”时，都会将这些改变同步到基础存储设备上。
+当模式是 "rwd" 并且 操作的是基础存储设备上的文件；那么，每次“更改文件内容[如write()写入数据]”时，都会将这些改变同步到基础存储设备上。
+当模式是 "rw" 并且 操作的是基础存储设备上的文件；那么，关闭文件时，会将“文件内容的修改”同步到基础存储设备上。至于，“更改文件内容”时，是否会立即同步，取决于系统底层实现。
+
+**测试**
+
+```java
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.PrintStream;;
+import java.io.RandomAccessFile;
+import java.io.IOException;
+
+/**
+ * RandomAccessFile 测试程序
+ *
+ * 运行结果(输出如下)：
+ * c1=a
+ * c2=b
+ * buf=9876543210
+ *
+ * 此外,
+ * (01) 在源文件所在目录生成了file.txt。
+ * (02) 注意RandomAccessFile写入boolean, byte, char, int,所占的字符个数。
+ *
+ */
+public class RandomAccessFileTest {
+
+    private static final String FileName = "file.txt";
+
+    public static void main(String[] args) {
+        // 若文件“file.txt”存在，则删除该文件。
+        File file = new File(FileName);
+        if (file.exists())
+            file.delete();
+
+        testCreateWrite();
+        testAppendWrite();
+        testRead();
+    }
+
+    /**
+     * 若“file.txt”不存在的话，则新建文件，并向文件中写入内容
+     */
+    private static void testCreateWrite() {
+        try {
+            // 创建文件“file.txt”对应File对象
+            File file = new File(FileName);
+            // 创建文件“file.txt”对应的RandomAccessFile对象
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+
+            // 向“文件中”写入26个字母+回车
+            raf.writeChars("abcdefghijklmnopqrstuvwxyz\n");
+            // 向“文件中”写入"9876543210"+回车
+            raf.writeChars("9876543210\n");
+
+            raf.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 向文件末尾追加内容
+     */
+    private static void testAppendWrite() {
+        try {
+            // 创建文件“file.txt”对应File对象
+            File file = new File(FileName);
+            // 创建文件“file.txt”对应的RandomAccessFile对象
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+
+            // 获取文件长度
+            long fileLen = raf.length();
+            // 将位置定位到“文件末尾”
+            raf.seek(fileLen);
+
+            // 以下向raf文件中写数据
+            raf.writeBoolean(true); // 占1个字节
+            raf.writeByte(0x41);    // 占1个字节
+            raf.writeChar('a');     // 占2个字节
+            raf.writeShort(0x3c3c); // 占2个字节
+            raf.writeInt(0x75);     // 占4个字节
+            raf.writeLong(0x1234567890123456L); // 占8个字节
+            raf.writeFloat(4.7f);  // 占4个字节
+            raf.writeDouble(8.256);// 占8个字节
+            raf.writeUTF("UTF严"); // UTF-8格式写入
+            raf.writeChar('\n');   // 占2个字符。“换行符”
+
+            raf.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 通过RandomAccessFile读取文件
+     */
+    private static void testRead() {
+        try {
+            // 创建文件“file.txt”对应File对象
+            File file = new File(FileName);
+            // 创建文件“file.txt”对应的RandomAccessFile对象，以只读方式打开
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
+
+            // 读取一个字符
+            char c1 = raf.readChar();
+            System.out.println("c1="+c1);
+            // 读取一个字符
+            char c2 = raf.readChar();
+            System.out.println("c2="+c2);
+
+            // 跳过54个字节。
+            raf.seek(54);
+
+            // 测试read(byte[] buffer, int byteOffset, int byteCount)
+            byte[] buf = new byte[20];
+            raf.read(buf, 0, buf.length);
+            System.out.println("buf="+(new String(buf)));
+
+            raf.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+
+
 ## 9. apache-common包的使用
 
 ### 9.1 介绍
@@ -2656,5 +2833,171 @@ public class Test02 {
 
 
 
+## 10.NIO.2中Path，Paths Files类的使用
 
+- Java NIO (New IO，Non-Blocking IO)是从Java 1.4版本开始引入的一套新 的IO API，可以替代标准的Java IO API。NIO与原来的IO有同样的作用和目 的，但是使用的方式完全不同，NIO支持面向缓冲区的(IO是面向流的)、基于通道的IO操作。**NIO将以更加高效的方式进行文件的读写操作**。
+
+- Java API中提供了两套NIO，一套是针对标准输入输出NIO，另一套就是网络编程NIO。
+
+  ```
+  |----java.nio.channels.Channel
+  		|----FileChannel  处理本地文件
+  		|----SocketChannel TCP网络编程的客户端channel
+  		|----ServerSocketChannel TCP网络编程的服务端channel
+  		|----DatagramChannel UDP网络编程中发送端和接收端的channel
+  ```
+
+  ##### NIO. 2
+
+  - 随着 JDK 7 的发布，Java对NIO进行了极大的扩展，增强了对 文件处理和文件系统特性的支持，以至于我们称他们为 NIO.2。 因为 NIO 提供的一些功能，NIO已经成为文件处理中越来越重要的部分。
+
+##### Path、Paths和Files核心API
+
+- 早期的Java只提供了一个File类来访问文件系统，但File类的功能比较有限，所 提供的方法性能也不高。而且，大多数方法在出错时仅返回失败，并不会提供异 常信息。
+
+- NIO. 2为了弥补这种不足，引入了Path接口，代表一个平台无关的平台路径，描 述了目录结构中文件的位置。Path可以看成是File类的升级版本，实际引用的资 源也可以不存在。
+
+  ```java
+     //在以前O操作都足这样写的:        import java.io.File
+      File file = new File("index.html");
+      //但在Java7中,我们可以这样写import java.nio.file.Path   import.java.nio.file.Paths,
+      Path path = Paths.get("index.html");
+  ```
+
+  
+
+- 同时，NIO.2在java.nio.file包下还提供了Files、Paths工具类，Files包含 了大量静态的工具方法来操作文件；Paths则包含了两个返回Path的静态 工厂方法。
+
+- Paths 类提供的静态 get() 方法用来获取 Path 对象：
+
+  - `static Path get(String first, String … more)` : 用于将多个字符串串连成路径
+  - `static Path get(URI uri)`: 返回指定uri对应的Path路径
+
+###### Path接口
+
+- Path 常用方法：
+  - String toString() ： 返回调用 Path 对象的字符串表示形式
+  - boolean startsWith(String path) : 判断是否以 path 路径开始
+  - boolean endsWith(String path) : 判断是否以 path 路径结束
+  - boolean isAbsolute() : 判断是否是绝对路径
+  - Path getParent() ：返回Path对象包含整个路径，不包含 Path 对象指定的文件路径
+  - Path getRoot() ：返回调用 Path 对象的根路径
+  - Path getFileName() : 返回与调用 Path 对象关联的文件名
+  - int getNameCount() : 返回Path 根目录后面元素的数量
+  - Path getName(int idx) : 返回指定索引位置 idx 的路径名称
+  - Path toAbsolutePath() : 作为绝对路径返回调用 Path 对象
+  - Path resolve(Path p) :合并两个路径，返回合并后的路径对应的Path对象
+  - File toFile(): 将Path转化为File类的对象
+
+###### Files 类
+
+- java.nio.file.Files 用于操作文件或目录的工具类。
+- **Files常用方法**：
+  - Path copy(Path src, Path dest, CopyOption … how) : 文件的复制
+  - Path createDirectory(Path path, FileAttribute … attr) : 创建一个目录
+  - Path createFile(Path path, FileAttribute … arr) : 创建一个文件
+  - void delete(Path path) : 删除一个文件/目录，如果不存在，执行报错
+  - void deleteIfExists(Path path) : Path对应的文件/目录如果存在，执行删除
+  - Path move(Path src, Path dest, CopyOption…how) : 将 src 移动到 dest 位置
+  - long size(Path path) : 返回 path 指定文件的大小
+
+###### Files 类
+
+- **Files常用方法**：用于判断
+  - boolean exists(Path path, LinkOption … opts) : 判断文件是否存在
+  - boolean isDirectory(Path path, LinkOption … opts) : 判断是否是目录
+  - boolean isRegularFile(Path path, LinkOption … opts) : 判断是否是文件
+  - boolean isHidden(Path path) : 判断是否是隐藏文件
+  - boolean isReadable(Path path) : 判断文件是否可读
+  - boolean isWritable(Path path) : 判断文件是否可写
+  - boolean notExists(Path path, LinkOption … opts) : 判断文件是否不存在
+- **Files常用方法**：用于操作内容
+  - SeekableByteChannel newByteChannel(Path path, OpenOption…how) : 获取与指定文件的连 接，how 指定打开方式。
+  - DirectoryStream newDirectoryStream(Path path) : 打开 path 指定的目录
+  - InputStream newInputStream(Path path, OpenOption…how):获取 InputStream 对象
+  - OutputStream newOutputStream(Path path, OpenOption…how) : 获取 OutputStream 对象
+
+```java
+package com.atguigu.java;
+
+import org.junit.Test;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+/**
+ * 1. jdk 7.0 时，引入了 Path、Paths、Files三个类。
+ * 2.此三个类声明在：java.nio.file包下。
+ * 3.Path可以看做是java.io.File类的升级版本。也可以表示文件或文件目录，与平台无关
+ * <p>
+ * 4.如何实例化Path:使用Paths.
+ * static Path get(String first, String … more) : 用于将多个字符串串连成路径
+ * static Path get(URI uri): 返回指定uri对应的Path路径
+ *
+ */
+public class PathTest {
+
+    //如何使用Paths实例化Path
+    @Test
+    public void test1() {
+        Path path1 = Paths.get("d:\\nio\\hello.txt");//new File(String filepath)
+
+        Path path2 = Paths.get("d:\\", "nio\\hello.txt");//new File(String parent,String filename);
+
+        System.out.println(path1);
+        System.out.println(path2);
+
+        Path path3 = Paths.get("d:\\", "nio");
+        System.out.println(path3);
+    }
+
+    //Path中的常用方法
+    @Test
+    public void test2() {
+        Path path1 = Paths.get("d:\\", "nio\\nio1\\nio2\\hello.txt");
+        Path path2 = Paths.get("hello.txt");
+
+//		String toString() ： 返回调用 Path 对象的字符串表示形式
+        System.out.println(path1);
+
+//		boolean startsWith(String path) : 判断是否以 path 路径开始
+        System.out.println(path1.startsWith("d:\\nio"));
+//		boolean endsWith(String path) : 判断是否以 path 路径结束
+        System.out.println(path1.endsWith("hello.txt"));
+//		boolean isAbsolute() : 判断是否是绝对路径
+        System.out.println(path1.isAbsolute() + "~");
+        System.out.println(path2.isAbsolute() + "~");
+//		Path getParent() ：返回Path对象包含整个路径，不包含 Path 对象指定的文件路径
+        System.out.println(path1.getParent());
+        System.out.println(path2.getParent());
+//		Path getRoot() ：返回调用 Path 对象的根路径
+        System.out.println(path1.getRoot());
+        System.out.println(path2.getRoot());
+//		Path getFileName() : 返回与调用 Path 对象关联的文件名
+        System.out.println(path1.getFileName() + "~");
+        System.out.println(path2.getFileName() + "~");
+//		int getNameCount() : 返回Path 根目录后面元素的数量
+//		Path getName(int idx) : 返回指定索引位置 idx 的路径名称
+        for (int i = 0; i < path1.getNameCount(); i++) {
+            System.out.println(path1.getName(i) + "*****");
+        }
+
+//		Path toAbsolutePath() : 作为绝对路径返回调用 Path 对象
+        System.out.println(path1.toAbsolutePath());
+        System.out.println(path2.toAbsolutePath());
+//		Path resolve(Path p) :合并两个路径，返回合并后的路径对应的Path对象
+        Path path3 = Paths.get("d:\\", "nio");
+        Path path4 = Paths.get("nioo\\hi.txt");
+        path3 = path3.resolve(path4);
+        System.out.println(path3);
+
+//		File toFile(): 将Path转化为File类的对象
+        File file = path1.toFile();//Path--->File的转换
+
+        Path newPath = file.toPath();//File--->Path的转换
+
+    }
+}
+```
 
