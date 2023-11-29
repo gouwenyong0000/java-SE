@@ -4,6 +4,161 @@
 
 每个 Java 应用程序都有一个 Runtime 类实例，使应用程序能够与其运行的环境相连接。可以通过 getRuntime 方法获取当前运行时。 应用程序不能创建自己的 Runtime 类实例。我们可以通过 Runtime.exec() 用来执行外部程序或命令
 
+## 一、概述
+
+在 Java 中要想执行脚本或者调用程序必须通过 ProcessBuilder 和 Runtime 类，以上两个类任选一个就行，关于他们的介绍如下：
+
+`ProcessBuilder.start()` 和 `Runtime.exec()` 方法都被用来创建一个操作系统进程（执行命令行操作），并返回 Process 子类的一个实例，该实例可用来控制进程状态并获得相关信息。  
+Process 类提供了执行从进程输入、执行输出到进程、等待进程完成、检查进程的退出状态以及销毁（杀掉）进程的方法。创建进程的方法可能无法针对某些本机平台上的特定进程很好地工作，比如，本机窗口进程，守护进程，Microsoft Windows 上的 Win16/DOS 进程，或者 shell 脚本。创建的子进程没有自己的终端或控制台。它的所有标准 io（即 stdin、stdout 和 stderr）操作都将通过三个流 (getOutputStream()、getInputStream() 和 getErrorStream()) 重定向到父进程。父进程使用这些流来提供到子进程的输入和获得从子进程的输出。因为有些本机平台仅针对标准输入和输出流提供有限的缓冲区大小，如果读写子 进程的输出流或输入流迅速出现失败，则可能导致子进程阻塞，甚至产生死锁。 当没有 Process 对象的更多引用时，不是删掉子进程，而是继续异步执行子进程。 对于带有 Process 对象的 Java 进程，没有必要异步或并发执行由 Process 对象表示的进程。  
+每个 ProcessBuilder 实例管理一个进程属性集。ProcessBuilder 的 start() 方法利用这些属性创建一个新的 Process 实例。start() 方法可以从同一实例重复调用，以利用相同或者相关的属性创建新的子进程。  
+不同点：  
+ProcessBuilder.start() 和 Runtime.exec() 传递的参数有所不同，Runtime.exec() 可接受一个单独的字符串，这个字符串是通过空格来分隔可执行命令程序和参数的；也可以接受字符串数组参数。而 ProcessBuilder 的构造函数是一个字符串列表或者数组。列表中第一个参数是可执行命令程序，其他的是命令行执行是需要的参数。  
+通过查看 JDK 源码可知，Runtime.exec 最终是通过调用 ProcessBuilder 来真正执行操作的。
+
+## **二、Runtime 演示示例**
+
+### 1. 在 windows 下调用 dos 命令：
+
+下面演示了在 windows 下执行 dos 命令 "chdir"，并将执行结果输出的示例。
+
+```java
+public class TestDos {  
+  
+    /** 
+     * 在windows下执行dos命令并在console端输出 
+     *  
+     * @throws Exception  
+     */  
+    public static void main(String[] args) throws Exception {  
+        String strCmd = "chdir";//待执行的dos命令(chdir命令作用是列出当前的工作目录)  
+        Process process = Runtime.getRuntime().exec("cmd /k " + strCmd);//通过cmd程序执行cmd命令  
+        //process.waitFor();  
+        //读取屏幕输出  
+        BufferedReader strCon = new BufferedReader(new InputStreamReader(process.getInputStream()));  
+        String line;  
+        while ((line = strCon.readLine()) != null) {  
+            System.out.println(line);  
+            }  
+    }  
+}
+```
+
+
+
+如果不需要进行屏幕输出的话可以简写成如下方式：
+
+```java
+public class TestDos {  
+  
+    /** 
+     * 在windows下调用dos命令 
+     *  
+     * @throws Exception  
+     */  
+    public static void main(String[] args) throws Exception {  
+        String strCmd = "dos命令";//待执行的dos命令  
+        Runtime.getRuntime().exec("cmd /c " + strCmd).waitFor();//通过cmd程序执行dos命令  
+    }  
+}
+```
+
+
+
+注：执行 dos 命令时，需在命令前加上 "cmd /x" 参数，其中 x 可以为 c 或者 k 值，具体说明如下：
+
+cmd /c chdir 是执行完 dir 命令后关闭命令窗口。  
+cmd /k chdir 是执行完 dir 命令后不关闭命令窗口。  
+cmd /c start chdir 会打开一个新窗口后执行 dir 指令，原窗口会关闭。  
+cmd /k start chdir 会打开一个新窗口后执行 dir 指令，原窗口不会关闭。
+
+### 2. 在 windows 下调用外部程序：
+
+下面演示了调用 QQ 程序的过程：
+
+```java
+/** 
+ * 在windows下调用QQ程序示例 
+ * */  
+public class CallQQ {  
+  
+    /** 
+     * @param args 
+     * @throws Exception  
+     */  
+    public static void main(String[] args) throws Exception {  
+        Runtime.getRuntime().exec("D:\\Program Files (x86)\\Tencent\\QQ\\QQProtect\\Bin\\QQProtect.exe");  
+    }  
+}
+```
+
+
+
+### 3. 在 Linux 下执行 shell 命令：
+
+下面演示了在 Linux 中执行 shell 命令 pwd，并显示执行结果：
+
+```java
+/** 
+ * 执行Linux的shell命令并在console端输出结果 
+ * */  
+public class CallShell {  
+  
+    /** 
+     * @throws Exception  
+     */  
+    public static void main(String[] args) throws Exception {  
+        String strCmd = "pwd";//执行shell命令  
+        Process process = Runtime.getRuntime().exec(strCmd);//通过执行cmd命令调用protoc.exe程序  
+        BufferedReader strCon = new BufferedReader(new InputStreamReader(process.getInputStream()));  
+        String line;  
+        while ((line = strCon.readLine()) != null) {  
+            System.out.println("java print:"+line);  
+            }  
+    }  
+}
+```
+
+
+
+### 4. 在 Linux 下调用 shell 脚本并输出结果：
+
+
+
+```java
+/** 
+ * 在linux下调用shell脚本并在console端输出脚本的执行结果 
+ * */  
+public class CallShell {  
+  
+    /** 
+     * @throws Exception  
+     */  
+    public static void main(String[] args) throws Exception {  
+        String strCmd = "/home/zhu/test/test.sh";//待调用shell脚本  
+        Process process = Runtime.getRuntime().exec(strCmd);//通过执行cmd命令调用protoc.exe程序  
+        BufferedReader strCon = new BufferedReader(new InputStreamReader(process.getInputStream()));  
+        String line;  
+        while ((line = strCon.readLine()) != null) {  
+            System.out.println("java print:"+line);  
+            }  
+    }  
+}
+```
+
+
+
+## 三、ProcessBuilder 使用示例
+
+ProcessBuilder 的使用参考如下：
+
+```java
+String[] as = new String[]{“待执行命令 1”，"待执行命令 2"，.........};  
+ProcessBuilder pb = new ProcessBuilder(as);  
+pb.start();  
+```
+
+使用 ProcessBuilder 可以依次执行多个命令
+
 
 
 入门案例
@@ -20,7 +175,7 @@
 
 
 
-下面通过一个 Demo 来 展示 如何用 Java 来调用 Windows 上的 wmic 命令来获取系统中当前的进程信息。
+Runtime.getRuntime().exec() 获得的就是 Process 类，exec() 方法有多个重载可以使用，针对不同的情况设置不同的参数。另外需要注意的是执行的 windows 和 linux 的命令的写法是不同的。
 
 ```java
 import java.io.BufferedReader;
@@ -49,6 +204,9 @@ public class RuntimeExecTest {
             new Thread(new SerializeTask(process.getErrorStream())).start();
             process.getOutputStream().close();
             int exitValue = process.waitFor();
+            if (process.exitValue() != 0) {
+                    System.out.println("error!");
+             }
             System.out.println("返回值：" + exitValue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -206,6 +364,36 @@ public class Test1 {
     }
 }
 ```
+
+# Apache Common-Exec 
+
+强烈建议使用 apache 的第三方库，该库提供了更加详细的设置和监控方法等等。
+
+执行的命令被称为 CommandLine，可使用该类的 addArgument() 方法为其添加参数，parse() 方法将你提供的命令包装好一个可执行的命令。命令是由执行器 Executor 类来执行的，DefaultExecutor 类的 execute() 方法执行命令，exitValue 也可以通过该方法返回接收。设置 ExecuteWatchdog 可指定进程在出错后多长时间结束，这样有效防止了 run-away 的进程。此外 common-exec 还支持异步执行，Executor 通过设置一个 ExecuteResultHandler 类，该类的实例会接收住错误异常和退出代码。
+
+```java
+CommandLine cmdLine = new CommandLine("AcroRd32.exe");
+cmdLine.addArgument("/p");
+    cmdLine.addArgument("/h");
+    cmdLine.addArgument("${file}");
+    HashMap map = new HashMap();
+    map.put("file", new File("invoice.pdf"));
+    commandLine.setSubstitutionMap(map);
+
+    DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+
+    ExecuteWatchdog watchdog = new ExecuteWatchdog(60*1000);
+    Executor executor = new DefaultExecutor();
+    executor.setExitValue(1);
+    executor.setWatchdog(watchdog);
+    executor.execute(cmdLine, resultHandler);
+
+    // some time later the result handler callback was invoked so we
+    // can safely request the exit value
+    int exitValue = resultHandler.waitFor();
+```
+
+
 
 # java shell命令工具类
 
@@ -534,10 +722,7 @@ public static void main(String[] args) {
 }
 ```
 
-## 环境变量不生效排查
-
-+ 环境变量未生效  通过**检查打印当时环境变量**
-+ **检查环境变量是否配置**或者i**dea重启，生效变量**
++ 
 
 
 
@@ -667,314 +852,7 @@ public static void main(String[] args) {
 
 
 
-# WinRAR的命令行模式用法介绍
+## 环境变量不生效排查
 
-1. 最简单的压缩命令：`winrar a asdf.txt.rar asdf.txt` 
-
-​	a的意思是进行压缩动作，后面第一个参数是被压缩后的文件名，后缀当然是rar了，最后面 的参数就是要被压缩的文件名
-
-2. 最简单的解压缩命令：`winrar e asdf.txt.rar` 
-
-​	e的意思是执行解压缩，解压缩的文件是后面这唯一的参数，但是这个e解压缩是把解出来的 文件释放到当前目录下面，与asdf.txt.rar文件并列了，因此，更加实用的是下面的带路径 解压缩。
-
-3. 带路径的解压缩命令`：winrar x asdf.rar` 
-
-​	x的意思是执行带绝对路径解压动作，这会在当前文件夹下创建一个文件夹asdf，把压缩包 里的文件、文件夹不改动结构释放到文件asdf里面，就像我们在winrar的图形界面下看到的 一样。
-
-因工作中要对数据打包，顺便研究了下WinRAR的命令行模式，自己写了些例子，基本用法如下：
-
-测试压缩文件准备：文件夹test_data，内部包含子文件夹，分别存放了一些*.log和*.txt文件。
-
-测试代码如下：
-
-```sh
-rem 压缩全部文件，按类型压缩,zip打包
- WinRAR.exe a num_all.zip .\test_data\
- WinRAR.exe a num_txt.zip .\test_data\num*.txt
- WinRAR.exe a num_log.zip .\test_data\num*.log
- 
- rem 压缩全部文件，按类型压缩,rar打包
- WinRAR.exe a num_all.rar .\test_data\
- WinRAR.exe a num_txt.rar .\test_data\num*.txt
- WinRAR.exe a num_log.rar .\test_data\num*.log
-
-rem 默认压缩根目录，递归处理子文件夹使用 -r
- WinRAR.exe a -r num_all_tg.zip .\test_data\*.*
- WinRAR.exe a -r num_all_txt.zip .\test_data\*.txt
- WinRAR.exe a -r num_all_log.rar .\test_data\*.log
- 
- 
-rem 添加注释，注释从一个txt文件读取，txt文件名info.txt
- WinRAR.exe c -zinfo.txt num_all.zip
- WinRAR.exe c -zinfo.txt num_all.rar
- 
- rem 从压缩包中读取注释，写入到read.txt文件,默认ASCII，参数-scuc表示unicode
-  WinRAR.exe cw num_all.zip read1_ASCII.txt
-  WinRAR.exe cw num_all.rar read2_ASCII.txt
-  WinRAR.exe cw -scuc num_all.rar read_unicode.txt
-  
-  rem 从压缩包中删除制定文件
-  WinRAR.exe d  num_all_tg.zip *.log
- 
- rem 解压到当前目录下,不包含压缩包内的路径
- WinRAR.exe e  num_all_tg.zip
- rem 解压到制定目录下,不包含压缩包内的路径
- WinRAR.exe e  num_all_tg.zip .\test_d2
- rem 解压到当前目录下,只解压制定类型的文件
- WinRAR.exe e num_all_tg.zip *.log
- 
- rem 给压缩包内的文件重命名
-  WinRAR.exe rn num_all_tg.zip num(1).txt  num(1).bak num(2).txt num(2).bak
-  WinRAR.exe rn num_all.rar *.txt *.bak
-  
- rem 使用压缩包捏的绝对路径解压
-  WinRAR.exe x  num_all_tg.zip
- rem 使用压缩包捏的绝对路径解压，解压指定类型文件
-  WinRAR.exe x  num_all_tg.zip *.log
- rem 使用压缩包捏的绝对路径解压，解压指定类型文件,并解压到指定文件夹
-  WinRAR.exe x  num_all_tg.zip *log  .\new_data\
-```
-
-以上为winrar的基本压缩，解压命令。
-
-关于winrar 的开关选项，以后有空再研究整理。
-
- 
-
-备注：WinRAR.exe为安装完后，从安装目录将主程序winRAR.exe拷贝出来即可，该程序是独立可运行的。
-
-以下为winRAR的命令帮助原文：
-
-Alphabetic commands list
-
-------
-
-| [**a**](http://www.cnblogs.com/HELPCmdA.htm)        | add files to an archive                       |
-| --------------------------------------------------- | --------------------------------------------- |
-| [**c**](http://www.cnblogs.com/HELPCmdC.htm)        | add an archive comment                        |
-| [**ch**](http://www.cnblogs.com/HELPCmdCH.htm)      | change archive parameters                     |
-| [**cv**](http://www.cnblogs.com/HELPCmdCV.htm)      | convert archives                              |
-| [**cw**](http://www.cnblogs.com/HELPCmdCW.htm)      | write an archive comment to file              |
-| [**d**](http://www.cnblogs.com/HELPCmdD.htm)        | delete files from an archive                  |
-| [**e**](http://www.cnblogs.com/HELPCmdE.htm)        | extract files from an archive, ignoring paths |
-| [**f**](http://www.cnblogs.com/HELPCmdF.htm)        | freshen files within an archive               |
-| [**i**](http://www.cnblogs.com/HELPCmdI.htm)        | find string in archives                       |
-| [**k**](http://www.cnblogs.com/HELPCmdK.htm)        | lock an archive                               |
-| [**m**](http://www.cnblogs.com/HELPCmdM.htm)        | move files and folders to an archive          |
-| [**r**](http://www.cnblogs.com/HELPCmdR.htm)        | repair a damaged archive                      |
-| [**rc**](http://www.cnblogs.com/HELPCmdRC.htm)      | reconstruct missing volumes                   |
-| [**rn**](http://www.cnblogs.com/HELPCmdRN.htm)      | rename archived files                         |
-| [**rr[N\]**](http://www.cnblogs.com/HELPCmdRR.htm)  | add data recovery record                      |
-| [**rv[N\]**](http://www.cnblogs.com/HELPCmdRV.htm)  | create recovery volumes                       |
-| [**s[name\]**](http://www.cnblogs.com/HELPCmdS.htm) | convert an archive to a self-extracting type  |
-| [**s-**](http://www.cnblogs.com/HELPCmdSm.htm)      | remove SFX module                             |
-| [**t**](http://www.cnblogs.com/HELPCmdT.htm)        | test archive files                            |
-| [**u**](http://www.cnblogs.com/HELPCmdU.htm)        | update files within an archive                |
-| [**x**](http://www.cnblogs.com/HELPCmdX.htm)        | extract files from an archive with full paths |
-
- 
-
- 
-
-**Winrar的命令行模式程序在安装目录下的 rar.exe (打包压缩程序)，unrar.exe(解压缩程序)，以我安装的winrar5.3为例，帮助文档如下：**
-
- **..\WinRAR\Rar.exe：**
-
-```
- RAR 5.30 beta 2    版权所有 (C) 1993-2015 Alexander Roshal
- 试用版本            输入 RAR -? 以获得帮助
- 
- 用法:rar <命令> -<参数 1> -<参数 N> <压缩文件> <文件...>
-                <@列表文件...> <解压路径\>
- 
- <命令>
-   a             添加文件到压缩文件
-   c             添加压缩文件注释
-   ch            更改压缩文件参数
-   cw            将压缩文件注释写入文件
-   d             从压缩文件中删除文件
-   e             提取文件无需压缩文件的路径
-   f             更新压缩文件里的文件
-   i[par]=<str>  查找压缩文件中的字符串
-   k             锁定压缩文件
-   l[t[a],b]     列出压缩文件内容 [technical[all], bare]
-   m[f]          移动到压缩文件 [仅文件]
-   p             打印文件到 stdout
-   r             修复压缩文件
-   rc            重建丢失的分卷
-   rn            重命名已压缩文件
-   rr[N]         添加数据恢复记录
-   rv[N]         创建恢复分卷
-   s[name|-]     转换压缩文件为自解压或自解压转换为压缩文件
-   t             测试压缩文件
-   u             更新压缩文件中的文件
-   v[t[a],b]     详细列出压缩文件内容 [technical[all],bare]
-   x             使用完整路径提取文件
- 
- <参数>
-   -             停止参数扫描
-   @[+]          禁用 [启用] 文件列表
-   ac            压缩或解压后清除存档属性
-   ad            添加压缩文件名到目标路径
-   ag[格式]      使用当前日期生成压缩文件名
-   ai            忽略文件属性
-   ao            添加具有压缩属性的文件
-   ap<格式>      添加路径到压缩文件中
-   as            同步压缩文件内容
-   c-            禁用注释显示
-   cfg-          禁用读取配置
-   cl            转换名称到小写
-   cu            转换名称到大写
-   df            压缩文件后删除原来的文件
-   dh            打开已共享文件
-   dr            删除文件到回收站
-   ds            对固实压缩文件禁用名称排序
-   dw            压缩文件后清除文件
-   e[+]<attr>    设置文件排除和包含属性
-   ed            不要添加空目录
-   en            不要放置 '压缩文件结束' 区块
-   ep            从名称里排除路径
-   ep1           从名称里排除基目录
-   ep2           扩展路径到完整路径
-   ep3           扩展路径为完整路径包括驱动器盘符
-   f             更新文件
-   hp[password]  加密文件数据和文件头
-   ht[b|c]       为文件校验和选择哈希类型 [BLAKE2,CRC32]
-   id[c,d,p,q]   禁用信息
-   ieml[addr]    通过电邮发送压缩文件
-   ierr          发送所有消息到 stderr
-   ilog[name]    记录错误到文件（仅注册版本）
-   inul          禁用所有消息
-   ioff          完成操作后关闭电脑
-   isnd          启用声音
-   k             锁定压缩文件
-   kb            保留损坏的已解压缩文件
-   log[f][=name] 将名称写入日志文件
-   m<0..5>       设置压缩级别(0-存储...3-默认...5-最大)
-   ma[4|5]       指定压缩格式的一个版本
-   mc<par>       设置高级压缩参数
-   md<n>[k,m,g]  字典大小显示为 KB, MB 或 GB
-   ms[ext;ext]   指定要存储的文件类型
-   mt<threads>   设置线程数
-   n<file>       额外的包含过滤器的文件
-   n@            从 stdin 读取额外的过滤器掩码
-   n@<list>      从列表文件读取额外的过滤器掩码
-   o[+|-]        设置覆盖模式
-   oc            设置 NTFS 压缩属性
-   oh            将硬链接保存为链接而非文件
-   oi[0-4][:min] 将完全相同的文件保存为引用
-   ol[a]         将符号链接作为链接处理 [绝对路径]
-   or            自动重命名文件
-   os            保存 NTFS 流
-   ow            保存或恢复文件所有者和组
-   p[password]   设置密码
-   p-            不查询密码
-   qo[-|+]       添加快速打开信息 [无|强制]
-   r             递归子目录
-   r-            禁用递归
-   r0            仅为通配符名称递归子目录
-   ri<P>[:<S>]   设置优先级 (0-默认,1-最小..15-最大) 和睡眠时间为 ms
-   rr[N]         添加数据恢复记录
-   rv[N]         创建恢复分卷
-   s[<N>,v[-],e] 创建固实压缩文件
-   s-            禁用固实压缩文件
-   sc<chr>[obj]  指定字符集
-   sfx[name]     创建自解压文档
-   si[name]      从标准输入 (stdin) 读取数据
-   sl<size>      处理小于指定大小的文件
-   sm<size>      处理大于指定大小的文件
-   t             压缩文件后测试文件
-   ta<date>      处理在 <日期> 之后修改过的文件，以 YYYYMMDDHHMMSS 格式
-   tb<date>      处理在 <日期> 之前修改过的文件，以 YYYYMMDDHHMMSS 格式
-   tk            保存原来的压缩文件时间
-   tl            设置压缩文件时间为最新的文件
-   tn<time>      处理比 <时间> 较新的文件
-   to<time>      处理比 <时间> 较旧的文件
-   ts<m,c,a>[N]  保存或恢复文件时间（修改，创建，访问）
-   u             更新文件
-   v<size>[k,b]  创建分卷大小为=<size>*1000 [*1024, *1]
-   vd            创建分卷之前清除磁盘内容
-   ver[n]        文件版本控制
-   vn            使用旧式的分卷命名方案
-   vp            创建每个分卷之前暂停
-   w<path>       指定工作目录
-   x<file>       排除指定的文件
-   x@            读取文件名以从 stdin 排除
-   x@<list>      排除指定列表文件里列出的文件
-   y             对所有询问假定选择“是”
-   z[file]       从文件读取压缩文件注释
-```
-
-
-
- 
-
- **..\WinRAR\unRar.exe：**
-
-```
-UNRAR 5.30 beta 2 免费软件      版权所有 (C) 1993-2015 Alexander Roshal
-用法:unrar <命令> -<参数 1> -<参数 N> <压缩文件> <文件...>
-               <@列表文件...> <解压路径\>
-
-<命令>
-  e             提取文件无需压缩文件的路径
-  l[t[a],b]     列出压缩文件内容 [technical[all], bare]
-  p             打印文件到 stdout
-  t             测试压缩文件
-  v[t[a],b]     详细列出压缩文件内容 [technical[all],bare]
-  x             使用完整路径提取文件
-
-<参数>
-  -             停止参数扫描
-  @[+]          禁用 [启用] 文件列表
-  ac            压缩或解压后清除存档属性
-  ad            添加压缩文件名到目标路径
-  ag[格式]      使用当前日期生成压缩文件名
-  ai            忽略文件属性
-  ap<格式>      添加路径到压缩文件中
-  c-            禁用注释显示
-  cfg-          禁用读取配置
-  cl            转换名称到小写
-  cu            转换名称到大写
-  dh            打开已共享文件
-  ep            从名称里排除路径
-  ep3           扩展路径为完整路径包括驱动器盘符
-  f             更新文件
-  id[c,d,p,q]   禁用信息
-  ierr          发送所有消息到 stderr
-  inul          禁用所有消息
-  ioff          完成操作后关闭电脑
-  kb            保留损坏的已解压缩文件
-  n<file>       额外的包含过滤器的文件
-  n@            从 stdin 读取额外的过滤器掩码
-  n@<list>      从列表文件读取额外的过滤器掩码
-  o[+|-]        设置覆盖模式
-  oc            设置 NTFS 压缩属性
-  ol[a]         将符号链接作为链接处理 [绝对路径]
-  or            自动重命名文件
-  ow            保存或恢复文件所有者和组
-  p[password]   设置密码
-  p-            不查询密码
-  r             递归子目录
-  ri<P>[:<S>]   设置优先级 (0-默认,1-最小..15-最大) 和睡眠时间为 ms
-  sc<chr>[obj]  指定字符集
-  sl<size>      处理小于指定大小的文件
-  sm<size>      处理大于指定大小的文件
-  ta<date>      处理在 <日期> 之后修改过的文件，以 YYYYMMDDHHMMSS 格式
-  tb<date>      处理在 <日期> 之前修改过的文件，以 YYYYMMDDHHMMSS 格式
-  tn<time>      处理比 <时间> 较新的文件
-  to<time>      处理比 <时间> 较旧的文件
-  ts<m,c,a>[N]  保存或恢复文件时间（修改，创建，访问）
-  u             更新文件
-  v             列出所有分卷
-  ver[n]        文件版本控制
-  vp            创建每个分卷之前暂停
-  x<file>       排除指定的文件
-  x@            读取文件名以从 stdin 排除
-  x@<list>      排除指定列表文件里列出的文件
-  y             对所有询问假定选择“是”
-```
-
- 
-
-Fetty：姓名、性别、年龄、具体职业不详，更无联系方式。 本人在博客园发布的文章（包括但不限于：简体中文、英文、标点符号、图像，以及以上任意组合等）均为敲打键盘、鼠标、屏幕等工具所造成结果，用于检验本人电脑、显示器的各项机械性能、光电性能，并不代表本人观点，如有雷同，不胜荣幸！
++ 环境变量未生效  通过**检查打印当时环境变量**
++ **检查环境变量是否配置**或者i**dea重启，生效变量**
