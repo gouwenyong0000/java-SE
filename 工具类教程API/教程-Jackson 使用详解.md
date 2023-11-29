@@ -303,7 +303,7 @@ ObjectMapper objectMapper = new ObjectMapper();
 
 结果：
 
-![](./images/教程-Jackson 使用详解/17242249d91773e2tplv-t2oaga2asx-jj-mark1890000q75-1692027916727-7.avif)  
+![](./image/教程-Jackson 使用详解/17242249d91773e2tplv-t2oaga2asx-jj-mark1890000q75-1692027916727-7.avif)  
 
 ### 13、自定义反序列化
 
@@ -396,7 +396,7 @@ ObjectMapper objectMapper = new ObjectMapper();
   System.out.println(json);
 ```
 
-运行结果： ![](./images/教程-Jackson 使用详解/17242249d91c78d5tplv-t2oaga2asx-jj-mark1890000q75.avif)  
+运行结果： ![](./image/教程-Jackson 使用详解/17242249d91c78d5tplv-t2oaga2asx-jj-mark1890000q75.avif)  
 
 ### 2、自定义序列化
 
@@ -446,7 +446,7 @@ public class CarSerializer extends StdSerializer<Car> {
 
 运行结果：
 
-![](./images/教程-Jackson 使用详解/17242249db99a96btplv-t2oaga2asx-jj-mark1890000q75.avif)
+![](./image/教程-Jackson 使用详解/17242249db99a96btplv-t2oaga2asx-jj-mark1890000q75.avif)
 
 三）、Jackson 日期转化
 ---------------
@@ -501,7 +501,7 @@ Transaction transaction = new Transaction("transfer", new Date());
 
 运行结果：
 
-![](./images/教程-Jackson 使用详解/17242249d868123atplv-t2oaga2asx-jj-mark1890000q75.avif)  
+![](./image/教程-Jackson 使用详解/17242249d868123atplv-t2oaga2asx-jj-mark1890000q75.avif)  
 
 ### 2、Date-->String
 
@@ -520,7 +520,7 @@ Transaction transaction = new Transaction("transfer", new Date());
 
 运行结果：
 
-![](./images/教程-Jackson 使用详解/17242249db453b83tplv-t2oaga2asx-jj-mark1890000q75.avif)  
+![](./image/教程-Jackson 使用详解/17242249db453b83tplv-t2oaga2asx-jj-mark1890000q75.avif)  
 
 四）、Jackson JSON 树模型
 -------------------
