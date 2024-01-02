@@ -1,5 +1,9 @@
 
 
+非对称加密算法又称现代加密算法，是计算机通信安全的基石，保证了加密数据不会被破解。与对称加密算法不同，非对称加密算法需要两个密钥：公开密钥（publickey）和私有密（privatekey），因为加密和解密使用的是两个不同的密钥，所以这种算法叫作非对称加密算法。公钥和[私钥](https://so.csdn.net/so/search?q=私钥&spm=1001.2101.3001.7020)是一对，如果用公钥对数据进行加密，只有用对应的私钥才能解密。常见算法：RSA、ECC。
+
+
+
 RSA 加密算法是一种非对称加密算法，即 RSA 拥有一对密钥（公钥 和 私钥），公钥可公开。公钥加密的数据，只能由私钥解密；私钥加密的数据只能由公钥解密。
 
 为了方便读取和保存密钥，先创建一个 IO 工具类（`IOUtils.java`）：
@@ -515,3 +519,446 @@ public class Main {
 
 }
 ```
+
+
+
+# 4-加解密和签名验签
+
+## RAS 工具类
+
+为了方便初始化密钥对、获取公私钥、加解密，先创建一个 RSA 工具类（`RsaUtils.java`）：
+
+```java
+package com.javaboy.rsa.utils;
+ 
+import javax.crypto.Cipher;
+import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
+
+public class RsaUtils {
+ 
+    /**
+     * 非对称密钥算法
+     */
+    private static final String RSA_ALGORITHM = "RSA";
+    /**
+     * 密钥长度，DH算法的默认密钥长度是1024
+     * 密钥长度必须是64的倍数，在512到65536位之间
+     */
+    private static final int KEY_SIZE = 2048;
+    /**
+     * 公钥
+     */
+    private static final String PUBLIC_KEY = "javaBoy";
+    /**
+     * 私钥
+     */
+    private static final String PRIVATE_KEY = "helloWorld";
+ 
+ 
+    /**
+     * 初始化密钥对
+     *
+     * @return
+     */
+    public static Map<String, Object> initKey() {
+        try {
+            // 获取指定算法的密钥对生成器（RSA）
+            KeyPairGenerator rsa = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+            // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
+            rsa.initialize(KEY_SIZE);
+            // 随机生成一对密钥（包含公钥和私钥）
+            KeyPair keyPair = rsa.generateKeyPair();
+            //甲方公钥
+            RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+            System.out.println("系数：" + publicKey.getModulus());
+            System.out.println("加密指数：" + publicKey.getPublicExponent());
+            //甲方私钥
+            RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+            System.out.println("系数：" + privateKey.getModulus());
+            System.out.println("解密指数：" + privateKey.getPrivateExponent());
+            // 将密钥存储在map中
+            Map<String, Object> keyMap = new HashMap<String, Object>();
+            keyMap.put(PUBLIC_KEY, publicKey);
+            keyMap.put(PRIVATE_KEY, privateKey);
+            return keyMap;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+ 
+ 
+    /**
+     * 取得私钥
+     *
+     * @param keyMap 密钥map
+     * @return byte[] 私钥
+     */
+    public static byte[] getPrivateKey(Map<String, Object> keyMap) {
+        Key key = (Key) keyMap.get(PRIVATE_KEY);
+        return key.getEncoded();
+    }
+ 
+    /**
+     * 取得公钥
+     *
+     * @param keyMap 密钥map
+     * @return byte[] 公钥
+     */
+    public static byte[] getPublicKey(Map<String, Object> keyMap) {
+        Key key = (Key) keyMap.get(PUBLIC_KEY);
+        return key.getEncoded();
+    }
+ 
+ 
+    /**
+     * 公钥加密
+     *
+     * @param data           待加密数据
+     * @param publicKeyBytes 公钥
+     * @return byte[] 加密数据
+     */
+    public static byte[] encryptByPublicKey(byte[] data, byte[] publicKeyBytes) {
+        try {
+            // 实例化密钥工厂
+            KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
+            // 密钥材料转换
+            X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+            // 产生公钥
+            PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
+            // 数据加密
+            Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            return cipher.doFinal(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+ 
+    /**
+     * RSA 私钥解密
+     *
+     * @param data            待解密数据
+     * @param privateKeyBytes 私钥
+     * @return byte[] 解密数据
+     */
+    public static byte[] decryptByPrivateKey(byte[] data, byte[] privateKeyBytes) {
+        try {
+            // 取得私钥
+            KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
+            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+            // 生成私钥
+            PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+            // 数据解密
+            Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            return cipher.doFinal(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+ 
+}
+```
+
+### 测试代码
+
+```java
+package com.javaboy.rsa.main;
+ 
+import com.javaboy.rsa.utils.RsaUtils;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+ 
+import java.util.Map;
+ 
+/**
+ * @author: gaoyang
+ * @date: 2021-06-12 16:04
+ * @description: 测试
+ */
+public class TestRsa {
+ 
+    public static void main(String[] args) {
+        Map<String, Object> keyMap = RsaUtils.initKey();
+        byte[] publicKey = RsaUtils.getPublicKey(keyMap);
+        byte[] privateKey = RsaUtils.getPrivateKey(keyMap);
+        System.out.println("公钥：" + Base64.encode(publicKey));
+        System.out.println("私钥：" + Base64.encode(privateKey));
+ 
+        System.out.println("================密钥对构造完毕,甲方将公钥公布给乙方，开始进行加密数据的传输=============");
+        String str = "aattaggcctegthththfef/aat.mp4";
+        System.out.println("===========甲方向乙方发送加密数据==============");
+        System.out.println("原文:" + str);
+        //甲方进行数据的加密
+        byte[] code1 = RsaUtils.encryptByPublicKey(str.getBytes(), publicKey);
+        System.out.println("甲方使用乙方公钥加密后的数据：" + Base64.encode(code1));
+        System.out.println("===========乙方使用甲方提供的私钥对数据进行解密==============");
+        //乙方进行数据的解密
+        byte[] decode1 = RsaUtils.decryptByPrivateKey(code1, privateKey);
+        System.out.println("乙方解密后的数据：" + new String(decode1) + "");
+ 
+        System.out.println("===========反向进行操作，乙方向甲方发送数据==============");
+        str = "乙方向甲方发送数据RSA算法";
+        System.out.println("原文:" + str);
+        //乙方使用公钥对数据进行加密
+        byte[] code2 = RsaUtils.encryptByPublicKey(str.getBytes(), publicKey);
+        System.out.println("===========乙方使用公钥对数据进行加密==============");
+        System.out.println("加密后的数据：" + Base64.encode(code2));
+        System.out.println("=============乙方将数据传送给甲方======================");
+        System.out.println("===========甲方使用私钥对数据进行解密==============");
+        //甲方使用私钥对数据进行解密
+        byte[] decode2 = RsaUtils.decryptByPrivateKey(code2, privateKey);
+        System.out.println("甲方解密后的数据：" + new String(decode2));
+ 
+ 
+    }
+ 
+}
+```
+
+**测试结果：**
+
+![](https://img-blog.csdnimg.cn/20210612165949461.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjIwMTE4MA==,size_16,color_FFFFFF,t_70)
+
+3. RSA 签名验签
+
+-----------
+
+RSA 非对称加密算法，除了用来加密 / 解密数据外，还可以用于对数据（文件）的 **签名** 和 **验签**，可用于确认数据或文件的完整性与签名者（所有者）。
+
+*   **签名 / 验签：通常使用 私钥签名，公钥验签。**
+
+Android 安装包 APK 文件的签名，是 RSA 签名验签的典型应用：Android 打包后，用私钥对 APK 文件进行签名，并把公钥和签名结果放到 APK 包中。下次客户端升级 APK 包时，根据新的 APK 包和包内的签名信息，用 APK 包内的公钥验签校验是否和本地已安装的 APK 包使用的是同一个私钥签名，如果是，则允许安装升级。  
+
+
+##  RSA 签名 / 验签工具类: RSASignUtils.java
+
+```java
+package com.javaboy.rsa.utils;
+ 
+import java.io.*;
+import java.security.*;
+ 
+
+public class RsaSignUtils {
+ 
+    /** 秘钥对算法名称 */
+    private static final String ALGORITHM = "RSA";
+ 
+    /** 密钥长度 */
+    private static final int KEY_SIZE = 2048;
+ 
+    /** 签名算法 */
+    private static final String SIGNATURE_ALGORITHM = "Sha1WithRSA";
+ 
+    /**
+     * 随机生成 RSA 密钥对（包含公钥和私钥）
+     */
+    public static KeyPair generateKeyPair() throws Exception {
+        // 获取指定算法的密钥对生成器
+        KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM);
+ 
+        // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
+        gen.initialize(KEY_SIZE);
+ 
+        // 随机生成一对密钥（包含公钥和私钥）
+        return gen.generateKeyPair();
+    }
+ 
+    /**
+     * 私钥签名（数据）: 用私钥对指定字节数组数据进行签名, 返回签名信息
+     */
+    public static byte[] sign(byte[] data, PrivateKey priKey) throws Exception {
+        // 根据指定算法获取签名工具
+        Signature sign = Signature.getInstance(SIGNATURE_ALGORITHM);
+ 
+        // 用私钥初始化签名工具
+        sign.initSign(priKey);
+ 
+        // 添加要签名的数据
+        sign.update(data);
+ 
+        // 计算签名结果（签名信息）
+        byte[] signInfo = sign.sign();
+ 
+        return signInfo;
+    }
+ 
+    /**
+     * 公钥验签（数据）: 用公钥校验指定数据的签名是否来自对应的私钥
+     */
+    public static boolean verify(byte[] data, byte[] signInfo, PublicKey pubKey) throws Exception {
+        // 根据指定算法获取签名工具
+        Signature sign = Signature.getInstance(SIGNATURE_ALGORITHM);
+ 
+        // 用公钥初始化签名工具
+        sign.initVerify(pubKey);
+ 
+        // 添加要校验的数据
+        sign.update(data);
+ 
+        // 校验数据的签名信息是否正确,
+        // 如果返回 true, 说明该数据的签名信息来自该公钥对应的私钥,
+        // 同一个私钥的签名, 数据和签名信息一一对应, 只要其中有一点修改, 则用公钥无法校验通过,
+        // 因此可以用私钥签名, 然后用公钥来校验数据的完整性与签名者（所有者）
+        boolean verify = sign.verify(signInfo);
+ 
+        return verify;
+    }
+ 
+    /**
+     * 私钥签名（文件）: 用私钥对文件进行签名, 返回签名信息
+     */
+    public static byte[] signFile(File file, PrivateKey priKey) throws Exception {
+        // 根据指定算法获取签名工具
+        Signature sign = Signature.getInstance(SIGNATURE_ALGORITHM);
+ 
+        // 用私钥初始化签名工具
+        sign.initSign(priKey);
+ 
+        InputStream in = null;
+ 
+        try {
+            in = new FileInputStream(file);
+ 
+            byte[] buf = new byte[1024];
+            int len = -1;
+ 
+            while ((len = in.read(buf)) != -1) {
+                // 添加要签名的数据
+                sign.update(buf, 0, len);
+            }
+ 
+        } finally {
+            close(in);
+        }
+ 
+        // 计算并返回签名结果（签名信息）
+        return sign.sign();
+    }
+ 
+    /**
+     * 公钥验签（文件）: 用公钥校验指定文件的签名是否来自对应的私钥
+     */
+    public static boolean verifyFile(File file, byte[] signInfo, PublicKey pubKey) throws Exception {
+        // 根据指定算法获取签名工具
+        Signature sign = Signature.getInstance(SIGNATURE_ALGORITHM);
+ 
+        // 用公钥初始化签名工具
+        sign.initVerify(pubKey);
+ 
+        InputStream in = null;
+ 
+        try {
+            in = new FileInputStream(file);
+ 
+            byte[] buf = new byte[1024];
+            int len = -1;
+ 
+            while ((len = in.read(buf)) != -1) {
+                // 添加要校验的数据
+                sign.update(buf, 0, len);
+            }
+ 
+        } finally {
+            close(in);
+        }
+ 
+        // 校验签名
+        return sign.verify(signInfo);
+    }
+ 
+    private static void close(Closeable c) {
+        if (c != null) {
+            try {
+                c.close();
+            } catch (IOException e) {
+                // nothing
+            }
+        }
+    }
+ 
+}
+```
+
+###  测试
+
+```java
+package com.javaboy.rsa.main;
+ 
+import sun.misc.BASE64Encoder;
+ 
+import java.security.*;
+ 
+
+public class TestRsaSign {
+ 
+    public static void main(String[] args) throws Exception {
+        /*
+         * 1. 先生成一对 RSA 密钥, 用于测试
+         */
+        // 随机生成一对 RAS 密钥（包含公钥和私钥）
+        KeyPair keyPair = generateKeyPair();
+        // 获取 公钥 和 私钥
+        PublicKey pubKey = keyPair.getPublic();
+        PrivateKey priKey = keyPair.getPrivate();
+ 
+        /*
+         * 2. 原始数据
+         */
+        String data = "你好, World";
+ 
+        /*
+         * 3. 私钥签名: 对数据进行签名, 计算签名结果
+         */
+        // 根据指定算法获取签名工具
+        Signature sign = Signature.getInstance("Sha1WithRSA");
+        // 用私钥初始化签名工具
+        sign.initSign(priKey);
+        // 添加要签名的数据
+        sign.update(data.getBytes());
+        // 计算签名结果（签名信息）
+        byte[] signInfo = sign.sign();
+        // 输出签名结果的 Base64 字符串
+        System.out.println(new BASE64Encoder().encode(signInfo));
+ 
+        /*
+         * 4. 公钥验签: 用公钥校验数据的签名是否来自指定的私钥
+         */
+        // 根据指定算法获取签名工具
+        sign = Signature.getInstance("Sha1WithRSA");
+        // 用公钥初始化签名工具
+        sign.initVerify(pubKey);
+        // 添加要校验的数据
+        sign.update(data.getBytes());
+        // 校验数据的签名信息是否正确,
+        // 如果返回 true, 说明该数据的签名信息来自该公钥对应的私钥,
+        // 同一个私钥的签名, 数据和签名信息一一对应, 只要其中有一点修改, 则用公钥无法校验通过,
+        // 因此可以用私钥签名, 然后用公钥来校验数据的完整性与签名者（所有者）
+        boolean verify = sign.verify(signInfo);
+        System.out.println(verify);
+    }
+ 
+    /**
+     * 随机生成 RSA 密钥对（包含公钥和私钥）
+     */
+    private static KeyPair generateKeyPair() throws Exception {
+        // 获取指定算法的密钥对生成器
+        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+        // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
+        gen.initialize(2048);
+        // 随机生成一对密钥（包含公钥和私钥）
+        return gen.generateKeyPair();
+    }
+ 
+}
+```
+
