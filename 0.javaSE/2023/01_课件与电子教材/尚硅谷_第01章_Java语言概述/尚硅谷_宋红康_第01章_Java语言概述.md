@@ -773,7 +773,9 @@ class HelloChina {
 
 第一个`HelloWord` 源程序就编写完成了，但是这个文件是程序员编写的，JVM是看不懂的，也就不能运行，因此我们必须将编写好的`Java源文件` 编译成JVM可以看懂的`字节码文件` ，也就是`.class`文件。
 
-### 8.3 编译
+### 8.3 编译javac
+
+javac命令官网：https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
 
 在DOS命令行中，进入`D:\JavaSE\chapter01`目录，使用`javac` 命令进行编译。
 
@@ -799,7 +801,7 @@ javac HelloWorld.java
 
 编译成功后，命令行没有任何提示。打开`D:\JavaSE\chapter01`目录，发现产生了一个新的文件 `HelloChina.class`，该文件就是编译后的文件，是Java的可运行文件，称为**字节码文件**，有了字节码文件，就可以运行程序了。 
 
-### 8.4 运行
+### 8.4 运行java
 
 在DOS命令行中，在字节码文件目录下，使用`java` 命令进行运行。
 
@@ -807,6 +809,23 @@ javac HelloWorld.java
 
 ```java
 java 主类名字
+    
+java [options] classname [args]
+java [options] -jar filename [args]
+
+	options
+		命令行选项以空格分隔  标准参数检查 JRE 版本、设置类路径、启用详细输出等。非标准选项是特定于 Java HotSpot 虚拟机的通用选项
+
+	classname
+		要启动的类的名称	.
+
+	filename
+		要调用的 Java Archive (JAR) 文件的名称。仅与选项一起使用-jar
+
+	args
+		传递给 main ()方法的参数由空格分隔。
+		
+链接：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
 ```
 
 主类是指包含main方法的类，main方法是Java程序的入口：
