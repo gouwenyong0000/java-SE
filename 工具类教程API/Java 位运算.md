@@ -625,6 +625,20 @@ System.out.println(Integer.toBinaryString(10));//1010
 System.out.println(Integer.toBinaryString(-10));//11111111111111111111111111111101
 System.out.println(Long.toBinaryString(10));//1010
 System.out.println(Long.toBinaryString(-10));//1111111111111111111111111111111111111111111111111111111111110110
+
+
+// 进制字符串与数字转换
+int j = 0b11001001100101100000001011010010;
+System.out.println("j = " + j);
+//使用下面解析会报错，范围限定在最大值和最小值之间
+//int i = Integer.parseInt("11001001100101100000001011010010", 2);
+
+int i = (int)Long.parseLong("11001001100101100000001011010010", 2);//按二进制解析字符串
+System.out.println("i = " + i);
+//        j = -912915758
+//        i = -912915758
+
+
 ```
 
 如上代码可知，Integer 和 Long 转换为补码时，Integer 为 32 位，Long 是 64 位。实际上上述的基本类型 32 位还是 64 位，均是直接定义在源码当中的，感兴趣直接看对应的 Integer 和 Long 的源码即可。
@@ -674,15 +688,6 @@ public static int toUnsignedInt(byte x) {
      return ((int) x) & 0xff;
 }
 
-
-// 进制字符串与数字转换
-int j = 0b11001001100101100000001011010010;
-System.out.println("j = " + j);
-
-int i = (int)Long.parseLong("11001001100101100000001011010010", 2);//按二进制解析字符串
-System.out.println("i = " + i);
-//        j = -912915758
-//        i = -912915758
 ```
 
 
