@@ -26,7 +26,7 @@
 	Wireshark	--抓包
 	SwitchHosts --修改host
 	SocketTool4   模拟Socket发包和服务器
-	xshell  终端
+	xshell  、MobaXterm终端
 	ipop  : IP绑定，路由配置，MAC信息，网络统计，端口信息，端口映射，网卡流量，报文捕获，终端工具，服务
 # 对比工具
 	WinMerge
