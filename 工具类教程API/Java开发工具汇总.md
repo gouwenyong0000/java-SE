@@ -19,6 +19,7 @@
 	JProfiler
 	GC 日志分析工具
         GCViewer【github开源】、GCEasy【在线版】、GCHisto、GCLogViewer、Hpjmeter、garbagecat 等
+    jclasslib：字节码分析
 
 # 网络相关
 
