@@ -177,6 +177,34 @@ aFile.close();
 
 
 
+半包解码：
+
+```java
+        //对ByteBuffer进行编解码，如果有半包消息指针reset，继续读取后续的报文，将解码成功的消息封装成Task，投递到业务线程池中，进行业务逻辑编排，示例代码如下
+        Object message = null;
+
+
+        while (byteBuffer.hasRemaining()){
+            byteBuffer.mark();//标记
+            message =  decode(byteBuffer);//flip()切换到读
+
+            if (message == null){
+                byteBuffer.reset();//未解析到完整报文，恢复到标记位置,等待报文完整
+                break;
+            }
+
+            messageList.add(message);
+        }
+
+        if (!byteBuffer.hasRemaining()){//
+            byteBuffer.clear();
+        }else {
+            byteBuffer.compact();
+        }
+```
+
+
+
 ## 图解ByteBuffer
 
 主要解释一下ByteBuffer的一些主要方法。
