@@ -43,7 +43,22 @@ keytool 命令详解
 ### 密钥和证书管理工具
 
 ```
--certreq            生成证书请求-changealias        更改条目的别名-delete             删除条目-exportcert         导出证书（简写 export）-genkeypair         生成密钥对（简写 genkey）-genseckey          生成密钥-gencert            根据证书请求生成证书-importcert         导入证书或证书链（简写 import）-importpass         导入口令-importkeystore     从其他密钥库导入一个或所有条目-keypasswd          更改条目的密钥口令-list               列出密钥库中的条目-printcert          打印证书内容-printcertreq       打印证书请求的内容-printcrl           打印 CRL 文件的内容-storepasswd        更改密钥库的存储口令
+-certreq            生成证书请求
+-changealias        更改条目的别名
+-delete             删除条目
+-exportcert         导出证书（简写 export）
+-genkeypair         生成密钥对（简写 genkey）
+-genseckey          生成密钥
+-gencert            根据证书请求生成证书
+-importcert         导入证书或证书链（简写 import）
+-importpass         导入口令-
+importkeystore     从其他密钥库导入一个或所有条目
+-keypasswd          更改条目的密钥口令
+-list               列出密钥库中的条目
+-printcert          打印证书内容
+-printcertreq       打印证书请求的内容
+-printcrl           打印 CRL 文件的内容
+-storepasswd        更改密钥库的存储口令
 ```
 
 Tips:
@@ -54,7 +69,27 @@ Tips:
 ### 常用参数
 
 ```
--genkey         产生密钥对（genkeypair 简写）；表示要创建一个新的密钥；alias和keystore缺省时，在用户主目录中创建一个”.keystore”文件，且别名为mykey，包含用户的公钥、私钥证书-alias          产生证书别名，和keystore关联的唯一别名，不区分大小写（默认 `mykey`）-keystore       指定密钥库文件的名称（默认在用户主目录创建证书库）-keyalg         指定密钥的算法（可选择密钥算法：`RSA`、`DSA`、`EC`，默认`DSA`）-keysize        指定密钥长度（与keyalg默认对应关系：`RSA=2048`、`DSA=2048`、`EC=256`）-sigalg         指定签名算法（MD5和 SHA1的签名算法已经不安全）-validity       指定证书有效期天数（默认 `90`天）-storepass      指定密钥库口令，推荐与keypass一致（获取keystore信息所需的密码）-storetype      指定密钥库的类型，可用类型为：JKS、PKCS12等。（jdk9以前，默认为JKS。自jdk9开始，默认为PKCS12）-keypass        指定别名条目口令（私钥的密码）-dname          指定证书发行者信息（其中 CN 要和服务器的 `域名` 或 `IP` 相同，本地测试则使用localhost，其他的可以不填）-list           显示密钥库中的证书信息-v              详细输出，显示密钥库中的证书详细信息-file           指定导出或导出的文件名-export         将别名指定的证书导出到文件（exportcert 简写）-import         将已签名数字证书导入密钥库（importcert 简写）-printcert      查看导出的证书信息-delete         删除密钥库中某条目-keypasswd      修改密钥库中指定条目口令-storepasswd    修改keystore口令-ext            X.509 扩展
+-genkey         产生密钥对（genkeypair 简写）；表示要创建一个新的密钥；alias和keystore缺省时，在用户主目录中创建一个”.keystore”文件，且别名为mykey，包含用户的公钥、私钥证书
+-alias          产生证书别名，和keystore关联的唯一别名，不区分大小写（默认 `mykey`）
+-keystore       指定密钥库文件的名称（默认在用户主目录创建证书库）
+-keyalg         指定密钥的算法（可选择密钥算法：`RSA`、`DSA`、`EC`，默认`DSA`）
+-keysize        指定密钥长度（与keyalg默认对应关系：`RSA=2048`、`DSA=2048`、`EC=256`）
+-sigalg         指定签名算法（MD5和 SHA1的签名算法已经不安全）
+-validity       指定证书有效期天数（默认 `90`天）
+-storepass      指定密钥库口令，推荐与keypass一致（获取keystore信息所需的密码）
+-storetype      指定密钥库的类型，可用类型为：JKS、PKCS12等。（jdk9以前，默认为JKS。自jdk9开始，默认为PKCS12）
+-keypass        指定别名条目口令（私钥的密码）
+-dname          指定证书发行者信息（其中 CN 要和服务器的 `域名` 或 `IP` 相同，本地测试则使用localhost，其他的可以不填）
+-list           显示密钥库中的证书信息
+-v              详细输出，显示密钥库中的证书详细信息
+-file           指定导出或导出的文件名
+-export         将别名指定的证书导出到文件（exportcert 简写）
+-import         将已签名数字证书导入密钥库（importcert 简写）
+-printcert      查看导出的证书信息
+-delete         删除密钥库中某条目
+-keypasswd      修改密钥库中指定条目口令
+-storepasswd    修改keystore口令
+-ext            X.509 扩展
 ```
 
 Tips:
@@ -81,14 +116,36 @@ Tips:
 
 *   Usage:
     
-    ```
-    keytool -genkey         -alias <alias>         -keyalg RSA         [-sigalg SHA256withRSA]         [-keysize 2048]         -keypass <keypasswd>         -keystore <keystore_file>         -storetype JKS|PKCS12         -storepass <keystore_passwd>         -validity 3650         -dname "CN=github.com,OU=github.com,Inc.,O=Github, Inc.,L=San Francisco,ST=California,C=US"         -ext SAN=dns:github.com,dns:www.github.com,ip:127.0.0.1
+    ```sh
+    keytool -genkey 
+            -alias <alias> 
+            -keyalg RSA 
+            [-sigalg SHA256withRSA] 
+            [-keysize 2048] 
+            -keypass <keypasswd> 
+            -keystore <keystore_file> 
+            -storetype JKS|PKCS12 
+            -storepass <keystore_passwd> 
+            -validity 3650 
+            -dname "CN=github.com,OU=github.com,Inc.,O=Github, Inc.,L=San Francisco,ST=California,C=US" 
+            -ext SAN=dns:github.com,dns:www.github.com,ip:127.0.0.1 
     ```
     
 *   Options:
     
-    ```
-    -genkey     产生密钥对（genkeypair 简写）-alias      证书别名；和keystore关联的唯一别名，这个alias通常不区分大小写（默认`mykey`）-keyalg     指定加密算法，RSA：非对称加密（默认`DSA`）-sigalg     指定签名算法，可选;-keysize    指定密钥长度，可选;-keypass    指定别名条目口令（私钥的密码）-storetype  生成证书类型，可用的证书库类型为：JKS、PKCS12等。（jdk9以前，默认为JKS。自jdk9开始，默认为PKCS12）-keystore   指定产生的密钥库的位置；-storepass  指定密钥库的存取口令，推荐与keypass一致-validity   证书有效期天数；（默认为 90天）-dname      表明了密钥的发行者身份（Distinguished Names）生成证书时，其中 CN 要和服务器的 `域名` 或 `IP` 相同，本地测试则使用localhost，其他的可以不填-ext        X.509 扩展
+    ```sh
+    -genkey     产生密钥对（genkeypair 简写）
+    -alias      证书别名；和keystore关联的唯一别名，这个alias通常不区分大小写（默认`mykey`）
+    -keyalg     指定加密算法，RSA：非对称加密（默认`DSA`）
+    -sigalg     指定签名算法，可选;
+    -keysize    指定密钥长度，可选;
+    -keypass    指定别名条目口令（私钥的密码）
+    -storetype  生成证书类型，可用的证书库类型为：JKS、PKCS12等。（jdk9以前，默认为JKS。自jdk9开始，默认为PKCS12）
+    -keystore   指定产生的密钥库的位置；
+    -storepass  指定密钥库的存取口令，推荐与keypass一致
+    -validity   证书有效期天数；（默认为 90天）
+    -dname      表明了密钥的发行者身份（Distinguished Names）生成证书时，其中 CN 要和服务器的 `域名` 或 `IP` 相同，本地测试则使用localhost，其他的可以不填
+    -ext        X.509 扩展
     ```
     
 
@@ -113,14 +170,24 @@ Tips：
 
 *   Usage:
     
-    ```
-    keytool -export         -alias <alias>         -keystore <keystore_file>         -storepass <keystore_passwd>         -file <file_cer>            [-rfc]
+    ```sh
+    keytool -export 
+            -alias <alias> 
+            -keystore <keystore_file> 
+            -storepass <keystore_passwd> 
+            -file <file_cer>    
+            [-rfc] 
     ```
     
 *   Options:
     
-    ```
-    -export     执行证书导出操作（exportcert 简写）-alias      密钥库中的证书条目别名（jks里可以存储多对公私钥文件，通过别名指定导出的公钥证书）-keystore   指定密钥库文件-storepass  密钥库口令-file       导出文件的输出路径-rfc        使用Base64格式输出（输出pem编码格式的证书，文本格式），不适用则导出的证书为DER编码格式
+    ```sh
+    -export     执行证书导出操作（exportcert 简写）
+    -alias      密钥库中的证书条目别名（jks里可以存储多对公私钥文件，通过别名指定导出的公钥证书）
+    -keystore   指定密钥库文件
+    -storepass  密钥库口令
+    -file       导出文件的输出路径
+    -rfc        使用Base64格式输出（输出pem编码格式的证书，文本格式），不适用则导出的证书为DER编码格式
     ```
     
 
@@ -130,14 +197,22 @@ Tips：
 
 *   Usage:
     
-    ```
-    keytool -certreq         -alias <alias>         -keystore <keystore_file>         -storepass <keystore_passwd>         -file <file_csr>
+    ```sh
+    keytool -certreq 
+            -alias <alias> 
+            -keystore <keystore_file> 
+            -storepass <keystore_passwd> 
+            -file <file_csr> 
     ```
     
 *   Options:
     
-    ```
-    -certreq    执行证书签发申请导出操作-alias      密钥库中的证书条目别名-keystore   密钥库文件名称-storepass  密钥库口令-file       输出的csr文件路径
+    ```sh
+    -certreq    执行证书签发申请导出操作
+    -alias      密钥库中的证书条目别名
+    -keystore   密钥库文件名称
+    -storepass  密钥库口令
+    -file       输出的csr文件路径
     ```
     
 
@@ -147,14 +222,24 @@ Tips：
 
 *   Usage:
     
-    ```
-    keytool -import         [-trustcacerts]         -alias <alias_cer>         -keystore <keystore_file>        -storepass <keystore_passwd>         -file <file_cer>
+    ```sh
+    keytool -import 
+            [-trustcacerts] 
+            -alias <alias_cer> 
+            -keystore <keystore_file>
+            -storepass <keystore_passwd> 
+            -file <file_cer> 
     ```
     
 *   Options:
     
-    ```
-    -import     执行证书导入操作（importcert 简写）-alias      指定导入密钥库中的证书别名（指定的条目别名不能与密钥库中已存在的条目别名重复（导入签发证书除外））-trustcacerts    将证书导入信任库（信任来自 cacerts 的证书）-keystore   密钥库名称-storepass  密钥库口令-file       输入文件名
+    ```sh
+    -import     执行证书导入操作（importcert 简写）
+    -alias      指定导入密钥库中的证书别名（指定的条目别名不能与密钥库中已存在的条目别名重复（导入签发证书除外））
+    -trustcacerts    将证书导入信任库（信任来自 cacerts 的证书）
+    -keystore   密钥库名称
+    -storepass  密钥库口令
+    -file       输入文件名
     ```
     
 
@@ -188,21 +273,53 @@ Tips： 此步骤会生成信任证书 truststore.jks 文件， 文件存放需�
 
 *   Usage:
     
-    ```
-    # 查看单个证书（cer | crt）keytool -printcert -file <cert_file> [-v|-rfc] # 查看密钥库中的证书条目keytool -list [-alias <alias_name>] -keystore <keystore_file> -storepass <keystore_passwd> [-v|-rfc] # 查看生成的CSR证书请求keytool -printcertreq -file <certreq_file>
+    ```sh
+    # 查看单个证书（cer | crt）
+    keytool -printcert -file <cert_file> [-v|-rfc]
+     
+    # 查看密钥库中的证书条目
+    keytool -list [-alias <alias_name>] -keystore <keystore_file> -storepass <keystore_passwd> [-v|-rfc]
+     
+    # 查看生成的CSR证书请求
+    keytool -printcertreq -file <certreq_file>     
     ```
     
 *   Options:
     
-    ```
-    -alias      密钥库中的证书条目别名；-keystore   指定密钥库文件；-storepass  密钥库口令；-printcert  执行证书打印命令；-list       缺省情况下，命令打印证书的 MD5 指纹。    而如果指定了 -v 选项，将以可读格式打印证书，    如果指定了 -rfc 选项，将以可打印的编码格式输出证书。
+    ```sh
+    -alias      密钥库中的证书条目别名；
+    -keystore   指定密钥库文件；
+    -storepass  密钥库口令；
+    -printcert  执行证书打印命令；
+    -list       缺省情况下，命令打印证书的 MD5 指纹。
+        而如果指定了 -v 选项，将以可读格式打印证书，
+        如果指定了 -rfc 选项，将以可打印的编码格式输出证书。
+     
     ```
     
 
 ### 其他命令
 
-```
-# 删除keystore里面指定证书条目keytool -delete -alias <alias> -keystore <keystore_file> -storepass <keystore_passwd> # 修改条目别名keytool -changealias -keystore <keystore_file> -alias <old_alias> -destalias <new_alias> # 修改条目密码keytool -keypasswd -alias <alias> -keypass <old_keypasswd> -new <new_keypasswd> -keystore <keystore_file> -storepass <keystore_passwd> # 修改keysore密码keytool -storepasswd -new <new_storepasswd> -keystore <keystore_file> -storepass <old_storepasswd> # 列出信任的CA证书（查看 JVM的信任库中的证书，storepass 默认为changeit）## 该证书文件存在于JAVA_HOME\jre\lib\security目录下，是Java系统的CA证书仓库，可以用 'alias' 来查看证书是否真的导入到JVM中keytool -list -v [-alias clientCer] -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit # 导入新的CA到信任证书，导入到 JRE的信任证书库## 常出现的异常：“未找到可信任的证书”  -- 主要原因为在客户端未将服务器下发的证书导入到JVM中。keytool -import -trustcacerts -alias clientCer -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -file ~/ssl/client.cer
+```sh
+# 删除keystore里面指定证书条目
+keytool -delete -alias <alias> -keystore <keystore_file> -storepass <keystore_passwd>
+ 
+# 修改条目别名
+keytool -changealias -keystore <keystore_file> -alias <old_alias> -destalias <new_alias>
+ 
+# 修改条目密码
+keytool -keypasswd -alias <alias> -keypass <old_keypasswd> -new <new_keypasswd> -keystore <keystore_file> -storepass <keystore_passwd>
+ 
+# 修改keysore密码
+keytool -storepasswd -new <new_storepasswd> -keystore <keystore_file> -storepass <old_storepasswd>
+ 
+# 列出信任的CA证书（查看 JVM的信任库中的证书，storepass 默认为changeit）
+## 该证书文件存在于JAVA_HOME\jre\lib\security目录下，是Java系统的CA证书仓库，可以用 'alias' 来查看证书是否真的导入到JVM中
+keytool -list -v [-alias clientCer] -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit
+ 
+# 导入新的CA到信任证书，导入到 JRE的信任证书库
+## 常出现的异常：“未找到可信任的证书”  -- 主要原因为在客户端未将服务器下发的证书导入到JVM中。
+keytool -import -trustcacerts -alias clientCer -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -file ~/ssl/client.cer
 ```
 
 栗子
@@ -218,8 +335,12 @@ Tips： 此步骤会生成信任证书 truststore.jks 文件， 文件存放需�
     
 4.  配置 Tomcat/conf/server.xml，找到如下原注释内容，并修改如下：
     
-    ```
-    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"    maxThreads="150" scheme="https" secure="true"    clientAuth="false" sslProtocol="TLS"    keystoreFile="~/ssl/tomcat.jks" keystorePass="123456"/>
+    ```xml
+    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+        maxThreads="150" scheme="https" secure="true"
+        clientAuth="false" sslProtocol="TLS"
+        keystoreFile="~/ssl/tomcat.jks" keystorePass="123456"
+    />
     ```
     
 
@@ -240,8 +361,13 @@ Tips： 此步骤会生成信任证书 truststore.jks 文件， 文件存放需�
     
 5.  配置 Tomcat/conf/server.xml，并开启双向认证（clientAuth 的值改为 true）
     
-    ```
-    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"    maxThreads="150" scheme="https" secure="true"    clientAuth="true" sslProtocol="TLS"    keystoreFile="~/ssl/tomcat.jks" keystorePass="123456"    truststoreFile="~/ssl/truststore.jks" truststorePass="123456"/>
+    ```xml
+    <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+        maxThreads="150" scheme="https" secure="true"
+        clientAuth="true" sslProtocol="TLS"
+        keystoreFile="~/ssl/tomcat.jks" keystorePass="123456"
+        truststoreFile="~/ssl/truststore.jks" truststorePass="123456"
+    />
     ```
     
 
