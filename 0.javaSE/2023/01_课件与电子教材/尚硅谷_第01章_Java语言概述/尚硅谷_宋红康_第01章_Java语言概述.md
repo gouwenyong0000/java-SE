@@ -704,8 +704,14 @@ Spring 官方说明：`https://spring.io/blog/2022/01/20/spring-boot-3-0-0-m1-is
 > tips：打印环境变量：
 >
 > ```bash
+> #windows
 > echo %JAVA_HOME%
+> echo   %PATH%
+> 
 > D:\Java\SDK\jdk11
+> 
+> #linux：
+> echo  $PATH
 > ```
 
 **小结如下：**

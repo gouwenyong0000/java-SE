@@ -3405,6 +3405,19 @@ PATH=$JAVA_HOME/bin:$PATH    # 或者PATH=/opt/jdk1.7.0_79/bin:$PATH
 export JAVA_HOME PATH    # 输出变量，让环境变量剩下
 ```
 
+打印环境变量
+
+```sh
+#windows
+echo %JAVA_HOME%
+echo   %PATH%
+
+D:\Java\SDK\jdk11
+
+#linux：
+echo  $PATH
+```
+
 3) 需要注销用户，环境变量才能生效。
 
 如果是在3 运行级别， `logout`
