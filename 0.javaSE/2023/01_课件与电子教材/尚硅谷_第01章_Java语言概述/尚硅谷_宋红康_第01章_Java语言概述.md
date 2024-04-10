@@ -781,7 +781,24 @@ class HelloChina {
 
 ### 8.3 编译javac
 
-javac命令官网：https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
+> javac命令官网：https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
+>
+> Java编译器`javac`具有多种参数，以下是一些常用的参数：
+>
+> 1. `-classpath` 或 `-cp`: 指定编译时使用的类路径。
+> 2. `-d <directory>`: 指定生成的类文件的存放目录。
+> 3. `-source <version>`: 指定源代码的版本，例如`1.8`、`1.11`等。
+> 4. `-target <version>`: 指定生成的类文件的目标版本。
+> 5. `-verbose`: 输出详细的编译信息。
+> 6. `-deprecation`: 输出使用了已废弃 API 的警告信息。
+> 7. `-nowarn`: 关闭所有警告信息。
+> 8. `-g`: 生成调试信息。
+> 9. `-encoding <encoding>`: 指定源文件的字符编码。
+> 10. `-J<flag>`: 传递参数给 Java 运行时系统。
+>
+> 这些是常用的一些参数，`javac` 还有更多参数用于更具体的需求，可以通过 `javac -help` 查看完整的参数列表。
+
+
 
 在DOS命令行中，进入`D:\JavaSE\chapter01`目录，使用`javac` 命令进行编译。
 
@@ -830,7 +847,22 @@ java [options] -jar filename [args]
 
 	args
 		传递给 main ()方法的参数由空格分隔。
-		
+以下是一些常用的Java虚拟机参数： 
+-Xms<size>: 设置JVM的初始堆大小。
+-Xmx<size>: 设置JVM的最大堆大小。
+-Xss<size>: 设置线程的栈大小。
+-XX:PermSize=<size>: 设置永久代（在Java 8及之前版本中）的初始大小。
+-XX:MaxPermSize=<size>: 设置永久代（在Java 8及之前版本中）的最大大小。
+-XX:MaxMetaspaceSize=<size>: 设置元空间（在Java 8及之后版本中）的最大大小。
+-XX:ReservedCodeCacheSize=<size>: 设置代码缓存大小。
+-XX:+UseParallelGC: 启用并行垃圾收集器。
+-XX:+UseConcMarkSweepGC: 启用CMS垃圾收集器。
+-XX:+UseG1GC: 启用G1垃圾收集器。
+-XX:+PrintGCDetails: 输出详细的垃圾收集信息。
+-XX:+PrintGCDateStamps: 输出垃圾收集的时间戳。
+-verbose:gc: 输出简要的垃圾收集信息。
+-D<property>=<value>: 设置系统属性。
+除了这些，还有很多其他的JVM参数，用于调整垃圾收集器、优化性能、诊断和调试等目的。要获取完整的JVM参数列表，可以使用java -XX:+PrintFlagsFinal命令。		
 链接：https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
 ```
 
@@ -844,8 +876,21 @@ public static void main(String[] args){
 
 举例：
 
-```
+```sh
 java HelloChina
+
+# 带参数
+D:\Java\SDK\jdk1.8\jdk1.8.0_241\bin\java.exe 
+# options
+-Xms64m 
+-Xmx64m 
+-XX:+PrintGCDetails 
+-Dfile.encoding=UTF-8 
+-classpath D:\Java\SDK\jdk1.8\jdk1.8.0_241\jre\lib\charsets.jar;F:\【Java】\now\尚硅谷_宋红康_JVM从入门到精通\JVM下篇：性能监控与调优篇\代码\03_代码\JVMDemo2\chapter03\lib\lombok.jar  
+
+com.atguigu.arthas.OOMTest #classname
+
+arg1 #args
 ```
 
 > 错误演示：
