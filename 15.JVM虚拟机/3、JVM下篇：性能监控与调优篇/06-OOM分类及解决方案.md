@@ -20,18 +20,18 @@
 -------------------------------------------------------------------------------
 
 模拟线上环境产生 OOM，代码清单如下所示：  
-![](images/06-OOM 分类及解决方案/04c305924ce64340ac6df8370fa61663-1713202176925-77.png)  
+![](images/06-OOM分类及解决方案/04c305924ce64340ac6df8370fa61663-1713202176925-77-1713203780002-2.png)  
 JVM 参数配置如下：
 
-![](images/06-OOM 分类及解决方案/47b1d19feca044ac97099282c504ef20.png)  
+![](images/06-OOM分类及解决方案/47b1d19feca044ac97099282c504ef20.png)  
 运行结果如下所示：  
-![](images/06-OOM 分类及解决方案/431fc81cde0c486dbdc1acaaadc76b1b.png)  
+![](images/06-OOM分类及解决方案/431fc81cde0c486dbdc1acaaadc76b1b.png)  
 运行程序得到 heapdump.hprof 文件，在设置的 heap 目录下，如下图所示：  
-![](images/06-OOM 分类及解决方案/86c013659d1d41da91037dd3b6c7e3fc.png)  
+![](images/06-OOM分类及解决方案/86c013659d1d41da91037dd3b6c7e3fc.png)  
 由于我们当前设置的内存比较小，所以该文件比较小，但是正常在线上环境，该文件是比较大的，通常以 G 为单位。
 
 下面使用工具分析堆内存文件 heapdump.hprof，通过 Java VisualVM 工具查看哪个类的实例占用内存最多，这样就可以初步定位到问题所在。如下图所示，可以看到在堆内存中存在大量的 People 类对象，占用了 99.9% 内存，基本上就可以定位问题所在了。当然这里的代码比较简单，在工作中，定位问题的思路基本一致。  
-![](images/06-OOM 分类及解决方案/53c4e1541e9c435f9a486b913be2da10.png)  
+![](images/06-OOM分类及解决方案/53c4e1541e9c435f9a486b913be2da10.png)  
 [内存溢出](https://so.csdn.net/so/search?q=%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA&spm=1001.2101.3001.7020)的原因有很多，比如代码中存在大对象分配，导致没有足够的内存空间存放该对象；再比如应用存在内存泄漏，导致在多次垃圾收集之后，依然无法找到一块足够大的内存容纳当前对象。
 
 对于堆溢出的解决方法，这里提供如下思路：
@@ -65,9 +65,9 @@ java.lang.OutOfMemoryError:Metaspace
 *   (3)dump 之后通过 mat 检查是否存在大量由于反射生成的代理类。
 
 代码清单如下所示，代码含义是使用动态代理产生类使得元空间溢出。  
-![](images/06-OOM 分类及解决方案/3ea45817bd394a2ba9c901b9ebe877fb.png)  
+![](images/06-OOM分类及解决方案/3ea45817bd394a2ba9c901b9ebe877fb.png)  
 JVM 参数配置如下：  
-![](images/06-OOM 分类及解决方案/dff867a810374d43a16bb5af533345a6.png)  
+![](images/06-OOM分类及解决方案/dff867a810374d43a16bb5af533345a6.png)  
 浏览器发送如下请求：
 
 ```
@@ -75,20 +75,20 @@ http://localhost:8080/metaSpaceOom
 ```
 
 运行结果如下所示：  
-![](images/06-OOM 分类及解决方案/45bd71b45c4e434b9c32a2fb4f27ba46.png)  
+![](images/06-OOM分类及解决方案/45bd71b45c4e434b9c32a2fb4f27ba46.png)  
 查看监控，如下图所示：  
-![](images/06-OOM 分类及解决方案/40c0dd8e11a645cb98454d6223f4035c.png)  
+![](images/06-OOM分类及解决方案/40c0dd8e11a645cb98454d6223f4035c.png)  
 可以看到，Full GC 非常频繁，而且元空间占用了 59190KB 即 57.8MB 空间，几乎把整个元空间占用。所以得出的结论是方法区空间设置过小，或者存在大量由于反射生成的代理类。查看 GC 日志如下：  
-![](images/06-OOM 分类及解决方案/e8aba547eff14689a290a553ccd5a7ce.png)  
-![](images/06-OOM 分类及解决方案/b4667c03903c46279dd1fde7d32ede80.png)  
+![](images/06-OOM分类及解决方案/e8aba547eff14689a290a553ccd5a7ce.png)  
+![](images/06-OOM分类及解决方案/b4667c03903c46279dd1fde7d32ede80.png)  
 可以看到 Full GC 是由于元空间不足引起的，那么接下来分析到底是什么数据占用了大量的方法区。导出 dump 文件，使用 Java VisualVM 分析。
 
 首先确定是哪里的代码发生了问题，可以通过线程来确定，因为在实际生产环境中，有时候无法确定是哪块代码引起的 OOM，那么就需要先定位问题线程，然后定位代码，如下图所示：  
-![](images/06-OOM 分类及解决方案/8da14ea1c1534017a7c3c0b836308bce.png)  
+![](images/06-OOM分类及解决方案/8da14ea1c1534017a7c3c0b836308bce.png)  
 定位到问题线程之后，使用 MAT 工具打开继续分析，如下图所示，先打开线程视图，然后根据线程名称打开对应线程的栈信息，最后找到对应的代码块。  
-![](images/06-OOM 分类及解决方案/10a7c02e70ac4f38ba26ed4f40a7fd07.png)  
+![](images/06-OOM分类及解决方案/10a7c02e70ac4f38ba26ed4f40a7fd07.png)  
 定位到代码以后，发现有使用到 cglib 动态代理，那么猜想问题是由于产生了很多代理类。接下来，可以通过包看一下类加载情况。由于代码是代理的 People 类，所以直接打开该类所在的包，如下图所示：  
-![](images/06-OOM 分类及解决方案/4514e24040044e7ca967953f4dd87bf4.png)  
+![](images/06-OOM分类及解决方案/4514e24040044e7ca967953f4dd87bf4.png)  
 可以看到确实加载了很多的代理类，想一下解决方案，是不是可以只加载一个代理类以及控制循环的次数，当然如果业务上确实需要加载很多类的话，就要考虑增大方法区大小和控制循环的次数，所以这里修改代码如下：
 
 ```
@@ -116,25 +116,25 @@ enhancer.setUseCache(true);
 出现 GC overhead limit exceeded 这个错误是由于 JVM 花费太长时间执行 GC，且只能回收很少的堆内存。根据 Oracle 官方文档表述，默认情况下，如果 Java 进程花费 98% 以上的时间执行 GC，并且每次只有不到 2% 的堆被恢复，则 JVM 抛出 GC overhead limit exceeded 错误。换句话说，这意味着应用程序几乎耗尽了所有可用内存，垃圾收集器花了太长时间试图清理它，并多次失败。这本质是一个预判性的异常，抛出该异常时系统没有真正的内存溢出，GC overhead limit exceeded 异常的最终结果是 Java heap space。
 
 在这种情况下，用户会体验到应用程序响应非常缓慢，通常只需要几毫秒就能完成的某些操作，此时则需要更长的时间来完成，这是因为所有的 CPU 正在进行垃圾收集，因此无法执行其他任务。使用代码清如下演示 GC overhead limit exceeded 异常。  
-![](images/06-OOM 分类及解决方案/3732219ddfd6412e83d1c23bdbcdf13f.png)  
+![](images/06-OOM分类及解决方案/3732219ddfd6412e83d1c23bdbcdf13f.png)  
 JVM 配置如下所示：  
-![](images/06-OOM 分类及解决方案/11fea41ee07c47ca855fc9d57a054fdc.png)  
+![](images/06-OOM分类及解决方案/11fea41ee07c47ca855fc9d57a054fdc.png)  
 test1() 方法的含义是运行期间将内容放入常量池，运行结果是 GC overhead limit exceeded 错误。test2() 方法的含义是不停地追加字符串 str，运行结果是 Java heap space 错误。大家可能会疑惑，看似 test1() 方法和 test2() 方法也没有太大的差别，为什么 test2() 方法没有报 GC overhead limit exceeded 呢？以上两个方法的区别在于发生 Java heap space 的 test2() 方法每次都能回收大部分的对象（中间产生的 UUID），只不过有一个对象是无法回收的，慢慢长大，直到内存溢出。发生 GC overhead limit exceeded 的 test1() 方法由于每个字符串都在被 list 引用，所以无法回收，很快就用完内存，触发不断回收的机制。
 
 需要注意的是，有些版本的 JDK，有可能不会发生 GC overhead limit exceeded，各位知道即可。该案例报错信息如下：  
-![](images/06-OOM 分类及解决方案/5bf1522ebfdf4304ac5698fc6d3a46f8.png)  
+![](images/06-OOM分类及解决方案/5bf1522ebfdf4304ac5698fc6d3a46f8.png)  
 通过查看 GC 日志可以发现，系统在频繁地做 Full GC，但是却没有回收多少空间，那么引起的原因可能是内存不足，也可能是存在内存泄漏的情况，接下来我们要根据堆内存文件具体分析 GC overhead limit exceeded 的原因。
 
 **1、定位问题代码块：**  
 通过线程分析，可以定位发生 OOM 的代码块，如下图所示：  
-![](images/06-OOM 分类及解决方案/1742b0e227884dd29f9bef4d0b7b72a7.png)  
+![](images/06-OOM分类及解决方案/1742b0e227884dd29f9bef4d0b7b72a7.png)  
 **2、分析堆内存文件：**  
 可以看到发生 OOM 是因为死循环，不停地往 ArrayList 存放字符串常量，JDK 1.7 以后，字符串常量池移到了堆中存储，所以最终导致内存不足发生了 OOM。
 
 打开 “Histogram” 选项，如下图所示。可以看到，String 类型的字符串占用了大概 7.5M 的空间，几乎把堆占满，但是还没有占满，所以这也符合官方对此异常的定义。  
-![](images/06-OOM 分类及解决方案/8f26ffb3aa80420ab50ea5397d3304b3.png)  
+![](images/06-OOM分类及解决方案/8f26ffb3aa80420ab50ea5397d3304b3.png)  
 右击选择 “List objects”，列出上中对象下面的所有引用对象，如下图所示，可以看到所有 String 对象。  
-![](images/06-OOM 分类及解决方案/1a5a063e6746427b926ba9daddac5099.png)  
+![](images/06-OOM分类及解决方案/1a5a063e6746427b926ba9daddac5099.png)  
 **3、解决方案**  
 这个是 JDK 6 新加的错误类型，一般都是堆空间不足导致的。针对该问题的解决方法如下：
 
@@ -152,9 +152,9 @@ java.lang.OutOfMemoryError :unable to create new native Thread
 ```
 
 线程溢出是因为创建的了大量的线程。出现此种情形之后，可能造成系统崩溃。代码清单如下模拟了线程溢出。  
-![](images/06-OOM 分类及解决方案/40b6dc56776344c29a76a9bdbbf38fe5.png)  
+![](images/06-OOM分类及解决方案/40b6dc56776344c29a76a9bdbbf38fe5.png)  
 结果如下：  
-![](images/06-OOM 分类及解决方案/f67793fe23454d27a292112f09599392.png)  
+![](images/06-OOM分类及解决方案/f67793fe23454d27a292112f09599392.png)  
 JDK 5.0 以后栈默认为 1MB，以前栈默认为 256KB。根据应用的线程所需内存大小进行调整，通过参数 - Xss 设置栈内存。在相同物理内存下，减小这个值能生成更多的线程。但是操作系统对一个进程内的线程数还是有限制的，不能无限生成，经验值是 3000～5000。
 
 操作系统能创建的线程数的具体计算公式如下：
@@ -187,7 +187,7 @@ MaxProcessMemory - JVMMemory – ReservedOsMemory = RemainMemory
 在实验过程中，64 位操作系统下调整 Xss 的大小并没有对产生线程的总数产生影响，程序执行到极限的时候，操作系统会死机，无法看出效果。
 
 在 32 位 Win7 操作系统下测试，发现调整 Xss 的大小会对线程数量有影响，随着 Xss 值的变大，线程数量越来越少。如下表所示，其中 JDK 版本是 1.8（适配 32 位操作系统）。  
-![](images/06-OOM 分类及解决方案/eb24afadad6b4f35bee72fff95c80646.png)  
+![](images/06-OOM分类及解决方案/eb24afadad6b4f35bee72fff95c80646.png)  
 Xss 参数的调整对于 64 位操作系统的实验结果是不明显的，但是对于 32 位操作系统的实验结果却是非常明显的，为什么会有这样的区别呢？上面讲到过线程数量的计算公式如下所示：
 
 ```
