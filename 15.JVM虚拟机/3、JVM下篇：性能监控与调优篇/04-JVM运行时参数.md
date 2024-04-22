@@ -362,7 +362,7 @@ jinfo -flag 具体参数 pid    #查看某个Java进程的具体参数的值
 -XX:MaxDirectMemorySize 指定 DirectMemory 容量，默认等于 Java 堆最大值
 ```
 
-> `-XX:+UseAdaptiveSizePolicy` 设置大小比例自适应的说明如下
+#### `-XX:+UseAdaptiveSizePolicy` 设置大小比例自适应的说明如下
 
 ```java
 /**

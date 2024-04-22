@@ -878,17 +878,20 @@ public class ThreadDeadLock {
 
 启动上面的代码
 
-![image.png](images/02-JVM监控及诊断工具-命令行篇/a0692c8f1ded8844e5214bd773416835.png)
+```java
+PS D:\code\mybatis> jps
+21808 Jps
+22692 DeadlockExample
+7012 Launcher
+20152
+PS D:\code\mybatis> jstack 22692
+```
 
-![image.png](images/02-JVM监控及诊断工具-命令行篇/257202781dbfd32717c4d39b91b6ba98.png)
+这是就打印了线程的相关信息了,箭头标识的这两个线程出现了阻塞状态,就是因为死锁了,
+![image-20240423003611785](images/02-JVM监控及诊断工具-命令行篇/image-20240423003611785.png)
 
-这是就打印了线程的相关信息了,
 
-箭头标识的这两个线程出现了阻塞状态,就是因为死锁了,
-![image.png](images/02-JVM监控及诊断工具-命令行篇/879a360f66bbf829ac901a65549f0cd2.png)
 
-然后里面就显示deadlock了.
-![image.png](images/02-JVM监控及诊断工具-命令行篇/2143d50c73db34a0f43f6381b186349c.png)
 
 ### 演示2：线程睡眠问题排查
 
