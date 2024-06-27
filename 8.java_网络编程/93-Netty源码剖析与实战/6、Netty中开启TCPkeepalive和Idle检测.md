@@ -20,11 +20,14 @@
 
 TCP keepalive 核心参数：
 
+```properties
 sysctl -a|grep tcp_keepalive
 
 net.ipv4.tcp_keepalive_time = 7200  
 net.ipv4.tcp_keepalive_intvl = 75  
 net.ipv4.tcp_keepalive_probes = 9  
+```
+
 当启用（默认关闭）keepalive 时，TCP 在连接没有数据；  
 通过的 7200 秒后发送 keepalive 消息，当探测没有确认时，  
 按 75 秒的重试频率重发，一直发 9 个探测包都没有确认，就认定连接失效。  
@@ -33,25 +36,22 @@ net.ipv4.tcp_keepalive_probes = 9
 #### 为什么还需要应用层 keepalive ?
 
 *   协议分层，各层关注点不同：  
-    传输层关注是否 “通”，应用层关注是否可服务？ 类比前面的电话订餐例子，电话能通，  
-    不代表有人接；服务器连接在，但是不定可以服务（例如服务不过来等）。
+    传输层关注是否 “通”，应用层关注是否可服务？ 类比前面的电话订餐例子，电话能通，  不代表有人接；服务器连接在，但是不定可以服务（例如服务不过来等）。
 *   TCP 层的 keepalive 默认关闭，且经过路由等中转设备 keepalive 包可能会被丢弃。
 *   TCP 层的 keepalive 时间太长：  
     默认 > 2 小时，虽然可改，但属于系统参数，改动影响所有应用。
 
-提示：HTTP 属于应用层协议，但是常常听到名词 “HTTP Keep-Alive” 指的是对长连接和短连接的选择：
-
-*   Connection : Keep-Alive 长连接（HTTP/1.1 默认长连接，不需要带这个 header）
-*   Connection : Close 短连接
+> 提示：HTTP 属于应用层协议，但是常常听到名词 “HTTP Keep-Alive” 指的是对长连接和短连接的选择：
+>
+> *   Connection : Keep-Alive 长连接（HTTP/1.1 默认长连接，不需要带这个 header）
+> *   Connection : Close 短连接
 
 #### Idle 监测是什么？
 
 Idle 监测，只是负责诊断，诊断后，做出不同的行为，决定 Idle 监测的最终用途：
 
 *   发送 keepalive : 一般用来配合 keepalive ，减少 keepalive 消息。  
-    Keepalive 设计演进：V1 定时 keepalive 消息 -> V2 空闲监测 + 判定为 Idle 时才发  
-    keepalive。
-    
+    Keepalive 设计演进：V1 定时 keepalive 消息 -> V2 空闲监测 + 判定为 Idle 时才发 keepalive。
     *   V1：keepalive 消息与服务器正常消息交换完全不关联，定时就发送；
     *   V2：有其他数据传输的时候，不发送 keepalive ，无数据传输超过一定时间，判定  
         为 Idle，再发 keepalive 。
@@ -59,24 +59,25 @@ Idle 监测，只是负责诊断，诊断后，做出不同的行为，决定 Id
     
     *   快速释放损坏的、恶意的、很久不用的连接，让系统时刻保持最好的状态。
     *   简单粗暴，客户端可能需要重连。
-    *   实际应用中：结合起来使用。按需 keepalive ，保证不会空闲，如果空闲，关闭连接。
+
+实际应用中：Idle 和keepalive 结合起来使用。按需 keepalive ，保证不会空闲，如果空闲，关闭连接。
 
 #### 如何在 Netty 中开启 TCP keepalive 和 Idle 检测
 
 开启 keepalive：
 
 *   Server 端开启 TCP keepalive
-    *   bootstrap.childOption(ChannelOption.SO_KEEPALIVE,true)
-    *   bootstrap.childOption(NioChannelOption.of(StandardSocketOptions.SO_KEEPALIVE), true)
+    *   `bootstrap.childOption(ChannelOption.SO_KEEPALIVE,true)`
+    *   `bootstrap.childOption(NioChannelOption.of(StandardSocketOptions.SO_KEEPALIVE), true)`
     *   **提示：.option(ChannelOption.SO_KEEPALIVE,true) 存在但是无效**
 *   开启不同的 Idle Check:  
-    ch.pipeline().addLast(“idleCheckHandler", new IdleStateHandler(0, 20, 0, TimeUnit.SECONDS));
+    `ch.pipeline().addLast(“idleCheckHandler", new IdleStateHandler(0, 20, 0, TimeUnit.SECONDS));`
 
 #### 源码解读：Netty 中两种 Keepalive 的区别
 
 在 Server 端开启 TCP keepalive:　两种方式
 
-```
+```java
 serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
 serverBootstrap.childOption(NioChannelOption.SO_KEEPALIVE,true)
 ```

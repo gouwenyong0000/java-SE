@@ -27,7 +27,10 @@
 
 **半包的主要原因：**
 
-　　　发送方写入数据 > 套接字缓冲区大小，还有就是发送的数据大于协议的 MTU(Maximum Transmission Unit 最大传输单元) 的时候必须拆包。（MTU 其实就是 TCP 协议每层的大小）
++ 发送方写入数据 > 套接字缓冲区大小，
++ 发送的数据大于协议的 MTU(Maximum Transmission Unit 最大传输单元) 的时候必须拆包。（MTU 其实就是 TCP 协议每层的大小）
+
+
 
 **换个角度：**
 
@@ -37,7 +40,7 @@
 
 **根本原因：**
 
-　　TCP 是流动协议，消息无边界。（UDP 像邮寄的包裹，虽然一次运输多个的，但每个包裹都有 “界限”，一个一个签收，所以无粘包、半包问题）
+　　**TCP 是流动协议，消息无边界**。（UDP 像邮寄的包裹，虽然一次运输多个的，但每个包裹都有 “界限”，一个一个签收，所以无粘包、半包问题）
 
 #### 解决粘包和半包问题的几种常用方法
 
@@ -53,13 +56,17 @@
 
 #### 解读 Netty 处理粘包、半包的源码
 
++ 解码核心工作流程？
++ 解码中两种数据积累器（Cumulator）的区别？
++ 三种解码器的常用额外控制参数有哪些？
+
 ##### 核心工作流程
 
-先找到 ByteToMessageDecoder.java，可以看到它继承了 ChannelInboundHandlerAdapter.java
+先找到 `ByteToMessageDecoder.java`，可以看到它继承了 `ChannelInboundHandlerAdapter.java`
 
 ![](images/4、Netty如何处理TCP粘包_半包/image-20220226105533245.png)
 
-　这个 ChannelInboundHandlerAdapter 有个核心的入口方法 “channelRead()”，源码如下：
+　这个 ChannelInboundHandlerAdapter 有个核心的入口方法 “`channelRead()`”，源码如下：
 
 ```java
 @Override
@@ -127,7 +134,7 @@
 >
 > 第一次的时候肯定为 null 所以 first 是 true，直接把 data 数据给了 cumulation。再接下来就是解码：
 >
-> ```
+> ```java
 > callDecode(ctx, cumulation, out);
 > ```
 
@@ -195,7 +202,7 @@ protected void callDecode(ChannelHandlerContext ctx, ByteBuf in, List<Object> ou
 
 > 参数中的 in 就是数据积累器中的数据，也就是我们传入的数据。往下走又这么个方法调用：
 > 
-> ```
+> ```java
 > decodeRemovalReentryProtection(ctx, in, out);
 > ```
 > 
@@ -221,7 +228,7 @@ final void decodeRemovalReentryProtection(ChannelHandlerContext ctx, ByteBuf in,
 
 分析：
 
-> 可以看出有个 decodeState = STATE_CALLING_CHILD_DECODE; 这个就是处理刚才 remove handler 的；接下来就是 “decode(ctx, in, out);”；这个 decode 是个抽象方法
+> 可以看出有个 decodeState = STATE_CALLING_CHILD_DECODE; 这个就是处理刚才 remove handler 的；接下来就是 “`decode(ctx, in, out);`”；这个 decode 是个抽象方法
 > 
 > ```java
 > protected abstract void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception;
@@ -282,9 +289,10 @@ public interface Cumulator {
 
 ![](images/4、Netty如何处理TCP粘包_半包/image-20220226112706606.png)
 
-实现方式 1 为：**MERGE_CUMULATOR**（默认的）：采用的是内存复制，先扩容空间，再追加数据
+实现方式 1 为：**MERGE_CUMULATOR**（默认的）：**采用的是内存复制，先扩容空间，再追加数据**
 
 ```java
+//通过使用内存副本将 ByteBuf 合并为一个ByteBuf来累积ByteBuf 。
 public static final Cumulator MERGE_CUMULATOR = new Cumulator() {
     @Override
     public ByteBuf cumulate(ByteBufAllocator alloc, ByteBuf cumulation, ByteBuf in) {
@@ -314,9 +322,12 @@ public static final Cumulator MERGE_CUMULATOR = new Cumulator() {
 };
 ```
 
-实现方式 2 ：**COMPOSITE_CUMULATOR** ：不是复制而是组合，先扩容，如果数据够了的话就直接把数据给组合起来，避免了内存复制
+实现方式 2 ：**COMPOSITE_CUMULATOR** ：**不是复制而是组合，先扩容，如果数据够了的话就直接把数据给组合起来，避免了内存复制**
 
 ```java
+/**
+通过将ByteBuf添加到CompositeByteBuf来累积它们，因此尽可能不进行内存复制。请注意， CompositeByteBuf使用更复杂的索引实现，因此根据您的用例和解码器实现，这可能比仅使用MERGE_CUMULATOR慢。
+*/
 public static final Cumulator COMPOSITE_CUMULATOR = new Cumulator() {
     @Override
     public ByteBuf cumulate(ByteBufAllocator alloc, ByteBuf cumulation, ByteBuf in) {
@@ -354,3 +365,119 @@ public static final Cumulator COMPOSITE_CUMULATOR = new Cumulator() {
     }
 };
 ```
+
+
+
+#### 三种解码器的常用额外控制参数有哪些？
+
+1、**DelimiterBasedFrameDecoder**
+
+```
+DelimiterBasedFrameDecoder extends ByteToMessageDecoder {
+
+    private final ByteBuf[] delimiters;//支持多个分割符组合
+```
+
+2、**FixedLengthFrameDecoder**
+
+```
+public class FixedLengthFrameDecoder extends ByteToMessageDecoder {
+
+    private final int frameLength;//长度
+```
+
+3、**LengthFieldBasedFrameDecoder**
+
+```java
+偏移量 0 处的 2 字节长度字段，不剥离标头
+本例中长度字段的值为12（0x0C） ，表示“HELLO，WORLD”的长度。默认情况下，解码器假定长度字段表示长度字段后面的字节数。因此，可以用简单的参数组合来解码。
+  lengthFieldOffset   = 0
+  lengthFieldLength   = 2
+  lengthAdjustment    = 0
+  initialBytesToStrip = 0 (= do not strip header)
+ 
+  BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)
+  +--------+----------------+      +--------+----------------+
+  | Length | Actual Content |----->| Length | Actual Content |
+  | 0x000C | "HELLO, WORLD" |      | 0x000C | "HELLO, WORLD" |
+  +--------+----------------+      +--------+----------------+
+  
+偏移量 0 处的 2 字节长度字段，条带标头
+因为我们可以通过调用ByteBuf. readableBytes()来获取内容的长度，所以您可能希望通过指定initialBytesToStrip来去除长度字段。在此示例中，我们指定2 （与长度字段的长度相同）来剥离前两个字节。
+  lengthFieldOffset   = 0
+  lengthFieldLength   = 2
+  lengthAdjustment    = 0
+  initialBytesToStrip = 2 (= the length of the Length field)
+ 
+  BEFORE DECODE (14 bytes)         AFTER DECODE (12 bytes)
+  +--------+----------------+      +----------------+
+  | Length | Actual Content |----->| Actual Content |
+  | 0x000C | "HELLO, WORLD" |      | "HELLO, WORLD" |
+  +--------+----------------+      +----------------+
+  
+偏移0处的2个字节长度字段，不剥离报头，长度字段代表整个消息的长度
+在大多数情况下，长度字段仅表示消息正文的长度，如前面的示例所示。然而，在某些协议中，长度字段表示整个消息的长度，包括消息头。在这种情况下，我们指定一个非零的lengthAdjustment 。由于此示例消息中的长度值始终比正文长度大2 ，因此我们指定-2作为lengthAdjustment进行补偿。
+  lengthFieldOffset   =  0
+  lengthFieldLength   =  2
+  lengthAdjustment    = -2 (= the length of the Length field)
+  initialBytesToStrip =  0
+ 
+  BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)
+  +--------+----------------+      +--------+----------------+
+  | Length | Actual Content |----->| Length | Actual Content |
+  | 0x000E | "HELLO, WORLD" |      | 0x000E | "HELLO, WORLD" |
+  +--------+----------------+      +--------+----------------+
+  
+5 字节标头末尾有 3 字节长度字段，不剥离标头
+以下消息是第一个示例的简单变体。消息前面会添加一个额外的标头值。 lengthAdjustment再次为零，因为解码器在帧长度计算期间始终考虑前置数据的长度。
+  lengthFieldOffset   = 2 (= the length of Header 1)
+  lengthFieldLength   = 3
+  lengthAdjustment    = 0
+  initialBytesToStrip = 0
+ 
+  BEFORE DECODE (17 bytes)                      AFTER DECODE (17 bytes)
+  +----------+----------+----------------+      +----------+----------+----------------+
+  | Header 1 |  Length  | Actual Content |----->| Header 1 |  Length  | Actual Content |
+  |  0xCAFE  | 0x00000C | "HELLO, WORLD" |      |  0xCAFE  | 0x00000C | "HELLO, WORLD" |
+  +----------+----------+----------------+      +----------+----------+----------------+
+  
+5字节头开始处的3字节长度字段，不剥离头
+这是一个高级示例，显示了长度字段和消息正文之间存在额外标头的情况。您必须指定一个正的lengthAdjustment ，以便解码器将额外的标头计入帧长度计算中。
+  lengthFieldOffset   = 0
+  lengthFieldLength   = 3
+  lengthAdjustment    = 2 (= the length of Header 1)
+  initialBytesToStrip = 0
+ 
+  BEFORE DECODE (17 bytes)                      AFTER DECODE (17 bytes)
+  +----------+----------+----------------+      +----------+----------+----------------+
+  |  Length  | Header 1 | Actual Content |----->|  Length  | Header 1 | Actual Content |
+  | 0x00000C |  0xCAFE  | "HELLO, WORLD" |      | 0x00000C |  0xCAFE  | "HELLO, WORLD" |
+  +----------+----------+----------------+      +----------+----------+----------------+
+  
+2 字节长度字段位于 4 字节标头中间偏移 1 处，剥离第一个标头字段和长度字段
+这是上面所有示例的组合。长度字段之前有前置头，长度字段之后有额外头。前置标头影响lengthFieldOffset ，额外标头影响lengthAdjustment 。我们还指定了一个非零的initialBytesToStrip来从帧中去除长度字段和前置头。如果您不想删除前置标头，则可以将initialBytesToSkip指定为0 。
+  lengthFieldOffset   = 1 (= the length of HDR1)
+  lengthFieldLength   = 2
+  lengthAdjustment    = 1 (= the length of HDR2)
+  initialBytesToStrip = 3 (= the length of HDR1 + LEN)
+ 
+  BEFORE DECODE (16 bytes)                       AFTER DECODE (13 bytes)
+  +------+--------+------+----------------+      +------+----------------+
+  | HDR1 | Length | HDR2 | Actual Content |----->| HDR2 | Actual Content |
+  | 0xCA | 0x000C | 0xFE | "HELLO, WORLD" |      | 0xFE | "HELLO, WORLD" |
+  +------+--------+------+----------------+      +------+----------------+
+  
+4字节头中间偏移1处的2字节长度字段，剥离第一个头字段和长度字段，长度字段代表整个消息的长度
+让我们对前面的示例进行另一种修改。与上一个示例唯一的区别是，长度字段表示整个消息的长度而不是消息正文，就像第三个示例一样。我们必须将 HDR1 的长度和 Length 计入lengthAdjustment中。请注意，我们不需要考虑 HDR2 的长度，因为长度字段已经包含整个标头长度。
+  lengthFieldOffset   =  1
+  lengthFieldLength   =  2
+  lengthAdjustment    = -3 (= the length of HDR1 + LEN, negative)
+  initialBytesToStrip =  3
+ 
+  BEFORE DECODE (16 bytes)                       AFTER DECODE (13 bytes)
+  +------+--------+------+----------------+      +------+----------------+
+  | HDR1 | Length | HDR2 | Actual Content |----->| HDR2 | Actual Content |
+  | 0xCA | 0x0010 | 0xFE | "HELLO, WORLD" |      | 0xFE | "HELLO, WORLD" |
+  +------+--------+------+----------------+      +------+----------------+
+```
+

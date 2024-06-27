@@ -52,17 +52,17 @@ io.netty.channel.AdaptiveRecvByteBufAllocator
 
 ##### [3] Netty 内存使用技巧 - Zero-Copy
 
-例 1：使用逻辑组合，代替实际复制。  
+**例 1：使用逻辑组合，代替实际复制。**  
 例如 CompositeByteBuf：  
 io.netty.handler.codec.ByteToMessageDecoder#COMPOSITE_CUMULATOR
 
 ![](images/8、Netty如何玩转内存使用/image-20220227112908461.png)
 
-例 2：使用包装，代替实际复制。  
+**例 2：使用包装，代替实际复制。**  
 byte[] bytes = data.getBytes();  
 ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
 
-例 3：调用 JDK 的 Zero-Copy 接口。  
+**例 3：调用 JDK 的 Zero-Copy 接口。**  
 Netty 中也通过在 DefaultFileRegion 中包装了 NIO 的 FileChannel.transferTo() 方法实  
 现了零拷贝：io.netty.channel.DefaultFileRegion#transferTo
 
@@ -93,6 +93,8 @@ JVM 外部 -> 堆外（off heap）
 *   支持并发又能保护系统
 *   维护、共享有限的资源
 
+
+
 如何实现对象池？
 
 *   开源实现：Apache Commons Pool
@@ -106,11 +108,15 @@ JVM 外部 -> 堆外（off heap）
 
 *   方法 1：参数设置 io.netty.noPreferDirect = true;
 *   方法 2：传入构造参数 false  
+    ```java
     ServerBootstrap serverBootStrap = new ServerBootstrap();  
     UnpooledByteBufAllocator unpooledByteBufAllocator = new UnpooledByteBufAllocator(false);  
     serverBootStrap.childOption(ChannelOption.ALLOCATOR, unpooledByteBufAllocator)
+    ```
+    
+    
 
-**堆外内存的分配？**
+**堆外内存的分配？**调用JDK的分配直接内存
 
 *   ByteBuffer.allocateDirect(initialCapacity)
 

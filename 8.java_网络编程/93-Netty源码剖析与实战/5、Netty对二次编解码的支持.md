@@ -23,17 +23,16 @@
     
     
 
-> _
-> 
 > 解决 TCP 粘包、半包的一次解码器都是继承的 **ByteToMessageDecoder**, 而 **ByteToMessageDecoder** 主要是将原始数据流（可能存在粘包、半包问题的数据流）转换为用户数据（是一个字节数组）。所以我们需要二次解码器（都是直接继承 **MessageToMessageDecoder**）将字节数组转换成 Java 对象。
+>
 > 
-> 有人会问能否将两次解码合二为一？
-> 
+>
+> **有人会问能否将两次解码合二为一？**
+>
 > 可以，但是这里是不建议的，首先没有分层感，不够清晰，其次就是耦合性太高，不容易置换方案，Java 是最忌讳耦合性高的方案的。
-> 
-> _
+>
 
-_
+
 
 #### 常用的 “二次” 编解码方式
 
@@ -50,7 +49,7 @@ _
 *   编码后占用空间，因为编解码的作用很大情况下是为了存储和传输。
 *   编解码的速度，
 *   是否追求可读性，
-*   多语言支持，例如 MessagePack。
+*   多语言（java、C、python）支持，例如 MessagePack的多语言支持。
 
 综上所述比较合适的有 JSON，MessagePack 和 Protobuf。但是最流行的是 ProtoBuf。
 
@@ -61,6 +60,47 @@ _
 ②相比较 XML 、JSON，Protobuf 更小、更快、更便捷
 
 ③Protobuf 是跨语言的，并且自带了一个编译器（protoc），只需要用它进行编译，可以自动生成 Java，C++，Python 等代码，不需要再写其他代码（代价是可读性不好，看不懂...）
+
+
+
+![image-20240517011231328](images/5、Netty对二次编解码的支持/image-20240517011231328.png)
+
+![image-20240517011312210](images/5、Netty对二次编解码的支持/image-20240517011312210.png)
+
+案例参考`io.netty.example.worldclock;`
+
+```java
+public class WorldClockServerInitializer extends ChannelInitializer<SocketChannel> {
+
+    private final SslContext sslCtx;
+
+    public WorldClockServerInitializer(SslContext sslCtx) {
+        this.sslCtx = sslCtx;
+    }
+
+    @Override
+    public void initChannel(SocketChannel ch) throws Exception {
+        ChannelPipeline p = ch.pipeline();
+        if (sslCtx != null) {
+            p.addLast(sslCtx.newHandler(ch.alloc()));
+        }
+
+        p.addLast(new ProtobufVarint32FrameDecoder());//一次解码器 按长度粘包
+        p.addLast(new ProtobufDecoder(WorldClockProtocol.Locations.getDefaultInstance()));//二次解码
+
+        p.addLast(new ProtobufVarint32LengthFieldPrepender());//二次编码  添加长度
+        p.addLast(new ProtobufEncoder());//一次编码
+
+        p.addLast(new WorldClockServerHandler());
+    }
+}
+```
+
+![image-20240517012421005](images/5、Netty对二次编解码的支持/image-20240517012421005.png)
+
+![image-20240517012448676](images/5、Netty对二次编解码的支持/image-20240517012448676.png)
+
+
 
 #### 源码解读：Netty 对二次编解码的支持
 

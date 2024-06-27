@@ -127,7 +127,7 @@ public B group(EventLoopGroup group) {
 >
 > ```java
 > public final EventLoopGroup group() {
->  return this.bootstrap.group();
+>  	return this.bootstrap.group();
 > }
 > ```
 

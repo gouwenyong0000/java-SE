@@ -123,7 +123,7 @@ private void incrementPendingOutboundBytes(long size, boolean invokeLater) {
 高并发时：java.util.concurrent.atomic.AtomicLong -> java.util.concurrent.atomic.LongAdder (JDK1.8)  
 结论： 及时衡量、使用 JDK 最新的功能
 
-```
+```java
 public static LongCounter newLongCounter() {
     if (javaVersion() >= 8) {
         return new LongAdderCounter();
@@ -157,13 +157,13 @@ ConcurrentHashMapV8（ConcurrentHashMap 在 JDK8 中的版本）
 ##### [4] 不同场景选择不同的并发类 -> 因需而变
 
 例 1：关闭和等待关闭事件执行器（Event Executor）：  
-Object.wait/notify -> CountDownLatch  
+Object.wait/notify【必须在监视器内使用】 -> CountDownLatch  
 io.netty.util.concurrent.SingleThreadEventExecutor#threadLock：
 
 ![](images/7、Netty的那些“锁”事/image-20220227111737055.png)
 
 例 2：Nio Event loop 中负责存储 task 的 Queue  
-Jdk’s LinkedBlockingQueue (MPMC) -> jctools’ MPSC  
+Jdk’s LinkedBlockingQueue (MPMC)多生产者多消费者 -> jctools’ MPSC  
 io.netty.util.internal.PlatformDependent.Mpsc#newMpscQueue(int)：
 
 ![](images/7、Netty的那些“锁”事/image-20220227112013230.png)
