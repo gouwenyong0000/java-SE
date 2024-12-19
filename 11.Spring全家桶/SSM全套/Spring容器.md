@@ -2080,7 +2080,6 @@ public interface MathCalculator {
     int div(int i,int j);
 
 }
-
 ```
 
 实现类：
@@ -2795,7 +2794,7 @@ public class AroundAspect {
 
 
 
-### 【源码】 - BeanFactory 里面的核心集合
+## 【源码】 - BeanFactory 里面的核心集合
 
 BeanFactory  
 
@@ -2803,7 +2802,7 @@ BeanFactory
 
 ![image-20241217010223237](images/Spring容器/image-20241217010223237.png)
 
-### 【源码】- Spring 容器 底层就是三个Map，三级缓存机制
+## 【源码】- Spring 容器 底层就是三个Map，三级缓存机制
 
 `org.springframework.beans.factory.support.DefaultSingletonBeanRegistry#getSingleton(java.lang.String, boolean)`
 
@@ -3095,23 +3094,329 @@ public class AccountDaoTest {
 
 ### 声明式事务
 
+![image-20241219001110960](images/Spring容器/image-20241219001110960.png)
+
+#### @Transactional - 异常回滚规则
+
+![image-20241219001158985](images/Spring容器/image-20241219001158985.png)
+
+#### 案例
+
+开启配置基于注解的事务
+
+```java
+/**
+ * 操作数据库：
+ * 1、导入包： spring-boot-starter-data-jdbc、mysql-connector-java
+ * 2、配置数据库连接信息：在application.properties 中  spring.datasource.*
+ * 3、可以直接使用  DataSource、  JdbcTemplate
+ */
+@EnableTransactionManagement // 开启基于注解的自动化事务管理
+@SpringBootApplication
+public class Spring03TxApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Spring03TxApplication.class, args);
+    }
+
+}
+
+```
+
+添加 @Transactional控制事务
+
+```java
+    @Transactional(timeout = 3)
+    @Override
+    public void checkout(String username, Integer bookId, Integer buyNum) throws InterruptedException, IOException {
+        //1、查询图书信息
+        Book book = bookDao.getBookById(bookId);
+        BigDecimal price = book.getPrice();
+        //2、计算扣减额度
+        BigDecimal total = new BigDecimal(buyNum).multiply(price);
+        //3、扣减余额  //REQUIRED
+        accountDao.updateBalanceByUsername(username,total);
+
+
+        //4、扣减库存 //REQUIRES_NEW
+        bookDao.updateBookStock(bookId,buyNum);
+
+        //模拟超时
+//        Thread.sleep(3000);
+        //5、抛出异常
+//        int i = 10/0;
+
+//        FileInputStream stream = new FileInputStream("D:\\123.txt");
+//        System.out.println("stream.available() = " + stream.available());
+
+    }
+```
+
+#### 事务@Transactional 可选值细节：
+
+> ```java
+> 事务@Transactional 可选值细节：
+> 1、transactionManager：事务管理器; 控制事务的获取、提交、回滚。
+>   底层默认使用哪个事务管理器？默认使用 JdbcTransactionManager；
+>   原理：
+>   1、事务管理器：TransactionManager； 控制提交和回滚
+>   2、事务拦截器：TransactionInterceptor： 控制何时提交和回滚
+> 		   completeTransactionAfterThrowing(txInfo, ex);  在这个时候回滚
+> 		   commitTransactionAfterReturning(txInfo);  在这个时候提交
+> 
+> 2、propagation：传播行为； 事务的传播行为。
+> 
+> 3、isolation：隔离级别
+> 
+> 4、timeout（同 timeoutString）：超时时间； 事务超时，秒为单位；
+>    一旦超过约定时间，事务就会回滚。
+>    超时时间是指：从方法开始，到最后一次数据库操作结束的时间。细节：如果后续有代码阻塞但是不操作数据库，不算入超时时间
+> 5、readOnly：只读优化
+> 6、rollbackFor（同rollbackForClassName）：指明哪些异常需要回滚。不是所有异常都一定引起事务回滚。
+>   异常：
+> 	运行时异常（unchecked exception【非受检异常】）例如：ArithmeticException:/by zero
+> 	编译时异常（checked exception【受检异常】） 例如：FileNotFoundException
+>   【回滚的默认机制】
+> 	   运行时异常：回滚
+> 	   编译时异常：不回滚
+> 
+>  【rollbackFor可以额外指定哪些异常需要回滚】；
+>  【最终回滚 = 运行时异常 + 指定回滚异常】
+> 
+> 7、noRollbackFor（同 noRollbackForClassName）：指明哪些异常不需要回滚。
+>  【不回滚 = 编译时异常 + 指定不回滚异常】
+> ```
 
 
 
+### 隔离级别Isolation
+
+![image-20241219003004838](images/Spring容器/image-20241219003004838.png)
+
+> 数据库事务处理中，为了保证数据的一致性和完整性，事务的隔离级别起到了至关重要的作用。然而，不同的隔离级别会导致不同类型的数据读取问题，包括不可重复读、幻读和脏读。下面是对这三种问题的详细解释：
+>
+> 1、**脏读（Dirty Read）**
+>
+> **定义**：一个事务读取了另一个事务尚`未提交`的数据。由于这些数据可能会被回滚，因此读取到的数据可能是无效的或“脏”的。
+>
+> **示例**：
+>
+> - 事务A修改了某个数据项的值，但尚未提交事务。
+> - 事务B读取了该数据项的值，此时读取到的是事务A尚未提交的数据。
+> - 如果事务A最终回滚了事务，那么事务B读取到的数据将是无效的。
+>
+> **影响**：脏读可能导致数据的不一致性和混乱，因为读取到的数据可能并不反映数据库的当前状态。
+>
+> 
+>
+> 2、**不可重复读（Non-repeatable Read）**
+>
+> **定义**：在同一个事务中，对同一数据的多次读取结果不一致。这通常发生在其他事务`修改`（update delete）了该数据并提交之后，导致当前事务在后续读取时获得了不同的数据值。
+>
+> **示例**：
+>
+> - 事务A读取了某个数据项的值，然后事务B修改了该数据项并提交。
+> - 当事务A再次读取该数据项时，发现值已经改变，导致不可重复读。
+>
+> **影响**：不可重复读破坏了事务的隔离性，使得事务在执行过程中无法确保数据的一致性。
+>
+> 
+>
+> 3、**幻读（Phantom Read）**
+>
+> **定义**：在同一个事务中，对同一数据的多次范围查询结果不一致。这通常发生在其他事务在两次查询之间`插入`了新的数据行，导致第二次查询返回了额外的数据行。
+>
+> **示例**：
+>
+> - 事务A执行了一个范围查询，获取了某些数据行。
+> - 在事务A再次执行相同的范围查询之前，事务B插入了新的数据行，这些数据行符合事务A的查询条件。
+> - 当事务A再次执行范围查询时，发现了新插入的数据行，导致幻读。
+>
+> **影响**：幻读同样破坏了事务的隔离性，使得事务无法预期数据集合的变化。
+
+```java
+// REPEATABLE_READ： 可重复读。 快照读。 MySQL默认
+// READ_COMMITTED： 读已提交。 当前读。 Oracle默认
+@Transactional(isolation = Isolation.REPEATABLE_READ)
+```
+
+### 传播行为propagation
+
+#### 概念
+
+![image-20241219011915576](images/Spring容器/image-20241219011915576.png)
 
 
 
-### 隔离级别
+#### 应用举例
+
+> ```java
+> 场景：用户结账，炸了以后，金额扣减回滚，库存不回滚。
+> 注意：【一定关注异常的传播链】
+> 实现：
+>    checkout(){
+>        //自己的操作；
+>        扣减金额： //REQUIRED
+>        扣减库存： //REQUIRES_NEW
+>         int i = 10/0;
+>    }
+> ```
+
+```java
+@Transactional(timeout = 3)
+@Override
+public void checkout(String username, Integer bookId, Integer buyNum) throws InterruptedException, IOException {
+    //1、查询图书信息
+    Book book = bookDao.getBookById(bookId);
+    BigDecimal price = book.getPrice();
+    //2、计算扣减额度
+    BigDecimal total = new BigDecimal(buyNum).multiply(price);
+    //3、扣减余额  //REQUIRED  加入到checkout的事务中     @Transactional(propagation = Propagation.REQUIRED,timeout = 5)
+    accountDao.updateBalanceByUsername(username,total);
+
+
+    //4、扣减库存 //REQUIRES_NEW 不加入到checkout的事务中，挂起当前事务开启一个新事务 @Transactional(propagation = Propagation.REQUIRES_NEW)
+    bookDao.updateBookStock(bookId,buyNum);
+
+    //5、抛出异常
+   int i = 10/0;
+
+}
+```
 
 
 
-### 传播行为
+#### 分析复杂案例：异常传播链对传播机制的影响
+
+> 异常传播链对传播机制的影响
+>
+> ​	1、代码执行到此处结束，后面代码不执行，例如L函数发生异常，在此处结束
+> ​	2、异常一层一层往外抛，例如L函数发生异常，D也异常，A也异常
+>
+>  点位2、3分析
+
+```java
+A {
+    B(){  //REQUIRED 和大事务共用一个事务
+        F();//REQUIRES_NEW 开启一个新事务
+        G();//REQUIRED
+        H();//REQUIRES_NEW
+    }
+    C(){  //REQUIRES_NEW
+       I();//REQUIRES_NEW
+       J();//REQUIRED
+    }
+    D(){   //REQUIRES_NEW
+        K();//REQUIRES_NEW
+        L();//REQUIRES_NEW //异常点位2： 10/0； K,F,H,C(i,j) = ok, E整个代码走不到，剩下炸 
+    }
+    E(){   //REQUIRED
+        M();//REQUIRED
+        //异常点位3：10/0；  F,H,C(i,j),D(K,L)= ok
+        N();//REQUIRES_NEW
+    }
+   int i = 10/0;  //异常点位1：C（I，J）,D(K，L) ，F，H,N= ok
+}
+```
+
+#### 参数设置项也会传播
+
+ 传播行为：参数设置项也会传播：如果小事务和大事务公用一个事务，小事务要按照大事务的设置，小事务自己的设置失效
+
+举个例子：
+
+```java
+@Service
+public class MyService {
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+    public void largeTransactionMethod() {
+        // 大事务逻辑
+        smallTransactionMethod(); // 调用小事务方法
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE) // 这个隔离级别设置将被忽略
+    public void smallTransactionMethod() {
+        // 小事务逻辑
+    }
+}
+```
+
+在这个例子中，`smallTransactionMethod` 方法被 `largeTransactionMethod` 方法调用。由于两者都使用了 `PROPAGATION_REQUIRED` 传播行为，它们将共享同一个事务。因此，`smallTransactionMethod` 方法中指定的 `SERIALIZABLE` 隔离级别将被 `largeTransactionMethod` 方法中指定的 `READ_COMMITTED` 隔离级别所覆盖。换句话说，`smallTransactionMethod` 将按照 `largeTransactionMethod` 的事务设置来执行。
 
 
 
+## 【源码】- 双检查锁机制
+
+![image-20241219015511333](images/Spring容器/image-20241219015511333.png)
 
 
-## 5.Spring-单元测试
+
+## 【源码】- IoC容器启动12大步
+
+Spring 容器的启动是一个复杂但有序的过程，它涉及多个步骤来确保应用程序的组件被正确加载、配置和初始化。以下是 Spring 容器启动的主要步骤，基于提供的背景知识整理而成：
+
+### 1. 初始化 Spring 容器
+
+- **创建 ApplicationContext 对象**：这是 Spring 容器的核心接口，代表了 Spring 上下文环境。常见的实现类有 `ClassPathXmlApplicationContext`、`AnnotationConfigApplicationContext` 和 `FileSystemXmlApplicationContext` 等。
+- **注册内置的 BeanPostProcessor 的 BeanDefinition**：BeanPostProcessor 是在 Bean 初始化前后对 Bean 进行额外处理的接口，Spring 容器在启动时会自动注册一些内置的 BeanPostProcessor。
+
+### 2. 加载和解析配置文件
+
+- **读取配置文件**：Spring 容器根据提供的配置信息（如 XML 文件、Java 配置类或属性文件）来加载 Bean 定义。
+- **解析 Bean 定义**：配置文件被解析成内部的 BeanDefinition 对象，这些对象包含了 Bean 的元数据信息，如类名、作用域、依赖关系等。
+
+### 3. 注册 BeanDefinition
+
+- **扫描并注册 BeanDefinition**：Spring 容器会扫描指定的包，查找带有特定注解（如 `@Component`、`@Service`、`@Repository`、`@Controller`）的类，并将它们注册为 BeanDefinition。
+- **处理 @Configuration 注解的配置类**：对于使用 Java 配置的 Spring 应用，Spring 会处理带有 `@Configuration` 注解的类，并识别带有 `@Bean` 注解的方法，这些方法返回的对象也会被注册为 Bean。
+
+### 4. ==容器刷新（refresh）==
+
+`org.springframework.context.support.AbstractApplicationContext#refresh`
+
+- **prepareRefresh()**：刷新前的预处理，如初始化属性源、验证属性合法性等。
+- **obtainFreshBeanFactory()**：获取在容器初始化时创建的 BeanFactory。
+- **prepareBeanFactory(beanFactory)**：向 BeanFactory 中添加一些必要的组件，如 BeanPostProcessor、MessageSource 等。
+- **postProcessBeanFactory(beanFactory)**：允许子类在 BeanFactory 创建并预处理完成后做进一步的设置。
+- **invokeBeanFactoryPostProcessors(beanFactory)**：执行 BeanFactoryPostProcessor 的方法，对 BeanDefinition 进行修改或替换。
+- ==**registerBeanPostProcessors(beanFactory)**：向容器中注册 BeanPostProcessor，用于干预 Spring 初始化 Bean 的流程。==
+- **initMessageSource()**：初始化 MessageSource 组件，用于国际化功能。
+- **initApplicationEventMulticaster()**：初始化事件派发器，用于处理应用事件。
+- **onRefresh()**：留给子类重写，允许在容器刷新时自定义逻辑。
+- **registerListeners()**：注册监听器，并将之前步骤产生的事件派发给这些监听器。
+- ==**finishBeanFactoryInitialization(beanFactory)**：初始化所有剩下的单例 Bean。==
+- **finishRefresh()**：发布容器刷新完成事件，并初始化与生命周期相关的组件。
+
+![image-20241220011530271](images/Spring容器/image-20241220011530271.png)
+
+
+
+### 5. 实例化和初始化 Bean
+
+- **实例化 Bean**：根据 BeanDefinition 中的信息创建 Bean 实例。
+- **设置对象属性**：通过反射机制为 Bean 设置属性值，包括依赖注入。
+- **调用 Aware 接口**：如果 Bean 实现了特定的 Aware 接口（如 `BeanNameAware`、`BeanFactoryAware`、`ApplicationContextAware` 等），Spring 容器会调用相应的方法，让 Bean 获取到一些容器提供的资源。
+- **执行 BeanPostProcessor**：在 Bean 初始化前后，Spring 容器会调用注册的 BeanPostProcessor 对 Bean 进行处理。
+- **执行初始化方法**：如果 Bean 实现了 `InitializingBean` 接口或配置了 `init-method`，Spring 容器会调用相应的初始化方法。
+
+6. 发布容器事件
+
+- 在容器启动过程中，会触发各种事件（如容器启动事件、Bean 初始化事件等），Spring 容器会发布这些事件，并允许注册监听器对这些事件进行处理。
+
+### 7. 处理延迟加载的 Bean
+
+- 对于标记为懒加载（`@Lazy`）的 Bean，它们不会在容器启动时被创建，而是在首次请求时动态创建。
+
+### 8. 注册关闭钩子
+
+- Spring 容器会注册一个关闭钩子，以便在应用关闭时优雅地释放资源，如销毁单例 Bean、发布关闭事件等。
+
+### 9. 完成启动
+
+- 当所有 Bean 都被成功创建、配置和初始化后，Spring 容器启动完成，应用程序可以开始运行并处理用户请求。
+
+通过以上步骤，Spring 容器能够确保应用程序的组件被正确加载、配置和初始化，从而为应用程序的运行提供必要的支持和保障。
 
 
 
