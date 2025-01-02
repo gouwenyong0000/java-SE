@@ -1,5 +1,91 @@
 # Spring企业级一站式框架
 
+```tex
+003.Spring - 介绍.mp4
+004.Spring - 容器和组件.mp4
+005.Spring - Ioc和DI.mp4
+006.容器 - 注册 - 实验1：@Bean - 把组件放到容器.mp4
+007.容器 - 注册 - 补充 - Maven配置问题.mp4
+008、容器 - 注册 - 补充 - maven 聚合配置.mp4
+009、容器 - 注册 - 实验2：从容器中获取组件 - 按照名字、类型.mp4
+010、容器 - 注册 - 实验2：组件创建时机和单例特性.mp4
+011、容器 - 注册 - 实验3：@Configuration - 配置类.mp4
+012、容器 - 注册 - 实验4-7：@Controller、@Service、@Repository、@Component - mvc分层注解.mp4
+013、容器 - 注册 - 实验8：@ComponentScan - 批量扫描.mp4
+014、容器 - 注册 - 实验9：@Import - 导入第三方组件.mp4
+015、容器 - 注册 - 补充 - 分层注解底层都是 @Component.mp4
+016、容器 - 注册 - 实验10：@Scope - 调整组件作用域.mp4
+017、容器 - 注册 - 实验11：@Lazy - 单例情况下的懒加载.mp4
+018、容器 - 注册 - 实验12：FactoryBean - 利用工厂制造复杂Bean.mp4
+019、容器 - 注册 - 实验13：@Conditional - 条件注册 .mp4
+020、容器 - 注册 - 实验13：@Conditional 派生注解.mp4
+021、容器 - 注册 - 实验13：@ConditionalOnMissingBean 的判定bug.mp4
+022、容器 - 注入 - 实验1：@Autowired .mp4
+023、容器 - 注入 - 实验2-3：@Qualifier 和 @Primary.mp4
+024、容器 - 注入 - 实验4：@Resource 也是自动注入.mp4
+025、容器 - 注入 - 实验6：构造器注入.mp4
+026、容器 - 注入 - 实验5：setter方法注入.mp4
+027、容器 - 注入 - 实验7：xxxAware 感知接口.mp4
+028、容器 - 注入 - 实验8：@Value 给属性赋值.mp4
+029、容器 - 注入 - 实验9：@PropertySource.mp4
+030、容器 - 注入 - 实验9：细节，类路径找资源的写法.mp4
+031、容器 - 注入 - ResourceUtils - 获取资源.mp4
+032、容器 - 注入 - @Profile - 多环境.mp4
+033、源码 - 原生方式使用容器 - ClassPathXmlApplicationContext.mp4
+034、容器 - 生命周期 - 实验1 - @Bean 指定生命周期初始化和销毁方法.mp4
+035、容器 -生命周期 - 实验2-3 - InitializingBean、DisposableBean.mp4
+036、容器 - 生命周期 - 实验4-5：@PreDestroy、@PostConstruct.mp4
+037、容器 - 生命周期 - 实验6：BeanPostProcessor.mp4
+038、容器 - 生命周期 - BeanPostProcessor能做什么.mp4
+039、容器篇 - 结束.mp4
+040、单元测试新用法.mp4
+041、AOP - 日志 - 硬编码与静态代理.mp4
+042、AOP - 日志 - 动态代理.mp4
+043、AOP - 日志 - 动态代理 - 加日志.mp4
+044、AOP - 日志 - 动态代理必须有接口.mp4
+045、AOP - 日志 - 日志工具类.mp4
+046、AOP - 专业术语.mp4
+047、AOP - 切面 - 编写切面和通知方法实现 AOP.mp4
+048、AOP - 细节 - 切入点 表达式通配符.mp4
+049、AOP - 细节 - 切入点表达式的其他写法.mp4
+050、AOP - 细节 - 组件在容器中其实是代理对象.mp4
+051、AOP - 细节 - 通知方法执行流程.mp4
+052、AOP - 细节 - JoinPoint 连接点信息.mp4
+053、AOP - 细节 - @Pointcut 抽取切入点表达式.mp4
+054、AOP - 细节 - 多切面执行顺序.mp4
+055、作业 - 处理.mp4
+056、【源码】 - BeanFactory 里面的核心集合.mp4
+057、【源码】- Spring 容器 底层就是三个Map，三级缓存机制.mp4
+058、AOP - 环绕通知 - 拦截器目标方法执行，执行前后进行修改.mp4
+059、AOP - 环绕通知 - 建议一定抛出异常，方便多切面情况下异常感知链路是通的.mp4
+060、AOP - 总结：应用场景.mp4
+061、事务 - 环境搭建 - 创建数据库、创建项目.mp4
+062、事务 - 环境搭建 - 整合数据源和JdbcTemplate.mp4
+063、事务 - 实验1：按照id查询图书（JdbcTemplate）.mp4
+064、事务 - 实验2：添加图书.mp4
+065、事务 - 实验3：按照id修改图书库存.mp4
+066、事务 - 实验4：按照id删除图书.mp4
+067、事务 - 实验5：按照username扣减账户余额.mp4
+068、事务 - 实验6：结账操作.mp4
+069、事务 - @Transactional - 声明式事务搞定.mp4
+070、事务 - 细节 - 事务管理器的原理.mp4
+071、事务 - 细节 - timeout - 超时控制.mp4
+072、事务 - 细节 - readOnly - 只读优化.mp4
+073、事务 -细节 - rollbackFor - 指定哪些异常需要回滚.mp4
+074、事务 - 细节 - noRollbackFor - 指定哪些异常不需要回滚.mp4
+075、事务 - 细节 - 隔离级别 - READ_UNCOMMITTED 读未提交.mp4
+076、事务 - 细节 - 隔离级别 - READ_COMMITTED - 读已提交.mp4
+077、事务 - 细节 - 隔离级别 - REPEATABLE_READ - 可重复读.mp4
+078、事务 - 细节 - 传播行为 - propagation.mp4
+079、事务 - 细节 - 传播行为 - 分析一个复杂案例.mp4
+080、事务 - 细节 - 传播行为 - 属性传播.mp4
+081、Spring - 总结.mp4
+082、【源码】- 双检查锁机制.mp4
+083、【源码】- IoC容器启动12大步.mp4
+```
+
+
+
 ## 1.Spring-介绍
 
 ### 框架是什么
@@ -2455,8 +2541,6 @@ public class LogAspect{
 
 ### AOP 细节
 
-
-
 •切入点表达式更多写法
 
 ​	•https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html
@@ -2479,9 +2563,70 @@ public class LogAspect{
 
 ####  切入点表达式
 
-**切入点表达式格式 **  `？表示可以省略`
+官网地址：https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html
 
-![image-20241216004513768](images/Spring容器/image-20241216004513768.png)
+##### **通配符类型**
+
+1. **`*`（星号）**：
+   - 表示任意数量的字符（除了点`.`），但不跨越包边界。
+   - 例如：`com.example..*Service` 匹配`com.example`包下的所有以`Service`结尾的类。
+2. **`..`（双点）**：
+   - 有两种用途：
+     - 在包路径中表示任意深度的子包。
+       - 例如：`com..service.*` 匹配`com`包下任何子包中的`service`包里的所有类。
+     - 在参数列表中表示任意数量和类型的参数。
+       - 例如：`execution(* *(..))` 匹配所有方法，无论它们接受什么参数。
+3. **`+`（加号）**：
+   - 用于指定一个类及其所有子类。
+   - 例如：`com.example.service.AccountService+` 匹配`AccountService`类以及它的所有子类。
+
+使用示例
+
+- **匹配特定包下的所有方法**：
+
+  ```java
+  @Pointcut("execution(* com.example.service..*(..))")
+  private void anyServiceOperation() {}
+  ```
+
+- **匹配特定返回类型的方法**：
+
+  ```java
+  @Pointcut("execution(public * com.example.service.AccountService+.get*(..))")
+  private void anyPublicGetInAccountService() {}
+  ```
+
+- **匹配带有特定注解的方法**：
+
+  ```java
+  @Pointcut("@annotation(org.springframework.transaction.annotation.Transactional)")
+  private void transactionalMethods() {}
+  ```
+
+- **匹配特定参数类型的方法**：
+
+  ```java
+  @Pointcut("execution(* com.example.service.OrderService.placeOrder(java.util.List<..>, ..))")
+  private void placeOrderWithListParam() {}
+  ```
+
+注意事项
+
+- 当使用`..`来表示任意数量的参数时，请注意它也会匹配没有参数的方法。
+- `+`符号只能与类型名称一起使用，并且仅当项目配置为支持 AspectJ 编译时织入时才有效；对于Spring AOP，这通常意味着它只会在运行时通过代理机制工作，如果目标对象是给定类型的实例的话。
+
+
+
+##### **切入点表达式格式 **  `？表示可以省略`
+
+```
+execution(modifiers-pattern?
+			ret-type-pattern
+			declaring-type-pattern?name-pattern(param-pattern)
+			throws-pattern?)
+```
+
+
 
 ![image-20241216005306948](images/Spring容器/image-20241216005306948.png)
 
