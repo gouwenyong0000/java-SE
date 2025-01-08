@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>成功</title>
+</head>
+<body>
+<h1>恭喜，登录成功：</h1>
+<!-- th:xx； 修改标签的任意属性 -->
+<h2>用户名：<span th:text="${name}" th:id="${name}">张三</span> </h2>
+<h2 >年龄：[[${age}]]  </h2>
+
+<!-- 列表：今天的访客 -->
+<table border="1px">
+    <tr>
+        <th>序号</th>
+        <th>用户名</th>
+        <th>年龄</th>
+        <th>成年人吗</th>
+    </tr>
+
+
+    <tr th:each="user : ${users}">
+        <td>[[${user.id}]]</td>
+        <td th:text="${user.getName()}">张三</td>
+        <td th:text="${user.age}">18</td>
+<!--        <td th:if="${user.age >= 18}">是</td>-->
+<!--        <td th:if="${user.age < 18}">否</td>-->
+
+        <td th:text="${user.age >= 18? '是':'否'}">否</td>
+    </tr>
+
+
+</table>
+</body>
+</html>

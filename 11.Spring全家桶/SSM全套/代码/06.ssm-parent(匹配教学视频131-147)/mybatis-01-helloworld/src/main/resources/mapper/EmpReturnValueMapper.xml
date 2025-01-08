@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mybatis.mapper.EmpReturnValueMapper">
+
+
+    <!--   有别名，但不用 -->
+    <select id="countEmp" resultType="long">
+        select count(*)
+        from t_emp
+    </select>
+    <select id="getEmpSalaryById" resultType="java.math.BigDecimal">
+        select emp_salary
+        from t_emp
+        where id = #{id}
+    </select>
+
+    <!--   返回集合，写集合中元素类型 -->
+    <select id="getAll" resultType="com.atguigu.mybatis.bean.Emp">
+        select *
+        from t_emp
+    </select>
+
+    <!-- 返回map集合，  resultType 写map中value元素类型 -->
+    <select id="getAllMap" resultType="com.atguigu.mybatis.bean.Emp">
+        select *
+        from t_emp
+    </select>
+
+
+    <!--
+        默认封装规则（resultType）：JavaBean 中的属性名 去数据库表中 找对应列名的值。一一映射封装。
+        自定义结果集（resultMap）：我们来告诉MyBatis 如何把结果封装到Bean中;
+             明确指定每一列如何封装到指定的Bean中
+      -->
+    <resultMap id="EmpRM" type="com.atguigu.mybatis.bean.Emp">
+        <!--id：声明主键映射规则-->
+        <id column="id" property="id"></id>
+        <!--result：声明普通列映射规则-->
+        <result column="emp_name" property="empName"></result>
+        <result column="age" property="age"></result>
+        <result column="emp_salary" property="empSalary"></result>
+    </resultMap>
+
+    <!-- resultMap：指定自定义映射规则   -->
+    <select id="getEmpById" resultMap="EmpRM">
+        select *
+        from t_emp
+        where id = #{id}
+    </select>
+
+
+</mapper>

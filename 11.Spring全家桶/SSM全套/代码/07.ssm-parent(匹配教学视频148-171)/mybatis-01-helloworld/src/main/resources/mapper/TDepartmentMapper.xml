@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mybatis.mapper.TDepartmentMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.mybatis.bean.TDepartment">
+            <id property="departmentId" column="department_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="managerId" column="manager_id" jdbcType="BIGINT"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        department_id,name,manager_id,
+        parent_id,sort,update_time,
+        create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_department
+        where  department_id = #{departmentId,jdbcType=BIGINT} 
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_department
+        where  department_id = #{departmentId,jdbcType=BIGINT} 
+    </delete>
+    <insert id="insert" keyColumn="department_id" keyProperty="departmentId" parameterType="com.atguigu.mybatis.bean.TDepartment" useGeneratedKeys="true">
+        insert into t_department
+        ( department_id,name,manager_id
+        ,parent_id,sort,update_time
+        ,create_time)
+        values (#{departmentId,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},#{managerId,jdbcType=BIGINT}
+        ,#{parentId,jdbcType=BIGINT},#{sort,jdbcType=INTEGER},#{updateTime,jdbcType=TIMESTAMP}
+        ,#{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="department_id" keyProperty="departmentId" parameterType="com.atguigu.mybatis.bean.TDepartment" useGeneratedKeys="true">
+        insert into t_department
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="departmentId != null">department_id,</if>
+                <if test="name != null">name,</if>
+                <if test="managerId != null">manager_id,</if>
+                <if test="parentId != null">parent_id,</if>
+                <if test="sort != null">sort,</if>
+                <if test="updateTime != null">update_time,</if>
+                <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="departmentId != null">#{departmentId,jdbcType=BIGINT},</if>
+                <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+                <if test="managerId != null">#{managerId,jdbcType=BIGINT},</if>
+                <if test="parentId != null">#{parentId,jdbcType=BIGINT},</if>
+                <if test="sort != null">#{sort,jdbcType=INTEGER},</if>
+                <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+                <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.atguigu.mybatis.bean.TDepartment">
+        update t_department
+        <set>
+                <if test="name != null">
+                    name = #{name,jdbcType=VARCHAR},
+                </if>
+                <if test="managerId != null">
+                    manager_id = #{managerId,jdbcType=BIGINT},
+                </if>
+                <if test="parentId != null">
+                    parent_id = #{parentId,jdbcType=BIGINT},
+                </if>
+                <if test="sort != null">
+                    sort = #{sort,jdbcType=INTEGER},
+                </if>
+                <if test="updateTime != null">
+                    update_time = #{updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="createTime != null">
+                    create_time = #{createTime,jdbcType=TIMESTAMP},
+                </if>
+        </set>
+        where   department_id = #{departmentId,jdbcType=BIGINT} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.atguigu.mybatis.bean.TDepartment">
+        update t_department
+        set 
+            name =  #{name,jdbcType=VARCHAR},
+            manager_id =  #{managerId,jdbcType=BIGINT},
+            parent_id =  #{parentId,jdbcType=BIGINT},
+            sort =  #{sort,jdbcType=INTEGER},
+            update_time =  #{updateTime,jdbcType=TIMESTAMP},
+            create_time =  #{createTime,jdbcType=TIMESTAMP}
+        where   department_id = #{departmentId,jdbcType=BIGINT} 
+    </update>
+</mapper>

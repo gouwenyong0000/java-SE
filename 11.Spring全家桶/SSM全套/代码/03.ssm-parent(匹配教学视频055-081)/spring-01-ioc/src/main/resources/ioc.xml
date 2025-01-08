@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="zhangsan" class="com.atguigu.spring.ioc.bean.Person"></bean>
+    <bean id="lisi" class="com.atguigu.spring.ioc.bean.Person">
+        <property name="name" value="李四"></property>
+        <property name="age" value="#{10*10}"></property>
+    </bean>
+
+    <!--   配置批量扫描 -->
+    <context:component-scan base-package="com.atguigu.spring"/>
+
+<!--    导入外部属性文件 -->
+    <context:property-placeholder location="dog.properties"/>
+
+<!--    @PropertySource() -->
+</beans>

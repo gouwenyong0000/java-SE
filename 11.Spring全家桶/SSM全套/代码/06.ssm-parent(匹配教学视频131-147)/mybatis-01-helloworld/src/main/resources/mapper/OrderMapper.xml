@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mybatis.mapper.OrderMapper">
+
+
+    <!--   自定义结果集 -->
+    <resultMap id="OrderRM" type="com.atguigu.mybatis.bean.Order">
+        <id column="id" property="id"></id>
+        <result column="address" property="address"></result>
+        <result column="amount" property="amount"></result>
+        <result column="customer_id" property="customerId"></result>
+        <!--      一对一关联封装  -->
+        <association property="customer"
+                     javaType="com.atguigu.mybatis.bean.Customer">
+            <id column="c_id" property="id"></id>
+            <result column="customer_name" property="customerName"></result>
+            <result column="phone" property="phone"></result>
+        </association>
+    </resultMap>
+
+
+    <select id="getOrderByIdWithCustomer"
+            resultMap="OrderRM">
+        select o.*,
+               c.id c_id,
+               c.customer_name,
+               c.phone
+        from t_order o
+                 left join t_customer c on o.customer_id = c.id
+        where o.id = #{id}
+    </select>
+</mapper>

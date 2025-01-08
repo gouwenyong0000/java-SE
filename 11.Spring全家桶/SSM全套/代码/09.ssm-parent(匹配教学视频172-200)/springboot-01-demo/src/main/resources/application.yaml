@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: 01-springboot-demo
+
+
+
+# 如果yaml和properties 同时出现相同配置，则properties的优先级更高
+
+person:
+  name: 张三
+  age: 20
+  birth-day: 2019/03/04 12:00:00
+  like: true
+  child:
+    name: 李四
+    age: 18
+    birth-day: 2019/03/04 12:00:00
+    text: ["haa", "bbb", "ccc"]
+  dogs:
+    - name: 旺财
+      age: 1
+    - name: 旺财2
+      age: 2
+    - {name: 旺财3, age: 3}
+  cats:
+    bluecat:
+      name: 蓝猫
+      age: 1
+    redcat:
+      name: 红猫
+      age: 2
+    blackcat: {name: 黑猫, age: 3}
+#server:
+#  port: 9999
+
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mybatis.mapper.EmpMapper">
+
+
+    <!-- namespace: 编写mapper接口的全类名，代表，这个xml文件和这个mapper接口进行绑定   -->
+
+
+<!--    Emp getEmpById(Integer id);
+select 标签代表一次查询
+   id：绑定方法名
+   resultType：返回值类型
+-->
+    <select id="getEmpById" resultType="com.atguigu.mybatis.bean.Emp">
+        select id,emp_name empName,age,emp_salary empSalary
+           from t_emp where id = ${id}
+    </select>
+
+
+<!--   返回的是集合，不用管集合， resultType 还写对象类型（集合中的元素类型）-->
+    <select id="getAll" resultType="com.atguigu.mybatis.bean.Emp">
+        select * from t_emp
+    </select>
+
+
+    <!--
+        useGeneratedKeys： 使用自动生成的id
+        keyProperty： 指定自动生成id对应的属性； 把自动生成的id封装到Emp对象的id属性中
+        自增id回填
+      -->
+    <insert id="addEmp" useGeneratedKeys="true" keyProperty="id">
+        insert into t_emp(emp_name, age, emp_salary) values (#{empName},#{age},#{empSalary})
+    </insert>
+
+
+    <update id="updateEmp">
+        update t_emp set emp_name = #{empName},
+                         age = #{age},
+                         emp_salary = #{empSalary}
+                     where id = #{id}
+    </update>
+
+
+    <delete id="deleteEmpById">
+        delete from t_emp where id = #{id}
+    </delete>
+
+
+
+<!--
+#{}：参数位置动态取值，安全，无SQL注入问题
+${}：JDBC层面 表名等位置 不支持预编译，只能用 ${}
+  -->
+    <select id="getEmpById02" resultType="com.atguigu.mybatis.bean.Emp">
+        select id,emp_name empName,age,emp_salary empSalary
+        from ${tableName} where id = #{id}
+    </select>
+
+
+</mapper>

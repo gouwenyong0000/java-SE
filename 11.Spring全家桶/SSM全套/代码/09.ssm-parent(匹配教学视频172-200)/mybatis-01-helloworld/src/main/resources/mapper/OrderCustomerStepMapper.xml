@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mybatis.mapper.OrderCustomerStepMapper">
+
+
+    <!--   按照id查询客户 -->
+    <select id="getCustomerById" resultMap="CustomerOrdersStepRM">
+        select *
+        from t_customer
+        where id = #{id}
+    </select>
+
+    <!--   按照客户id查询他的所有订单  resultType="com.atguigu.mybatis.bean.Order" -->
+    <select id="getOrdersByCustomerId" resultType="com.atguigu.mybatis.bean.Order">
+        select *
+        from t_order
+        where customer_id = #{cId}
+    </select>
+
+
+    <!--   分步查询的自定义结果集： -->
+    <resultMap id="CustomerOrdersStepRM" type="com.atguigu.mybatis.bean.Customer">
+        <id column="id" property="id"></id>
+        <result column="customer_name" property="customerName"></result>
+        <result column="phone" property="phone"></result>
+        <collection property="orders"
+                    select="com.atguigu.mybatis.mapper.OrderCustomerStepMapper.getOrdersByCustomerId"
+                    column="id">
+        </collection>
+        <!--    告诉MyBatis，封装 orders 属性的时候，是一个集合，
+                但是这个集合需要调用另一个 方法 进行查询；select：来指定我们要调用的另一个方法
+                column：来指定我们要调用方法时，把哪一列的值作为传递的参数，交给这个方法
+                   1）、column="id"： 单传参：id传递给方法
+                   2）、column="{cid=id,name=customer_name}"：多传参（属性名=列名）；
+                        cid=id：cid是属性名，它是id列的值
+                        name=customer_name：name是属性名，它是customer_name列的值
+        -->
+
+    </resultMap>
+
+    <select id="getCustomerByIdAndOrdersStep" resultMap="CustomerOrdersStepRM">
+        select *
+        from t_customer
+        where id = #{id}
+    </select>
+
+
+    <!--   分步查询：自定义结果集；封装订单的分步查询  -->
+    <resultMap id="OrderCustomerStepRM" type="com.atguigu.mybatis.bean.Order">
+        <id column="id" property="id"></id>
+        <result column="address" property="address"></result>
+        <result column="amount" property="amount"></result>
+        <result column="customer_id" property="customerId"></result>
+        <!--       customer属性关联一个对象，启动下一次查询，查询这个客户 -->
+        <association property="customer"
+                     select="com.atguigu.mybatis.mapper.OrderCustomerStepMapper.getCustomerById"
+                     column="customer_id">
+        </association>
+    </resultMap>
+
+    <select id="getOrderByIdAndCustomerStep" resultMap="OrderCustomerStepRM">
+        select *
+        from t_order
+        where id = #{id}
+    </select>
+
+
+    <!--   查询订单 + 下单的客户 + 客户的其他所有订单 -->
+    <select id="getOrderByIdAndCustomerAndOtherOrdersStep"
+            resultMap="OrderCustomerStepRM">
+        select * from t_order where id = #{id}
+    </select>
+
+
+</mapper>

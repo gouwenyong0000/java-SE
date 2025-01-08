@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    本网页使用layui框架编写； layui官网：https://layui.dev/  -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/layui/2.9.15/css/layui.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/layui/2.9.15/layui.min.js"></script>
+
+
+    <style>
+        .layui-col-xs6 {
+            padding: 10px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="layui-row">
+    <div class="layui-col-xs6">
+        <h1>SpringMVC - 请求测试</h1>
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验1：使用普通变量，收集请求参数</div>
+                <div class="layui-colla-content" >
+                    <div style="display: flex;justify-content: center">
+                        <form class="layui-form" action="/handle01">
+                            <div style="width: 250px;padding: 10px" >
+
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-username"></i>
+                                        </div>
+                                        <input type="text" name="username"  placeholder="用户名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-password"></i>
+                                        </div>
+                                        <input type="password" name="password" placeholder="密码"
+                                               class="layui-input" lay-affix="eye">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-row">
+                                        <div class="layui-col-xs12">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-cellphone"></i>
+                                                </div>
+                                                <input type="text" name="cellphone" placeholder="手机号" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <input type="checkbox" name="agreement" title="同意">
+                                    <a href="#terms" target="_blank" style="position: relative; top: 6px; left: -15px;">
+                                        <ins>用户协议</ins>
+                                    </a>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit>注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验2：使用@RequestParam，逐一封装多个参数</div>
+                <div class="layui-colla-content">
+                    <div style="display: flex;justify-content: center">
+                        <form class="layui-form" action="/handle02">
+                            <div style="width: 250px;padding: 10px" >
+
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-username"></i>
+                                        </div>
+                                        <input type="text" name="username"  placeholder="用户名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-password"></i>
+                                        </div>
+                                        <input type="password" name="password" placeholder="密码"
+                                               class="layui-input" lay-affix="eye">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-row">
+                                        <div class="layui-col-xs12">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-cellphone"></i>
+                                                </div>
+                                                <input type="text" name="cellphone" placeholder="手机号" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <input type="checkbox" name="agreement" title="同意">
+                                    <a href="#terms" target="_blank" style="position: relative; top: 6px; left: -15px;">
+                                        <ins>用户协议</ins>
+                                    </a>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit>注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验3：使用POJO，统一封装多个参数</div>
+                <div class="layui-colla-content">
+                    <div style="display: flex;justify-content: center">
+                        <form class="layui-form" action="/handle03" method="post">
+                            <div style="width: 250px;border: 5px solid black;padding: 10px" >
+
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-username"></i>
+                                        </div>
+                                        <input type="text" name="username"  placeholder="用户名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-password"></i>
+                                        </div>
+                                        <input type="password" name="password" placeholder="密码"
+                                               class="layui-input" lay-affix="eye">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-row">
+                                        <div class="layui-col-xs12">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-cellphone"></i>
+                                                </div>
+                                                <input type="text" name="cellphone" placeholder="手机号" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <input type="checkbox" name="agreement" title="同意">
+                                    <a href="#terms" target="_blank" style="position: relative; top: 6px; left: -15px;">
+                                        <ins>用户协议</ins>
+                                    </a>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit>注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验4：使用@RequestHeader获取请求头数据</div>
+                <div class="layui-colla-content">
+                    <a type="button" class="layui-btn" href="/handle04">随便发个请求</a>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验5：使用@CookieValue获取Cookie数据</div>
+                <div class="layui-colla-content">
+                    <a type="button" class="layui-btn" href="/handle05">随便又发个请求</a>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验6：使用POJO，级联封装复杂对象</div>
+                <div class="layui-colla-content">
+                    <div style="display: flex;justify-content: center">
+                        <form class="layui-form layui-form-pane" action="/handle06">
+                            <div style="width: 400px;padding: 10px" >
+
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-username"></i>
+                                        </div>
+                                        <input type="text" name="username"  placeholder="用户名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-password"></i>
+                                        </div>
+                                        <input type="password" name="password" placeholder="密码"
+                                               class="layui-input" lay-affix="eye">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-row">
+                                        <div class="layui-col-xs12">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-cellphone"></i>
+                                                </div>
+                                                <input type="text" name="cellphone" placeholder="手机号" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <div class="layui-row">
+                                        <div class="layui-col-xs4">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-website"></i>
+                                                </div>
+                                                <input type="text" name="address.province" placeholder="省" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-xs4">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-find-fill"></i>
+                                                </div>
+                                                <input type="text" name="address.city" placeholder="市" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-xs4">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-tree"></i>
+                                                </div>
+                                                <input type="text" name="address.area" placeholder="区" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">性别</label>
+                                        <div class="layui-input-block">
+                                            <input type="radio" name="sex" value="男" title="男">
+                                            <input type="radio" name="sex" value="女" title="女">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">爱好</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="hobby" value="足球" title="足球">
+                                            <input type="checkbox" name="hobby" value="篮球" title="篮球">
+                                            <input type="checkbox" name="hobby" value="乒乓球" title="乒乓球">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">年级</label>
+                                        <div class="layui-input-block">
+                                            <select name="grade">
+                                                <option value="一年级">一年级</option>
+                                                <option value="二年级">二年级</option>
+                                                <option value="三年级">三年级</option>
+                                                <option value="四年级">四年级</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <input type="checkbox" name="agreement" title="同意">
+                                    <a href="#terms" target="_blank" style="position: relative; top: 6px; left: -15px;">
+                                        <ins>用户协议</ins>
+                                    </a>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit>注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验7：使用@RequestBody，封装JSON对象</div>
+                <div class="layui-colla-content">
+                    <button type="button" class="layui-btn layui-bg-blue">去Postman测试，自己带上【实验6】中数据的json</button>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验8：使用@RequestPart/@RequestParam，封装文件，测试文件上传</div>
+                <div class="layui-colla-content">
+                    <div style="display: flex;justify-content: center">
+
+                        <form class="layui-form layui-form-pane" action="/handle08" method="post" enctype="multipart/form-data">
+                            <div style="width: 350px;padding: 10px" >
+                                <div class="layui-form-item">
+                                    <fieldset class="layui-elem-field" style="background-color: lemonchiffon">
+                                        <legend>文件上传要求</legend>
+                                        <div class="layui-field-box">
+                                            <p>1. 表单：method=post</p>
+                                            <p>2. enctype="multipart/form-data"</p>
+                                            <p>3. 注意：SpringMVC对上传文件有大小限制（默认单文件最大：1MB；整个请求最大：10MB）</p>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-username"></i>
+                                        </div>
+                                        <input type="text" name="username"  placeholder="用户名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-wrap">
+                                        <div class="layui-input-prefix">
+                                            <i class="layui-icon layui-icon-password"></i>
+                                        </div>
+                                        <input type="password" name="password" placeholder="密码"
+                                               class="layui-input" lay-affix="eye">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-row">
+                                        <div class="layui-col-xs12">
+                                            <div class="layui-input-wrap">
+                                                <div class="layui-input-prefix">
+                                                    <i class="layui-icon layui-icon-cellphone"></i>
+                                                </div>
+                                                <input type="text" name="cellphone" placeholder="手机号" class="layui-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">头像</label>
+                                    <div class="layui-input-block">
+                                        <input type="file" name="headerImg" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">生活照</label>
+                                    <div class="layui-input-block">
+                                        <input type="file" name="lifeImg" multiple class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <input type="checkbox" name="agreement" title="同意">
+                                    <a href="#terms" target="_blank" style="position: relative; top: 6px; left: -15px;">
+                                        <ins>用户协议</ins>
+                                    </a>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit>注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验9：使用HttpEntity，封装请求原始数据</div>
+                <div class="layui-colla-content">
+                    <a class="layui-btn layui-bg-blue" href="/handle09?user=admin&age=18">随便㕛发个请求</a>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验10：使用原生Servlet API，获取原生请求对象</div>
+                <div class="layui-colla-content">
+                    <a class="layui-btn layui-bg-blue" href="/handle09?user=admin&age=18">随便叒发个请求</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-col-xs6">
+        <h1>SpringMVC - 响应测试</h1>
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验1：返回json数据</div>
+                <div class="layui-colla-content">
+                    <a type="button" class="layui-btn" href="/resp01">给个JSON</a>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验2：文件下载测试</div>
+                <div class="layui-colla-content">
+                    <a type="button" class="layui-btn" href="/download">给个美女</a>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">实验3：使用Thymeleaf模版引擎，实现服务端渲染</div>
+                <div class="layui-colla-content">
+                    <fieldset class="layui-elem-field" style="background-color: lemonchiffon">
+                        <legend>服务端渲染</legend>
+                        <div class="layui-field-box">
+                            <h3>现在服务端渲染的方式用的很少了；项目基本都是前后分离。</h3>
+                            <h3>这样各端专注于自己的开发，快速协同分工</h3>
+                            <fieldset class="layui-elem-field" style="background-color: lightcyan">
+                                <legend>前后分离</legend>
+                                <div class="layui-field-box">
+                                    <h5>1. 前端开发人员编写独立的前端项目</h5>
+                                    <h5>2. 前端项目自己控制页面跳转逻辑</h5>
+                                    <h5>3. 后端仅需返回前端需要的JSON数据</h5>
+                                    <h5>4. 后端无需关心页面效果等问题</h5>
+                                    <h5>优点：分工明确，快速协同，专注用户体验</h5>
+                                    <h5>缺点：成本高，技术复杂，门槛高</h5>
+                                </div>
+                            </fieldset>
+                            <fieldset class="layui-elem-field" style="background-color: lightcyan">
+                                <legend>前后不分离(服务端渲染)</legend>
+                                <div class="layui-field-box">
+                                    <h5>1. 后端开发人员要控制页面跳转逻辑（利用转发、重定向）</h5>
+                                    <h5>2. 服务器要拿到业务数据，全部填充到页面，然后整体把页面返回给客户端</h5>
+                                    <h5>3. 模版引擎作用：将数据填充到页面模板</h5>
+                                    <h5>4. JSP其实就是一种模板引擎</h5>
+                                    <h5>优点：弱前端、低成本、速度快</h5>
+                                    <h5>缺点：不专业、体验差、效率低、易扯皮</h5>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<style>
+
+</style>
+</html>

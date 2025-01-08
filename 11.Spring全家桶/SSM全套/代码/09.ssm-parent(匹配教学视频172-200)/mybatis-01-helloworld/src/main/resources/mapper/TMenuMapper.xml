@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mybatis.mapper.TMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.mybatis.bean.TMenu">
+            <id property="menuId" column="menu_id" jdbcType="BIGINT"/>
+            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+            <result property="menuType" column="menu_type" jdbcType="INTEGER"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="permsType" column="perms_type" jdbcType="INTEGER"/>
+            <result property="apiPerms" column="api_perms" jdbcType="VARCHAR"/>
+            <result property="webPerms" column="web_perms" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
+            <result property="contextMenuId" column="context_menu_id" jdbcType="BIGINT"/>
+            <result property="frameFlag" column="frame_flag" jdbcType="TINYINT"/>
+            <result property="frameUrl" column="frame_url" jdbcType="VARCHAR"/>
+            <result property="cacheFlag" column="cache_flag" jdbcType="TINYINT"/>
+            <result property="visibleFlag" column="visible_flag" jdbcType="TINYINT"/>
+            <result property="disabledFlag" column="disabled_flag" jdbcType="TINYINT"/>
+            <result property="deletedFlag" column="deleted_flag" jdbcType="TINYINT"/>
+            <result property="createUserId" column="create_user_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateUserId" column="update_user_id" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        menu_id,menu_name,menu_type,
+        parent_id,sort,path,
+        component,perms_type,api_perms,
+        web_perms,icon,context_menu_id,
+        frame_flag,frame_url,cache_flag,
+        visible_flag,disabled_flag,deleted_flag,
+        create_user_id,create_time,update_user_id,
+        update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_menu
+        where  menu_id = #{menuId,jdbcType=BIGINT} 
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_menu
+        where  menu_id = #{menuId,jdbcType=BIGINT} 
+    </delete>
+    <insert id="insert" keyColumn="menu_id" keyProperty="menuId" parameterType="com.atguigu.mybatis.bean.TMenu" useGeneratedKeys="true">
+        insert into t_menu
+        ( menu_id,menu_name,menu_type
+        ,parent_id,sort,path
+        ,component,perms_type,api_perms
+        ,web_perms,icon,context_menu_id
+        ,frame_flag,frame_url,cache_flag
+        ,visible_flag,disabled_flag,deleted_flag
+        ,create_user_id,create_time,update_user_id
+        ,update_time)
+        values (#{menuId,jdbcType=BIGINT},#{menuName,jdbcType=VARCHAR},#{menuType,jdbcType=INTEGER}
+        ,#{parentId,jdbcType=BIGINT},#{sort,jdbcType=INTEGER},#{path,jdbcType=VARCHAR}
+        ,#{component,jdbcType=VARCHAR},#{permsType,jdbcType=INTEGER},#{apiPerms,jdbcType=VARCHAR}
+        ,#{webPerms,jdbcType=VARCHAR},#{icon,jdbcType=VARCHAR},#{contextMenuId,jdbcType=BIGINT}
+        ,#{frameFlag,jdbcType=TINYINT},#{frameUrl,jdbcType=VARCHAR},#{cacheFlag,jdbcType=TINYINT}
+        ,#{visibleFlag,jdbcType=TINYINT},#{disabledFlag,jdbcType=TINYINT},#{deletedFlag,jdbcType=TINYINT}
+        ,#{createUserId,jdbcType=BIGINT},#{createTime,jdbcType=TIMESTAMP},#{updateUserId,jdbcType=BIGINT}
+        ,#{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="menu_id" keyProperty="menuId" parameterType="com.atguigu.mybatis.bean.TMenu" useGeneratedKeys="true">
+        insert into t_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="menuId != null">menu_id,</if>
+                <if test="menuName != null">menu_name,</if>
+                <if test="menuType != null">menu_type,</if>
+                <if test="parentId != null">parent_id,</if>
+                <if test="sort != null">sort,</if>
+                <if test="path != null">path,</if>
+                <if test="component != null">component,</if>
+                <if test="permsType != null">perms_type,</if>
+                <if test="apiPerms != null">api_perms,</if>
+                <if test="webPerms != null">web_perms,</if>
+                <if test="icon != null">icon,</if>
+                <if test="contextMenuId != null">context_menu_id,</if>
+                <if test="frameFlag != null">frame_flag,</if>
+                <if test="frameUrl != null">frame_url,</if>
+                <if test="cacheFlag != null">cache_flag,</if>
+                <if test="visibleFlag != null">visible_flag,</if>
+                <if test="disabledFlag != null">disabled_flag,</if>
+                <if test="deletedFlag != null">deleted_flag,</if>
+                <if test="createUserId != null">create_user_id,</if>
+                <if test="createTime != null">create_time,</if>
+                <if test="updateUserId != null">update_user_id,</if>
+                <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="menuId != null">#{menuId,jdbcType=BIGINT},</if>
+                <if test="menuName != null">#{menuName,jdbcType=VARCHAR},</if>
+                <if test="menuType != null">#{menuType,jdbcType=INTEGER},</if>
+                <if test="parentId != null">#{parentId,jdbcType=BIGINT},</if>
+                <if test="sort != null">#{sort,jdbcType=INTEGER},</if>
+                <if test="path != null">#{path,jdbcType=VARCHAR},</if>
+                <if test="component != null">#{component,jdbcType=VARCHAR},</if>
+                <if test="permsType != null">#{permsType,jdbcType=INTEGER},</if>
+                <if test="apiPerms != null">#{apiPerms,jdbcType=VARCHAR},</if>
+                <if test="webPerms != null">#{webPerms,jdbcType=VARCHAR},</if>
+                <if test="icon != null">#{icon,jdbcType=VARCHAR},</if>
+                <if test="contextMenuId != null">#{contextMenuId,jdbcType=BIGINT},</if>
+                <if test="frameFlag != null">#{frameFlag,jdbcType=TINYINT},</if>
+                <if test="frameUrl != null">#{frameUrl,jdbcType=VARCHAR},</if>
+                <if test="cacheFlag != null">#{cacheFlag,jdbcType=TINYINT},</if>
+                <if test="visibleFlag != null">#{visibleFlag,jdbcType=TINYINT},</if>
+                <if test="disabledFlag != null">#{disabledFlag,jdbcType=TINYINT},</if>
+                <if test="deletedFlag != null">#{deletedFlag,jdbcType=TINYINT},</if>
+                <if test="createUserId != null">#{createUserId,jdbcType=BIGINT},</if>
+                <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+                <if test="updateUserId != null">#{updateUserId,jdbcType=BIGINT},</if>
+                <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.atguigu.mybatis.bean.TMenu">
+        update t_menu
+        <set>
+                <if test="menuName != null">
+                    menu_name = #{menuName,jdbcType=VARCHAR},
+                </if>
+                <if test="menuType != null">
+                    menu_type = #{menuType,jdbcType=INTEGER},
+                </if>
+                <if test="parentId != null">
+                    parent_id = #{parentId,jdbcType=BIGINT},
+                </if>
+                <if test="sort != null">
+                    sort = #{sort,jdbcType=INTEGER},
+                </if>
+                <if test="path != null">
+                    path = #{path,jdbcType=VARCHAR},
+                </if>
+                <if test="component != null">
+                    component = #{component,jdbcType=VARCHAR},
+                </if>
+                <if test="permsType != null">
+                    perms_type = #{permsType,jdbcType=INTEGER},
+                </if>
+                <if test="apiPerms != null">
+                    api_perms = #{apiPerms,jdbcType=VARCHAR},
+                </if>
+                <if test="webPerms != null">
+                    web_perms = #{webPerms,jdbcType=VARCHAR},
+                </if>
+                <if test="icon != null">
+                    icon = #{icon,jdbcType=VARCHAR},
+                </if>
+                <if test="contextMenuId != null">
+                    context_menu_id = #{contextMenuId,jdbcType=BIGINT},
+                </if>
+                <if test="frameFlag != null">
+                    frame_flag = #{frameFlag,jdbcType=TINYINT},
+                </if>
+                <if test="frameUrl != null">
+                    frame_url = #{frameUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="cacheFlag != null">
+                    cache_flag = #{cacheFlag,jdbcType=TINYINT},
+                </if>
+                <if test="visibleFlag != null">
+                    visible_flag = #{visibleFlag,jdbcType=TINYINT},
+                </if>
+                <if test="disabledFlag != null">
+                    disabled_flag = #{disabledFlag,jdbcType=TINYINT},
+                </if>
+                <if test="deletedFlag != null">
+                    deleted_flag = #{deletedFlag,jdbcType=TINYINT},
+                </if>
+                <if test="createUserId != null">
+                    create_user_id = #{createUserId,jdbcType=BIGINT},
+                </if>
+                <if test="createTime != null">
+                    create_time = #{createTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="updateUserId != null">
+                    update_user_id = #{updateUserId,jdbcType=BIGINT},
+                </if>
+                <if test="updateTime != null">
+                    update_time = #{updateTime,jdbcType=TIMESTAMP},
+                </if>
+        </set>
+        where   menu_id = #{menuId,jdbcType=BIGINT} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.atguigu.mybatis.bean.TMenu">
+        update t_menu
+        set 
+            menu_name =  #{menuName,jdbcType=VARCHAR},
+            menu_type =  #{menuType,jdbcType=INTEGER},
+            parent_id =  #{parentId,jdbcType=BIGINT},
+            sort =  #{sort,jdbcType=INTEGER},
+            path =  #{path,jdbcType=VARCHAR},
+            component =  #{component,jdbcType=VARCHAR},
+            perms_type =  #{permsType,jdbcType=INTEGER},
+            api_perms =  #{apiPerms,jdbcType=VARCHAR},
+            web_perms =  #{webPerms,jdbcType=VARCHAR},
+            icon =  #{icon,jdbcType=VARCHAR},
+            context_menu_id =  #{contextMenuId,jdbcType=BIGINT},
+            frame_flag =  #{frameFlag,jdbcType=TINYINT},
+            frame_url =  #{frameUrl,jdbcType=VARCHAR},
+            cache_flag =  #{cacheFlag,jdbcType=TINYINT},
+            visible_flag =  #{visibleFlag,jdbcType=TINYINT},
+            disabled_flag =  #{disabledFlag,jdbcType=TINYINT},
+            deleted_flag =  #{deletedFlag,jdbcType=TINYINT},
+            create_user_id =  #{createUserId,jdbcType=BIGINT},
+            create_time =  #{createTime,jdbcType=TIMESTAMP},
+            update_user_id =  #{updateUserId,jdbcType=BIGINT},
+            update_time =  #{updateTime,jdbcType=TIMESTAMP}
+        where   menu_id = #{menuId,jdbcType=BIGINT} 
+    </update>
+</mapper>

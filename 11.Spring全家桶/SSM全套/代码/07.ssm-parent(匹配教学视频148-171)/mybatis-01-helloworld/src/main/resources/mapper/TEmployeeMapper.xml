@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mybatis.mapper.TEmployeeMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.mybatis.bean.TEmployee">
+            <id property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+            <result property="loginName" column="login_name" jdbcType="VARCHAR"/>
+            <result property="loginPwd" column="login_pwd" jdbcType="VARCHAR"/>
+            <result property="actualName" column="actual_name" jdbcType="VARCHAR"/>
+            <result property="gender" column="gender" jdbcType="TINYINT"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+            <result property="disabledFlag" column="disabled_flag" jdbcType="TINYINT"/>
+            <result property="deletedFlag" column="deleted_flag" jdbcType="TINYINT"/>
+            <result property="administratorFlag" column="administrator_flag" jdbcType="TINYINT"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        employee_id,login_name,login_pwd,
+        actual_name,gender,phone,
+        department_id,disabled_flag,deleted_flag,
+        administrator_flag,remark,update_time,
+        create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_employee
+        where  employee_id = #{employeeId,jdbcType=BIGINT} 
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_employee
+        where  employee_id = #{employeeId,jdbcType=BIGINT} 
+    </delete>
+    <insert id="insert" keyColumn="employee_id" keyProperty="employeeId" parameterType="com.atguigu.mybatis.bean.TEmployee" useGeneratedKeys="true">
+        insert into t_employee
+        ( employee_id,login_name,login_pwd
+        ,actual_name,gender,phone
+        ,department_id,disabled_flag,deleted_flag
+        ,administrator_flag,remark,update_time
+        ,create_time)
+        values (#{employeeId,jdbcType=BIGINT},#{loginName,jdbcType=VARCHAR},#{loginPwd,jdbcType=VARCHAR}
+        ,#{actualName,jdbcType=VARCHAR},#{gender,jdbcType=TINYINT},#{phone,jdbcType=VARCHAR}
+        ,#{departmentId,jdbcType=INTEGER},#{disabledFlag,jdbcType=TINYINT},#{deletedFlag,jdbcType=TINYINT}
+        ,#{administratorFlag,jdbcType=TINYINT},#{remark,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP}
+        ,#{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="employee_id" keyProperty="employeeId" parameterType="com.atguigu.mybatis.bean.TEmployee" useGeneratedKeys="true">
+        insert into t_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="employeeId != null">employee_id,</if>
+                <if test="loginName != null">login_name,</if>
+                <if test="loginPwd != null">login_pwd,</if>
+                <if test="actualName != null">actual_name,</if>
+                <if test="gender != null">gender,</if>
+                <if test="phone != null">phone,</if>
+                <if test="departmentId != null">department_id,</if>
+                <if test="disabledFlag != null">disabled_flag,</if>
+                <if test="deletedFlag != null">deleted_flag,</if>
+                <if test="administratorFlag != null">administrator_flag,</if>
+                <if test="remark != null">remark,</if>
+                <if test="updateTime != null">update_time,</if>
+                <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="employeeId != null">#{employeeId,jdbcType=BIGINT},</if>
+                <if test="loginName != null">#{loginName,jdbcType=VARCHAR},</if>
+                <if test="loginPwd != null">#{loginPwd,jdbcType=VARCHAR},</if>
+                <if test="actualName != null">#{actualName,jdbcType=VARCHAR},</if>
+                <if test="gender != null">#{gender,jdbcType=TINYINT},</if>
+                <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+                <if test="departmentId != null">#{departmentId,jdbcType=INTEGER},</if>
+                <if test="disabledFlag != null">#{disabledFlag,jdbcType=TINYINT},</if>
+                <if test="deletedFlag != null">#{deletedFlag,jdbcType=TINYINT},</if>
+                <if test="administratorFlag != null">#{administratorFlag,jdbcType=TINYINT},</if>
+                <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
+                <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+                <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.atguigu.mybatis.bean.TEmployee">
+        update t_employee
+        <set>
+                <if test="loginName != null">
+                    login_name = #{loginName,jdbcType=VARCHAR},
+                </if>
+                <if test="loginPwd != null">
+                    login_pwd = #{loginPwd,jdbcType=VARCHAR},
+                </if>
+                <if test="actualName != null">
+                    actual_name = #{actualName,jdbcType=VARCHAR},
+                </if>
+                <if test="gender != null">
+                    gender = #{gender,jdbcType=TINYINT},
+                </if>
+                <if test="phone != null">
+                    phone = #{phone,jdbcType=VARCHAR},
+                </if>
+                <if test="departmentId != null">
+                    department_id = #{departmentId,jdbcType=INTEGER},
+                </if>
+                <if test="disabledFlag != null">
+                    disabled_flag = #{disabledFlag,jdbcType=TINYINT},
+                </if>
+                <if test="deletedFlag != null">
+                    deleted_flag = #{deletedFlag,jdbcType=TINYINT},
+                </if>
+                <if test="administratorFlag != null">
+                    administrator_flag = #{administratorFlag,jdbcType=TINYINT},
+                </if>
+                <if test="remark != null">
+                    remark = #{remark,jdbcType=VARCHAR},
+                </if>
+                <if test="updateTime != null">
+                    update_time = #{updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="createTime != null">
+                    create_time = #{createTime,jdbcType=TIMESTAMP},
+                </if>
+        </set>
+        where   employee_id = #{employeeId,jdbcType=BIGINT} 
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.atguigu.mybatis.bean.TEmployee">
+        update t_employee
+        set 
+            login_name =  #{loginName,jdbcType=VARCHAR},
+            login_pwd =  #{loginPwd,jdbcType=VARCHAR},
+            actual_name =  #{actualName,jdbcType=VARCHAR},
+            gender =  #{gender,jdbcType=TINYINT},
+            phone =  #{phone,jdbcType=VARCHAR},
+            department_id =  #{departmentId,jdbcType=INTEGER},
+            disabled_flag =  #{disabledFlag,jdbcType=TINYINT},
+            deleted_flag =  #{deletedFlag,jdbcType=TINYINT},
+            administrator_flag =  #{administratorFlag,jdbcType=TINYINT},
+            remark =  #{remark,jdbcType=VARCHAR},
+            update_time =  #{updateTime,jdbcType=TIMESTAMP},
+            create_time =  #{createTime,jdbcType=TIMESTAMP}
+        where   employee_id = #{employeeId,jdbcType=BIGINT} 
+    </update>
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mybatis.mapper.CustomerMapper">
+
+    <resultMap id="CutomerRM" type="com.atguigu.mybatis.bean.Customer">
+        <id column="c_id" property="id"></id>
+        <result column="customer_name" property="customerName"></result>
+        <result column="phone" property="phone"></result>
+<!--
+collection：说明 一对N 的封装规则
+ofType: 集合中元素的类型
+-->
+        <collection property="orders" ofType="com.atguigu.mybatis.bean.Order">
+            <id column="id" property="id"></id>
+            <result column="address" property="address"></result>
+            <result column="amount" property="amount"></result>
+            <result column="c_id" property="customerId"></result>
+        </collection>
+    </resultMap>
+
+
+    <select id="getCustomerByIdWithOrders" resultMap="CutomerRM">
+        select c.id c_id,
+               c.customer_name,
+               c.phone,
+               o.*
+        from t_customer c
+                 left join t_order o on c.id = o.customer_id
+        where c.id = #{id}
+    </select>
+
+    <select id="getAllCustomersWithOrders"
+            resultMap="com.atguigu.mybatis.mapper.OrderCustomerStepMapper.CustomerOrdersStepRM">
+        select * from t_customer
+    </select>
+</mapper>
