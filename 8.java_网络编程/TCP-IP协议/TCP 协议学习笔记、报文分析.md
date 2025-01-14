@@ -1,4 +1,6 @@
-TCP（Transmission Control Protocol 传输控制协议）协议是基于 IP 协议，面向连接的、可靠的、基于字节流的传输层通信协议。
+> 本文由 [简悦 SimpRead](http://ksria.com/simpread/) 转码， 原文地址 [blog.csdn.net](https://blog.csdn.net/huyuyang6688/article/details/119975253)
+
+TCP（Transmission Control Protocol 传输控制协议）协议是基于 IP 协议，面向连接的、可靠的、基于[字节流](https://so.csdn.net/so/search?q=%E5%AD%97%E8%8A%82%E6%B5%81&spm=1001.2101.3001.7020)的传输层通信协议。
 
 *   基于 IP 协议：在 TCP/IP 协议栈中，TCP 协议是基于 IP 协议之上传输的，TCP 协议报文中的源端口 + IP 协议报文中的源地址 + TCP 协议报文中的目标端口 + IP 协议报文中的目标地址，组合起来唯一确定一条 TCP 连接。
     
@@ -17,8 +19,7 @@ TCP（Transmission Control Protocol 传输控制协议）协议是基于 IP 协�
     ……
     
 
-TCP 协议报文
---------
+### TCP 协议报文
 
 协议就是计算机与计算机之间通过网络实现通信时事先达成的一种 “约定”。了解 TCP 协议报文之前，先简单回顾下【OSI 七层模型】和【TCP/IP 协议】。
 
@@ -26,13 +27,13 @@ OSI（Open System Interconnect），开放系统互联，一般称它 OSI 参考
 
 TCP/IP 协议不是单单指 TCP、IP 协议，是指由 HTTP、FTP、SMTP、TCP、UDP、IP 等协议组成的协议簇，是对这些[通信协议](https://so.csdn.net/so/search?q=%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE&spm=1001.2101.3001.7020)的统称。至于为啥叫它 TCP/IP 协议，我猜可能是 TCP 协议和 IP 协议比较有代表性吧~
 
-![](https://img-blog.csdnimg.cn/8c065b026670452f8f1859b2024beb0b.png)
+![](images/TCP 协议学习笔记、报文分析/47d01d0ea002b3be77111e3923605766-1736873868282-3.png)
 
 至于 OSI 参考模型和 TCP/IP 四层协议的区别，我理解 OSI 参考模型是学术上定义的标准，是一个理论上的网络通信模型，没有对协议进行详细的定义。而 TCP/IP 协议是参考这个标准的具体实现，是在实际的实现中运行的网络协议。OSI 参考模型注重 “通信协议必要的功能是什么”，而 TCP/IP 则更强调 “在计算机上实现协议应该开发哪种程序”。
 
 以 `curl -H "Content-Type:application/json" -X POST --data '{"param1": "value2", "param2": "value2"}' http://192.168.2.188/service` 为例，来分析一下通过 HTTP 协议从客户端向服务端发送数据，数据如何传输的：
 
-![](https://img-blog.csdnimg.cn/5e24b0cc220d4beda69cdc6bea9250e6.png)
+![](images/TCP 协议学习笔记、报文分析/e2b26d1cd05629eaf1853b8b128c60ec.png)
 
 客户端为发送端，服务端为接收端。
 
@@ -48,14 +49,13 @@ TCP/IP 协议不是单单指 TCP、IP 协议，是指由 HTTP、FTP、SMTP、TCP
 
 发送端从应用层、传输层、网络层、数据链路层由上至下按照顺序传输数据，接收端则从数据链路层、网络层、传输层、应用层由下至上向每个上一级分层传输数据。每个分层上，在处理由上一层传过来的数据时可以附上当前分层的协议所必须的首部信息，然后接收端对收到的数据进行数据 “首部” 与“内容”的分离，再转发给上一分层，并最终将发送端的数据恢复为原状。
 
-TCP 三次握手、四次挥手
--------------
+### TCP 三次握手、四次挥手
 
 前面说 TCP 是面向连接传输的，通信双方通过三次握手建立 “连接”。这里的“连接” 是指通信双方知道对方的存在，双方有对应的 socket 资源，有对应的发送缓存和接收缓存，有相应的拥塞控制策略等。连接并不是真实存在的，只是一种状态，通信双方通过一定的数据结构来维持这种状态。
 
 分析三次握手之前，先了解一下 TCP 报文的内容，可能会理解地更容易一些。
 
-![](https://img-blog.csdnimg.cn/636f0b2bc94d43948be5189d28041175.jpg)
+![](images/TCP 协议学习笔记、报文分析/56f108fb9ff1c042e94e6cab9e447b6a.jpeg)
 
 *   **源端口**：客户端（发送方）对应应用的的端口号，某个应用发起网络请求时，操作系统会给它分配一个对应端口号
     
@@ -82,15 +82,15 @@ TCP 三次握手、四次挥手
 
 *   **选项和填充部分**：这部分不是必填的，可以根据需要增加对应的数据。较常见的选项字段是 MSS（Maximum segment size），表示每个 TCP 报文的数据段的最大长度，MSS 只存在于 SYN 报文中（因此 TCP 协议是在三次握手阶段协商 MSS 的大小），一般情况下，MSS 的值越大，网络利用率越高，但是也有可能降低网络速度。TCP 协议一般通过 MTU 来确定 MSS 的值，在 MTU 中，IP 数据报的大小不超过 1500 字节，而 IP 数据报的首部 20 字节，所以 TCP 报文段不超过 1480 字节；TCP 报文段首部 20 字节，所以 TCP 携带的数据不超过 1460 字节，即 MSS 最大值为 1460。【MTU：最大控制单元，数据链路层要求帧的大小不能超过 1518 字节（14 字节的帧头 + 4 字节帧校验和 + 最多 1500 字节数据），这 1500 字节的数据就是 MTU】
 
-![](https://img-blog.csdnimg.cn/7e31c1693ee04647902bf86bdbeb912e.png)
+![](images/TCP 协议学习笔记、报文分析/1f70c7155dd44a67f6db79d7e0575274.png)
 
-### 三次握手
+#### 三次握手
 
 三次握手建立连接的过程：
 
 通信双方建立连接，通常情况下都是 Server 端先打开一个服务端套接字（ServerSocket）来监听对方的连接请求，称为被动打开；Server 端被动打开后，Client 端就可以主动向 Server 端发起连接请求了，称为主动打开。
 
-![](https://img-blog.csdnimg.cn/3dc547e1a5784c0dbf372acf4dc015a9.png)
+![](images/TCP 协议学习笔记、报文分析/f17349f800362f679625e28fef10e4d2.png)
 
 1、Client 生成序列号 Sequence Number（假设生成的 seq 值为 x），SYN 标志位为 1，向 Server 发送一次 TCP 请求报文，表示请求与对方建立连接，同时 Client 进入 SYN-SENT 状态。【服务端老哥，我想请求和你建立连接】
 
@@ -124,11 +124,11 @@ TCP 三次握手、四次挥手
     如果第三次握手中断，Server 会认为自己第二次的 SYN、ACK 包发送失败了，所以会重传第二次的 SYN、ACK 包，如果重传次数超过了最大设置，Server 就会主动断开连接，状态由 SYN_RCVD 变为 CLOSED。Client 这时已经是 ESTABLISHED 状态，可以发送数据，但是因为 Server 还不是 ESTABLISHED 状态，所以不会接收 Client 发送的数据，因此 Client 也会重传所发的数据，等超过发送数据的重传次数（tcp_retries2），Client 也会主动断开连接。
     
 
-### TCP 四次挥手
+#### TCP 四次挥手
 
 四次挥手断开连接的过程：
 
-![](https://img-blog.csdnimg.cn/fed47cadd53d4b03ab6d8c731eeb2eca.png)  
+![](images/TCP 协议学习笔记、报文分析/c1dbcf26437cf4815b8765060985ce5c.png)  
 1、Client 主动关闭连接，序列号 Sequence Number 为和 Server 通信时 Server 的最后一次 ACK 报文的 ack 的值（假设 seq 值为 x），FIN 标志位为 1，向 Server 发送一次 TCP 请求报文，表示请求和对方断开连接，同时 Client 进入 FIN_WAIT_1 状态。【服务端老哥，我想和你断开连接，我不再向你发送数据了】
 
 2、Server 收到客户端的 FIN 报文后，会回发 ACK 报文，ACK 标志位为 1，确认序号 Acknowledgement Number（ack）为 Client 第一次挥手报文的 seq+1（x+1）。【收到，请客户端老弟稍等一下，我准备好了跟你说】
@@ -148,8 +148,7 @@ TCP 三次握手、四次挥手
     当 Server 收到 Client 的第 1 次 FIN 报文时，仅仅表示 Client 不再发送数据了但是还能接收数据，Server 也未必全部数据都发送给 Client 了，所以 Server 可以立即 Close，也可以发送一些数据给 Client 后，再发送 FIN 报文给 Client 来表示同意关闭连接，因此，Server 的 ACK 报文和 FIN 报文一般都会分开发送。
     
 
-TCP 抓包分析
---------
+### TCP 抓包分析
 
 了解了理论后，通过 tcpdump 来抓包分析下 TCP 三次握手、传输数据、四次挥手的过程是怎样的。找两台机器分别充当服务端（10.246.100.61）和客户端（10.246.131.47）。
 
@@ -241,7 +240,7 @@ public class Client {
 
 第 4 行报文用 Wireshark 分析可以看到有 TCP Window Update 的标志，这是服务端根据自己处理能力，调整 TCP 窗口为 131712，可以发现后面的报文中 Win 都变成 131712 了。
 
-![](https://img-blog.csdnimg.cn/cff1bbcd8c4a452eb355a71a34968b5d.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAZGFubnlob282Njg4,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center)
+![](images/TCP 协议学习笔记、报文分析/8535c358490ca047d67259bb34cd8a04.png)
 
 然后客户端每执行一次`bufferedWriter.flush();` ，就会有一条【客户端向服务端发送数据】和【服务端回复 ack】的报文。代码中客户端一共发送了 4 次数据，tcpdump 也监听到了 4 组对应发送数据和 ack 的报文。
 
@@ -277,7 +276,7 @@ public class Client {
 
 Client 段代码：
 
-```
+```java
 public class Client {
     public static void main(String[] args) throws IOException {
         Socket socket =null;
@@ -321,13 +320,8 @@ public class Client {
 
 文章前面提到 MSS 最大为 1460，也就是 TCP 报文最多可以携带 1460 字节的数据，上面发送了 1500 字节的数据，果然被拆分到两个 TCP 报文分别发送了，第一次发送了 1448 字节数据（length=1448），第二个报文发送了剩余的 52 字节数据（length=42）。数据太大了拆成 2 个报文可以理解，但是为什么 1550 字节的数据被拆分成了 1448 字节 + 52 字节，而不是 1460+40 字节呢？通过 Wireshark 分析可以发现，可选项部分占用了 12 字节（包含两个各占一个字节的 NOP 标志位和占 10 字节的 Timestamps 时间戳），所以可携带的数据最多只有 1460-12=1448 字节了：
 
-![](https://img-blog.csdnimg.cn/450afdb3b10247ad9929bb98bc7cb6ac.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAZGFubnlob282Njg4,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center)
+![](images/TCP 协议学习笔记、报文分析/5498bc78aab44f0cded990e0166e9175.png)
 
 上面的报文还可以看出，客户端是同时把第 5、第 6 行这两个报文发了出去，发出第一个报文后没有等待服务端的 ack，就紧接着吧第二个报文发出去了，实际情况下，客户端发送数据不用必须等接收到服务端上一个 ack 报文后才会发送，客户端会一次性发送多个报文，服务端接收到后会 ack 最后收到的报文。比如客户端同时发送了三个报文，每个报文 seq 分别为 1、2、3，假如服务端只收到 seq 为 1 的报文，回复的报文 ack 为 2（表示 2 之前的报文都收到了，请发送 seq 为 2 的报文吧）；假如服务端收到 seq 为 1、2 的报文，回复的报文 ack 为 3（表示 3 之前的报文都收到了，请发送 seq 为 3 的报文吧）；假如服务端短时间内都收到了，就只会回复一个 ack 为 4 的报文（表示 4 之前的报文都收到了，请发送 seq 为 4 的报文吧）。
 
 TCP 通信过程中可能遇到很多问题，还有很多复杂的场景，这里只是简单抓个包分析下，如果有不对的地方，希望包涵给予指正。
-
-
-
-
-
